@@ -236,11 +236,11 @@ Thus we need to compute the CDF, which is NP-hard \cite{}. We show how
 to deterministically approximate the CDF of the root with additive error at most $\epsilon $
 in time polynomial in $\frac{1}{\epsilon}$.
 
-Figure ~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $ V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node $v$, is  associated with probability density function form (PDF) $f$, describes the completion-time distribution.
-$$f(\dur)=
+Figure ~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $ V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with probability density function (PDF) describes the completion-time distribution. In this case $P_a(x)=P_b(x)=P_c(x)=P_d(x)=P_e(x)$.
+$$P_a(x)=
 \begin{cases}
-0.25 & \dur=1 \\
-0.75 & \dur=4 \\
+0.25 & x=1 \\
+0.75 & x=4 \\
 0 & otherwise
 \end{cases}$$
 This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c$ and $d$ in sequence and, when they finish, run $e$.
@@ -276,34 +276,34 @@ This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c
 
 Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we will compute the duration distribution in the form of PDF for each compound task node including the root node, and then we will return the probability for $\tau$ to satisfy a given deadline $T$. 
 First, compute duration distribution for the node $B$. The children task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
-$$f(\dur)=
+$$P_B(x)=P_{\max(a,b)}(x)=
 \begin{cases}
-0.0625 & \dur=1 \\
-0.9375 & \dur=4 \\
+0.0625 & x=1 \\
+0.9375 & x=4 \\
 0 & otherwise
 \end{cases}$$
 
 Second, compute duration distribution for node $C$. The children task nodes $c,d$, are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $c$ and $d$:  
-$$f(\dur)=
+$$P_C(x)=P_{c+d}(x)=
 \begin{cases}
-0.0625 & \dur=2 \\
-0.375 & \dur=5 \\
-0.5625 & \dur=8 \\
+0.0625 & x=2 \\
+0.375 & x=5 \\
+0.5625 & x=8 \\
 0 & otherwise
 \end{cases}$$
 
 Last, compute duration distribution for node $A$, the root node. The children task nodes $B,C,e$ are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $B$, $C$ and $e$: 
-$$f(\dur)=
+$$P_{\tau}=P_A(x)=P_{A+B+e}(x)=
 \begin{cases}
-9.7\cdot 10^{-4} & \dur=4 \\
-0.0234 & \dur=7 \\
-0.1582 & \dur=10 \\
-0.4218 & \dur=13 \\
-0.3955 & \dur=16 \\
+9.7\cdot 10^{-4} & x=4 \\
+0.0234 & x=7 \\
+0.1582 & x=10 \\
+0.4218 & x=13 \\
+0.3955 & x=16 \\
 0 & otherwise
 \end{cases}$$
 
-For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$ the probability is quite low, $F_{\dur}(8)=0.0244$ . 
+For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$ the probability is  $F_{\tau}(8)=0.0244$ . 
 \end{example}
 
  
