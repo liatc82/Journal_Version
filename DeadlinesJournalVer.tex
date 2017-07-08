@@ -1186,21 +1186,21 @@ is the sum of the completion times of the leaves. The theorem follows immediatel
 \end{proof}
 
 Furthermore, we would like to specify the exact complexity class of the deadline problem and show that it is $\#$P-complete. Next we define a NP problem which counting its possible witness results the deadline problem. 
+
 \begin{definition}\label{Def:SDRVT}
-Given $Y=\{Y_1,\dots,Y_n\}$, a set of discrete integer-valued random variables specified by probability mass functions with finite supports with sizes $\leq m$ and $T \in \mathbb{Z}$. We call the decision problem $F_{\sum_{i=1}^{n} Y_{i}} (T)>0$, ``SDRVT" (Sum of Discrete Random Variable smaller than T).
+Given $Y=\{Y_1,\dots,Y_n\}$, a set of discrete integer-valued random variables specified by probability mass functions with finite supports with sizes $\leq m$ and $T \in \mathbb{Z}$. We call the decision problem $F_{\sum_{i=1}^{n} Y_{i}} (T)>0$, ``deadline-zero". %(Sum of Discrete Random Variable smaller than T).
 \end{definition}
-%$\operatorname{SumRandVarT}$ (\operatorname{SumRandVarT}--> SDRVT)
-Note that in Lemma~\ref{SumDiscreteRV} the decision problem was $F_{\sum_{i=1}^{n} Y_{i}}(T)>p$ and that we proved it is NP-hard.
-However, in the case where $p=0$, as in the SDRVT problem ( Def.~\ref{Def:SDRVT}), the decision  can be made in linear time because the probability is greater than $0$ if and only if $\sum_{i=1}^{n} \min{\support(Y_{i})} \leq T$. Of course, this means that the SDRVT problem is also in NP. We consider an event (or an assignment to the random variables) as a witness. Now, we can consider $\#$SDRVT as a counting problem, i.e., counting all possible events that sum to less than $T$ with probability $>0$. 
-This is equals to $F_{\sum_{i=1}^{n} Y_{i}}(T)$ (=deadline problem) multiplied by the total number of events, $m^n$. We will show that $\#$SDRVT is $\#P$-complete. The proof goes by a reduction from $\#\operatorname{KNAPSACK}$ to $\#$SDRVT. Recall the definition of $\#\operatorname{KNAPSACK}$\cite{arora2009computational}: We are given $n$ objects, together with each object $i\in \{1,\dots , n\}$ we have its integer weight $w_i$, and the total weight $W$ our knapsack can hold. Our objective is to find the number of subsets $K \subseteq \{1, \dots , n\}$ such that $\sum_{i \in K} w_i \leq W$. We call the sets satisfying this weight constraint feasible, and denote them as $S$. Thus, we are computing $|S|$.
+Note that in Lemma~\ref{SumDiscreteRV} the decision problem was $F_{\sum_{i=1}^{n} Y_{i}}(T)>p$ and it proved that it is NP-hard.
+However, in the case where $p=0$, as in the ``deadline-zero" problem,  Def.~\ref{Def:SDRVT}, the decision can be made in linear time because the probability is greater than $0$ in the case where $\sum_{i=1}^{n} \min{\support(Y_{i})} \leq T$. Of course, this means that the ``deadline-zero" problem is also in NP. We consider an event (or an assignment to the random variables) as a witness. Now, we can consider $\#$deadline-zero as a counting problem, i.e., counting all possible events that sum to less than $T$ with probability $>0$. 
+This is equals to the deadline problem $F_{\sum_{i=1}^{n} Y_{i}}(T)$, multiplied by the total number of events $m^n$. We will show that $\#$deadline-zero is $\#P$-complete. The proof goes by a reduction from $\#\operatorname{knapsack}$ to $\#$deadline-zero. Recall the definition of $\#\operatorname{knapsack}$\cite{arora2009computational}: We are given $n$ objects, and together with each object $i\in \{1,\dots , n\}$ we have its integer weight $w_i$, and the total weight $W$ our knapsack can hold. Our objective is to find the number of subsets $K \subseteq \{1, \dots , n\}$ such that $\sum_{i \in K} w_i \leq W$. We call the sets satisfying this weight constraint feasible, and denote them as $S$. Thus, we are computing $|S|$.
 
 \begin{theorem} \label{deadlinSP}
-$\#$SDRVT is $\#P$-complete.
+$\#$deadline-zero is $\#P$-complete.
 \end{theorem}
 
-\begin{proof} By reduction from $\#\operatorname{KNAPSACK}
-$. Given an instance of $\#\operatorname{KNAPSACK}
-$, create the two-valued random variables $Y_{1},\dots,Y_{n} $ with $P(Y_i=w_i)=1/2$ and $P(Y_i=0)=1/2$ and choose $T=W$. By construction, $|S|=2^n \cdot F_{\sum_{i=1}^{n} Y_{i}}(T)$. Since, every event has a probability $1/2^n$, we get that $|S|$ is the number of events where $F_{\sum_{i=1}^{n} Y_{i}}(T)$. Thus, if we could count the number of such events (witnesses for $\#$SDRVT), we could also count the size of $|S|$. This establishes that the problem is $\#P$ hard, completeness is by definition because we defined the problem in terms of counting witnesses.
+\begin{proof} By reduction from $\#\operatorname{knapsack}
+$. Given an instance of $\#\operatorname{knapsack}
+$, create the two-valued random variables $Y_{1},\dots,Y_{n} $ with $P(Y_i=w_i)=1/2$ and $P(Y_i=0)=1/2$ and choose $T=W$. By construction, $|S|=2^n \cdot F_{\sum_{i=1}^{n} Y_{i}}(T)$. Since, every event has a probability $1/2^n$, we get that $|S|$ is the number of events where $F_{\sum_{i=1}^{n} Y_{i}}(T)$. Thus, if we could count the number of such events (witnesses for $\#$deadline-zero), we could also count the size of $|S|$. This establishes that the problem is $\#P$ hard, completeness is by definition because we defined the problem in terms of counting witnesses.
 \end{proof}
 
 Finally, we consider the linear utility function, i.e. the problem
