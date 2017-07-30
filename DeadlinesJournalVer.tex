@@ -127,7 +127,7 @@ where our scheme is superior to sampling and to exact computation.%, using some 
 Numerous planning tools produce plans that call for executing tasks non-linearly.
 Usually, such plans are represented as a tree, where the
 leaves indicate primitive tasks, and other nodes represent compound tasks consisting of executing
-their sub-tasks either in parallel (also called ``concurrent'' tasks \cite{gabaldon2002programming}) or in sequence.
+their sub-tasks either in parallel (also called ``concurrent'' tasks~\cite{gabaldon2002programming}) or in sequence.
 \cite{erol1994htn,nau1998control,nau2003shop2,kelly2008offline}.
 
 Given such a hierarchical plan representation, it is frequently of interest to evaluate its desirability in terms of
@@ -183,9 +183,7 @@ probabilistic reasoning. %The related work suggests some directions in which thi
 
 We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes.
 Primitive action nodes contain distributions over their resource consumption. 
-Although other resources can be handled with our approach \hl{(e.g. memory: tasks running in parallel use
-the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed)}, we will assume henceforth,
-in order to be more concrete, that the only resource of interest is time.
+Although other resources can be handled with our approach (e.g. memory: tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed), we will assume henceforth, in order to be more concrete, that the only resource of interest is time.
 %{(for example, if fuel is the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car).}
 A sequence node $v_s$ denotes a task that has been decomposed
 into subtasks, represented by the children of $v_s$, which must be executed in sequence 
@@ -233,7 +231,7 @@ X = \max_{c\in ch{S}} X_c
 Let $X_r$ be a random variable representing the duration distribution of the root,
 and denote the cumulative distribution function (CDF) of a random variable $X$ by $F_X$. Then
 the probabability that the plan meets the deadline $T$ is $F_{X_r}(T)$.
-Thus we need to compute the CDF, which is NP-hard \cite{}. We show how
+Thus we need to compute the CDF, which is NP-hard~\cite{}. We show how
 to deterministically approximate the CDF of the root with additive error at most $\epsilon $
 in time polynomial in $\frac{1}{\epsilon}$.
 
@@ -312,14 +310,14 @@ For every deadline $T$ we can easily return the probability for $\tau$ to satisf
 
 The size of the support (number of non-zero probability values) of the sum of random variables
 may be exponential in the number of variables, even for 2-valued variables.
-In fact, as shown in \cite{}, computing the CDF of a sum of random variables at a given point is NP-hard.
+In fact, as shown in~\cite{}, computing the CDF of a sum of random variables at a given point is NP-hard.
 We thus define a notion of approximation, 
 which we call an {\bf Kolmogorov upper bound} (defined below),
 and supply a $\Trim$ operator that reduces the support size, while 
 producing an approximation that is a Kolomogorov upper bound.
 
 Let $X$ and $X'$ be random variables; 
-the Kolmogorov distance \cite{} between $X$ and $X'$ is defined as:
+the Kolmogorov distance~\cite{} between $X$ and $X'$ is defined as:
 \[
 d_K(X,X') = \sup_{x} |F_{X'}(x)-F_X(x)|
 \]
@@ -469,7 +467,7 @@ where the $X'_i$ is a Kolmogorov $\epsilon_i $ upper bound of $X_i$
 and show that $Y'_n$ is a Kolmogorov $\delta $ upper bound of $X$, for an appropriate $\delta $.
 
 The distribution of the sum of random variables $X'_i + Y'_{i-1}$ is 
-computed by a discrete convolution, and Trim is computed as in Algorithm \ref{alg:Trim}.
+computed by a discrete convolution, and Trim is computed as in Algorithm~\ref{alg:Trim}.
 
 We begin by bounding the approximation error propagated by convolution (sum of r.v.s):
 
@@ -518,7 +516,7 @@ $\hat{X} \succeq_e \sum_{i=1}^{n} X_{i}$, where $e={\sum_{i=1}^n\varepsilon_i + 
 %\end{theorem} 
 %\vspace*{-0.2cm} 
 
-\begin{proof} (outline) For $n$ iterations, from Lemma~\ref{Convolv}, we get an accumulated error of 
+\begin{proof} For $n$ iterations, from Lemma~\ref{Convolv}, we get an accumulated error of 
 $\varepsilon_1 +\dots+ \varepsilon_n$. From Lemma~\ref{Trim}, we get an additional error of at most $n\varepsilon$ due to trimming. 
 % From Lemma~\ref{SizeD}, $|D|\leq 2n/\varepsilon$ we get overall run-time of $O(\frac{1}{\varepsilon} \cdot n^2 \cdot m)$.
 \end{proof}
@@ -533,7 +531,7 @@ in time $O((nm/\varepsilon)\log(m/\varepsilon))$ using $O(m/\varepsilon)$ memory
 
 %\vspace*{-0.3cm} 
 \begin{proof}
-From Lemma~\ref{SizeD}, the size of list $D$ in Algorithm \ref{alg:sequence} is at most $m/\varepsilon$
+From Lemma~\ref{SizeD}, the size of list $D$ in Algorithm~\ref{alg:sequence} is at most $m/\varepsilon$
 just after the convolution, after which it is trimmed, so the space complexity is $O(m/\varepsilon)$.
 $\operatorname{Convolve}$ thus takes time $O((m/\varepsilon)\log(m/\varepsilon))$, where the logarithmic factor
 is required internally
@@ -632,7 +630,7 @@ run-time of the algorithm is $O((n m/\varepsilon) \log(m/\varepsilon))$.
 	
 \end{example}
 
-A significant advantage of the algorithm we are proposing is that it can be modified to give both an upper and a lower bound for the required probability. In the next paragraph, we describe the way we compute the lower bound and outline the correctness argument. The idea uses the same algorithm suggested (Alg. \ref{alg:sequence}), but instead of trimming in \textbf{ascending order} (Alg. \ref{alg:sequence}, line 10) it is performed in \textbf{decreasing order}, starting with the maximum value in the support. The lower bound version of the $\Trim$ operator is referred to as $\LTrim$ (Lower-bound Trim) here, and we provide a proof that $X\succeq_{\varepsilon}\LTrim(X,\varepsilon) $. 
+A significant advantage of the algorithm we are proposing is that it can be modified to give both an upper and a lower bound for the required probability. In the next paragraph, we describe the way we compute the lower bound and outline the correctness argument. The idea uses the same algorithm suggested (Alg.~\ref{alg:sequence}), but instead of trimming in \textbf{ascending order} (Alg.~\ref{alg:sequence}, line 10) it is performed in \textbf{decreasing order}, starting with the maximum value in the support. The lower bound version of the $\Trim$ operator is referred to as $\LTrim$ (Lower-bound Trim) here, and we provide a proof that $X\succeq_{\varepsilon}\LTrim(X,\varepsilon) $. 
 %In this short subsection we will suggest an algorithm which uses the inverted version of $\Trim$ and results a lower bound of the error.
 %\begin{center}
 %	\begin{algorithm}
@@ -921,7 +919,7 @@ Therefore, the complexity of the $\Sequence$ algorithm is
 $O((N^4 /\varepsilon^2)\log(N^3/\varepsilon^2))$ and the complexity of the $\Parallel$ operator is $O((N^3/\varepsilon)\log(N))$. The time and space for sequence dominate, so the total time complexity is $N$ times the complexity of $\Sequence$ and the space complexity is that of $\Sequence$.
 \end{proof}
 
-If the constraining assumptions on $M$ and $\varepsilon$ in Theorem \ref{th:TTalgcomplexity} are lifted, the complexity is still polynomial:
+If the constraining assumptions on $M$ and $\varepsilon$ in Theorem~\ref{th:TTalgcomplexity} are lifted, the complexity is still polynomial:
 replace one instance of $1/\varepsilon$ by $max(m,1/\varepsilon)$, and the other by $max(1/\varepsilon,N (N^2+1))$
 in the runtime complexity expression.
 
@@ -1154,7 +1152,7 @@ takes this extra time only in cases where any algorithm that decides how to trim
 
 We show that the deadline problem is NP-hard, 
 even for a task tree consisting only of primitive tasks and one sequence node, i.e.
-{\em linear plans} \cite{Russell:2003:AIM:773294,simmons2001planning, aktolga2004java}.
+{\em linear plans}~\cite{Russell:2003:AIM:773294,simmons2001planning}.%, aktolga2004java}. %TODO: add this refference
 %We begin with a lemma on sums of random variables.
 
   %(we call the following problem SumDiscreteRV).
@@ -1164,7 +1162,7 @@ with finite supports, $T \in \mathbb{Z}$, and $p\in[0,1]$. Then, deciding  wheth
 \end{lemma}
 
 \begin{proof} 
-First proved in \cite{---} and also shown in \cite{cohen2015estimating}, by reduction from \textit{SubsetSum}~\cite[problem number SP13]{Garey:1990:CIG:574848}.
+First proved \hl{in}~\cite{---} and also shown in~\cite{cohen2015estimating}, by reduction from \textit{SubsetSum}~\cite[problem number SP13]{Garey:1990:CIG:574848}.
 %Recall that
 %$\textit{SubsetSum}$ is: given a set $S=\{s_{1},\dots,s_{n}\}$ of integers, and integer target value $T$, is there a subset of $S$ whose sum is exactly $T$? 
 %Given an instance of \textit{SubsetSum}, create
@@ -1195,7 +1193,7 @@ if $Pr(Y_i=y)=1/|\support(Y_i)|$ for every $i$ and every $y\in\support(Y_i)$, co
 
 It is easy to see that \#deadline-probability is in \#P because we can check if an assignment satisfies $\sum_{i=0}^{n} Y_{i} \leq T$ in linear time.
 
-We will show that \#deadline-probability is \#P-complete by providing a reduction from \#knapsack. Recall the definition of $\#\operatorname{knapsack}$ \cite{arora2009computational}: We are given $n$ objects, and together with each object $i\in \{1,\dots , n\}$ we have its integer weight $w_i$, and the total weight $W$ our knapsack can hold. Our objective is to find the number of subsets $K \subseteq \{1, \dots , n\}$ such that $\sum_{i \in K} w_i \leq W$. We call the sets satisfying this weight constraint feasible, and denote them as $S$. Thus, the \#knapsack problem is to compute $|S|$.
+We will show that \#deadline-probability is \#P-complete by providing a reduction from \#knapsack. Recall the definition of $\#\operatorname{knapsack}$~\cite{arora2009computational}: We are given $n$ objects, and together with each object $i\in \{1,\dots , n\}$ we have its integer weight $w_i$, and the total weight $W$ our knapsack can hold. Our objective is to find the number of subsets $K \subseteq \{1, \dots , n\}$ such that $\sum_{i \in K} w_i \leq W$. We call the sets satisfying this weight constraint feasible, and denote them as $S$. Thus, the \#knapsack problem is to compute $|S|$.
 
 \begin{theorem} \label{deadlinSP}
 \#deadline-probability is \#P-complete.
@@ -1355,7 +1353,7 @@ The plans from the DRC are shown in Figures {\ref{fig:drive}}, {\ref{fig:walk}} 
 \end{figure}
 
 In the Logistics domain, packages are to be transported by trucks or airplanes.
-Hierarchical plans were generated by the JSHOP2 planner \cite{nau2003shop2} for this domain and consisted of one parallel node (packages delivered in parallel),
+Hierarchical plans were generated by the JSHOP2 planner~\cite{nau2003shop2} for this domain and consisted of one parallel node (packages delivered in parallel),
 with children all being sequential plans. In Figure {\ref{fig:transport}} presented a simple plan generated by JSHOP2 algorithm for accomplishing (transport-two p1 p2) from the following initial state: $\{$(package p1), (at p1 l1), (destination p1 l3), (available-truck t1), (at t1 home),
 (package p2), (at p2 l2), (destination p2 l3), (available-truck t2), (at t2 home)$\}$.
 The duration distribution of all primitive tasks is uniform but the support parameters were determined by the type of the task, 
@@ -1373,8 +1371,8 @@ in the algorithm was usually much better than the theoretical $\varepsilon$ boun
 We ran the exact algorithm, our approximation algorithm with $\varepsilon \in \{ 0.1, 0.01, 0.001\}$, and a simple simulation with 
 $10^3$ to $10^7$ samples (number of samples is denoted by $s$ in the table), on networks from the DRC
 implementation, sequence nodes with 10, 20, and 50 children (number of nodes denoted by $N$ in the table), and 20 Logistics domain plans, and
-several values of $M$ \hl{($M, N$ are as in Theorem}~\ref{th:TTalgcomplexity}). 
-Results for the various task trees are shown in tables \ref{tab:errors1}, \ref{tab:errors2} (error comparison) and \ref{tab:runtimes1}, \ref{tab:runtimes2} (runtime comparison).
+several values of $M$ (the notations $M, N$ are as in Theorem~\ref{th:TTalgcomplexity}). 
+Results for the various task trees are shown in tables~\ref{tab:errors1},~\ref{tab:errors2} (error comparison) and~\ref{tab:runtimes1},~\ref{tab:runtimes2} (runtime comparison).
 Errors are the maximum error in the CDF, measured from the true result when available, and from the bounds generated by the approximation algorithm using $\varepsilon = 0.0001$
 when the exact algorithm timed out (over 2 hours). 
 The exact algorithm times out in many cases when the number of tasks is 20 or more, except when size of the support $M$ is very small, in which case it handles some more nodes, but still cannot handle 
@@ -1579,17 +1577,17 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \section{\hl{Dependencies and other genaralizations}}\label{sec:generalizations}
 
-Computing the distribution of the makespan in trees is a seemingly trivial problem 
-in probabilistic reasoning \cite{Pearl}.
-Given the task network, such as the one in \ref{fig:task-network},
+Computing the distribution of the makespan in trees is considered a trivial problem in some contexts
+in probabilistic reasoning~\cite{Pearl}.
+Specifically, given the task network, such as the one in Figure~\ref{fig:task-network},
 it is straightforward to represent the 
 distribution using a Bayes network (BN) that has one node
-per task, and where the {\em children} of a node $v$ in the 
+per task where the {\em children} of a node $v$ in the 
 task network are represented by BN nodes that are {\em parents} of
 the BN node representing $v$. This results in a tree-shaped BN, 
 where it is well known that probabilistic reasoning can be done in time linear
-in the number of nodes, e.g. by belief propagation (message passing) \cite{Pearl,Kim}. 
-The difficulty is in the potentially exponential size
+in the number of nodes, e.g., by belief propagation (message passing)~\cite{Pearl,Kim}. 
+However, there is a difficulty, ignored in this literature, in the potentially exponential size
 of variable domains, which our algorithm, essentially a limited form
 of approximate belief propagation from primitive task variables to the root, avoids by trimming.
 
@@ -1618,12 +1616,11 @@ of approximate belief propagation from primitive task variables to the root, avo
 
 Looking at makespan distribution computation as probabilistic reasoning leads immediately to 
 the question on how to handle task completion times that have dependencies, represented as a BN. 
-Since reasoning in BNs is NP-hard even for binary-valued variables \cite{Dagum.aij,Cooper.ai}, 
+Since reasoning in BNs is NP-hard even for binary-valued variables~\cite{Dagum.aij,Cooper.ai}, 
 this is hard in general.
-But for cases where the BN toplogy is tractable, such as for BNs with a small 
-cutset~\cite{??}
-BNs with bounded treewidth \cite{Bodlaender:2006:TCA:2092758.2092759},
-or directed-path singly connected BNs \cite{ShimonyDomshlak.aiRN2003},
+But for cases where the BN toplogy is tractable, such as for BNs with a small cutset %~\cite{??}
+BNs with bounded treewidth~\cite{Bodlaender:2006:TCA:2092758.2092759},
+or directed-path singly connected BNs~\cite{ShimonyDomshlak.aiRN2003},
 a deterministic polynomial-time approximation scheme for 
 the makespan distribution may be achievable.
 
@@ -1717,9 +1714,9 @@ the makespan distribution may be achievable.
 
 
 Here we motivate and handle a special case of a small cutset. 
-Suppose that in addition we allow a small number of dependencies
+Specifically, suppose that, in addition to the tree, we allow a small number of dependencies
 between primitive task distributions. Does our algorithm generalize to this case?
-The importance of this question is because such an extension is natural. For example,
+The importance of this question is because such an extension is natural in some contexts. For example,
 in the logistics case we have a 2-level tree, with a toplogy similar to that of Figure ~\ref{fig:task-network}.
 The children of the sequence nodes are primitive tasks such as
 ``drive delivery truck 1 from Boston to NY'' (suppose this is primitive task A in  Figure ~\ref{fig:task-network}).
@@ -1727,10 +1724,10 @@ Now, the duration of this action is a random variable
 that depends on the state of traffic at the time the action is taken. Suppose that another
 primitive action (e.g. primitive task C) is ``drive delivery truck 2 from Boston to NY'' which is to occur roughly at the
 same time as the first action. Since traffic conditions are likely to be very similar, the
-duration of the actions will be highly correlated, and we need to be able to take
+duration of the actions may be correlated, and we need to be able to take
 this dependency into account.
 
-Another case where we have extreme dependency is when the same primitive action is actually
+Another case where we have dependency is when the same primitive action is 
 used in more than one composite task. Although this state cannot be represented in
 strict hierarchies, recall that timing relationships represented by HTNs can also be
 represented by directed acyclic perti nets. For example, the task network of Figure~\ref{fig:task-network}
@@ -1744,7 +1741,7 @@ i.e. has a duration exactly equal to that of A (Figure~\ref{fig:task-network-wit
 
 This case, as well as generalizations thereof where the number of correlated variables is small,
 we can handle by a scheme known as {\em conditioning}, adapted to our approximation scheme.
-For example, in cutset conditioning a separate reasoning problem is generated
+For example, in cutset conditioning, a separate reasoning problem is generated
 for every possible value instantiation over all the cutset variables. The results
 are combined by weighted averaging. We propose to do the same in our case, but must prove
 that the approximation quality is maintained, as we indeed do below.
@@ -1789,8 +1786,10 @@ and likewise:
 F^+_{X}(x) \sum_{y\in D(Y)} P(Y=y) F^+_{X|Y=y}(x)
 \]
 
+\hl{To Eyal:} the $\approx$ symbol is not defined.
+
 \begin{theorem}
-Computing these values takes time $O(m^|Y|)t$, where $t$ is the runtime
+Computing these values takes time $O(m^{|Y|})t$, where $t$ is the runtime
 of our tree task network algorithm. The resulting approximation obeys, for all $x$:
 \[
 F^-_{X}(x) \approx _\varepsilon F_{X}(x) \approx _\varepsilon F^+_{X}(x)
@@ -1807,7 +1806,7 @@ F^-_{X}(x) -  F_{X}(x) =  \sum_{y\in D(Y)} P_{Y}(y)(F^-_{X|Y=y}(x) - F_{X|Y=y}(x
 The right hand side is a convex sum of quantities that are all between 0 and $\varepsilon$, which therefore
 must also be between 0 and $\varepsilon$.
 
-\section{\hl{Discussion and Related Work}}\label{sec:discussion}
+\section{Discussion and Related Work}\label{sec:discussion}
 
 Numerous issues remain unresolved, briefly discussed below.
 Trivial improvements to the $\Trim$ operator are possible, such as the inverse version of the operator used to
@@ -1818,7 +1817,7 @@ especially after processing a parallel node, which is not done in our version. T
 a trade-off yet to be examined.
 Another option is, when given a specific threshold, trying for higher accuracy in just the region of the
 threshold, but how to do that is non-trivial. For {\em sampling} schemes such methods are known, including adaptive 
-sampling \cite{bucher1988adaptive,lipton1990practical},
+sampling~\cite{bucher1988adaptive,lipton1990practical},
 stratified sampling, and other schemes.
 It may be possible to apply such schemes to deterministic algorithms as well - an interesting issue for future work.
 
@@ -1844,8 +1843,8 @@ Other work examines both deterministic~\cite{mercier2007discrete} and  Monte-Car
 Distribution of maximum of r.v.s was studied in~\cite{devroye1980generating}, with a focus mostly on continuous distributions.
 
 Complexity of finding the probability that the makespan is under a given threshold in task networks was shown to
-be NP-hard in \cite{hagstrom1988computational}, even when the completion time of each task has a Bernoulli distribution.
-Nevertheless, our results are orthogonal as the source of the complexity in \cite{hagstrom1988computational} is in the graph structure,
+be NP-hard in~\cite{hagstrom1988computational}, even when the completion time of each task has a Bernoulli distribution.
+Nevertheless, our results are orthogonal as the source of the complexity in~\cite{hagstrom1988computational} is in the graph structure,
 whereas in our setting the complexity is due to the size of the support. In fact for linear plans (an NP-hard case in our setting),
 the probability of meeting the deadline can be computed in low-order polynomial time for Bernoulli distributions, using straightforward dynamic programming.
 Makespan distributions in series parallel networks in the i.i.d. case was examined in~\cite{gutjahr1992average}, without   
@@ -1854,10 +1853,10 @@ considering algorithmic issues. There is also a significant body of work on esti
 based on averaging or on limit theorems, and does not provide a guaranteed approximation scheme. 
 Temporal planing and in particular TPNs (temporal plan network) are presented in
 \cite{kim2001executing}, the model is similar to ours, but the focus is on lower/upper bounds, rather than probability distributions. 
-Hierarchical constraint-based plans in MAPGEN \cite{bresina2005mixed} allow for more
+Hierarchical constraint-based plans in MAPGEN~\cite{bresina2005mixed} allow for more
 general dependencies than series-parallel, providing additional expressive power but making the deadline problem even harder.
 
-The research literature contains numerous {\em randomized} approximation schemes that handle dependencies \cite{Pearl,Yuan20061189}, especially for
+The research literature contains numerous {\em randomized} approximation schemes that handle dependencies~\cite{Pearl,Yuan20061189}, especially for
 the case with {\em no evidence}. In fact, our implementation of the sampling scheme in ROBIL handled dependent durations.
 It is unclear whether such sampling schemes can be adapted to handle dependencies {\em and} arbitrary evidence, such as: ``the completion time of
 compound task $X$ in the network is known to be exactly one hour from now''.
