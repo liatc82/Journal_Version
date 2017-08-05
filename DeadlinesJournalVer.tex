@@ -238,8 +238,8 @@ in time polynomial in $\frac{1}{\epsilon}$.
 Figure ~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $ V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with probability density function (PDF) describes the completion-time distribution. In this case $P_a(x)=P_b(x)=P_c(x)=P_d(x)=P_e(x)$.
 $$P_a(x)=
 \begin{cases}
-0.25 & x=1 \\
-0.75 & x=4 \\
+1/4 & x=1 \\
+3/4 & x=4 \\
 0 & otherwise
 \end{cases}$$
 This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c$ and $d$ in sequence and, when they finish, run $e$.
@@ -277,28 +277,28 @@ Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we will comp
 First, compute duration distribution for the node $B$. The children task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
 $$P_B(x)=P_{\max(a,b)}(x)=
 \begin{cases}
-0.0625 & x=1 \\
-0.9375 & x=4 \\
+1/16 & x=1 \\
+15/16 & x=4 \\
 0 & otherwise
 \end{cases}$$
 
 Second, compute duration distribution for node $C$. The children task nodes $c,d$, are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $c$ and $d$:  
 $$P_C(x)=P_{c+d}(x)=
 \begin{cases}
-0.0625 & x=2 \\
-0.375 & x=5 \\
-0.5625 & x=8 \\
+1/16 & x=2 \\
+3/8 & x=5 \\
+9/16 & x=8 \\
 0 & otherwise
 \end{cases}$$
 
 Last, compute duration distribution for node $A$, the root node. The children task nodes $B,C,e$ are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $B$, $C$ and $e$: 
 $$P_{\tau}=P_A(x)=P_{A+B+e}(x)=
 \begin{cases}
-9.7\cdot 10^{-4} & x=4 \\
-0.0234 & x=7 \\
-0.1582 & x=10 \\
-0.4218 & x=13 \\
-0.3955 & x=16 \\
+1/1024 & x=4 \\
+3/128 & x=7 \\
+81/512 & x=10 \\
+27/64 & x=13 \\
+405/1024 & x=16 \\
 0 & otherwise
 \end{cases}$$
 
