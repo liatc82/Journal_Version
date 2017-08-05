@@ -7,7 +7,6 @@
 
 % Use the postscript times font!
 \usepackage{times}
-
 % the following package is optional:
 \usepackage{latexsym} 
 \usepackage{multirow}
@@ -531,7 +530,7 @@ in time $O((nm/\varepsilon)\log(m/\varepsilon))$ using $O(m/\varepsilon)$ memory
 
 %\vspace*{-0.3cm} 
 \begin{proof}
-From Lemma~\ref{SizeD}, the size of list $D$ in Algorithm~\ref{alg:sequence} is at most $m/\varepsilon$
+From Lemma~\ref{SizeD}, the size of list $D$ in Algorithm~\ref{alg:Trim} is at most $m/\varepsilon$
 just after the convolution, after which it is trimmed, so the space complexity is $O(m/\varepsilon)$.
 $\operatorname{Convolve}$ thus takes time $O((m/\varepsilon)\log(m/\varepsilon))$, where the logarithmic factor
 is required internally
@@ -630,7 +629,7 @@ run-time of the algorithm is $O((n m/\varepsilon) \log(m/\varepsilon))$.
 	
 \end{example}
 
-A significant advantage of the algorithm we are proposing is that it can be modified to give both an upper and a lower bound for the required probability. In the next paragraph, we describe the way we compute the lower bound and outline the correctness argument. The idea uses the same algorithm suggested (Alg.~\ref{alg:sequence}), but instead of trimming in \textbf{ascending order} (Alg.~\ref{alg:sequence}, line 10) it is performed in \textbf{decreasing order}, starting with the maximum value in the support. The lower bound version of the $\Trim$ operator is referred to as $\LTrim$ (Lower-bound Trim) here, and we provide a proof that $X\succeq_{\varepsilon}\LTrim(X,\varepsilon) $. 
+A significant advantage of the algorithm we are proposing is that it can be modified to give both an upper and a lower bound for the required probability. In the next paragraph, we describe the way we compute the lower bound and outline the correctness argument. The idea uses the same algorithm suggested (Alg.~\ref{alg:Trim}), but instead of trimming in \textbf{ascending order} (Alg.~\ref{alg:Trim}, line 10) it is performed in \textbf{decreasing order}, starting with the maximum value in the support. The lower bound version of the $\Trim$ operator is referred to as $\LTrim$ (Lower-bound Trim) here, and we provide a proof that $X\succeq_{\varepsilon}\LTrim(X,\varepsilon) $. 
 %In this short subsection we will suggest an algorithm which uses the inverted version of $\Trim$ and results a lower bound of the error.
 %\begin{center}
 %	\begin{algorithm}
@@ -1152,7 +1151,7 @@ takes this extra time only in cases where any algorithm that decides how to trim
 
 We show that the deadline problem is NP-hard, 
 even for a task tree consisting only of primitive tasks and one sequence node, i.e.
-{\em linear plans}~\cite{Russell:2003:AIM:773294,simmons2001planning}.%, aktolga2004java}. %TODO: add this refference
+{\em linear plans}~\cite{Russell:2003:AIM:773294,simmons2001planning,aktolga2004java}. 
 %We begin with a lemma on sums of random variables.
 
   %(we call the following problem SumDiscreteRV).
@@ -1162,7 +1161,7 @@ with finite supports, $T \in \mathbb{Z}$, and $p\in[0,1]$. Then, deciding  wheth
 \end{lemma}
 
 \begin{proof} 
-First proved \hl{in}~\cite{---} and also shown in~\cite{cohen2015estimating}, by reduction from \textit{SubsetSum}~\cite[problem number SP13]{Garey:1990:CIG:574848}.
+First proved in~\cite{mohring2001scheduling} by a reduction from \textit{Partition}~\cite[problem number SP]{Garey:1990:CIG:574848} and also shown in~\cite{cohen2015estimating}, by reduction from \textit{SubsetSum}~\cite[problem number SP13]{Garey:1990:CIG:574848}.
 %Recall that
 %$\textit{SubsetSum}$ is: given a set $S=\{s_{1},\dots,s_{n}\}$ of integers, and integer target value $T$, is there a subset of $S$ whose sum is exactly $T$? 
 %Given an instance of \textit{SubsetSum}, create
@@ -1853,7 +1852,7 @@ considering algorithmic issues. There is also a significant body of work on esti
 based on averaging or on limit theorems, and does not provide a guaranteed approximation scheme. 
 Temporal planing and in particular TPNs (temporal plan network) are presented in
 \cite{kim2001executing}, the model is similar to ours, but the focus is on lower/upper bounds, rather than probability distributions. 
-Hierarchical constraint-based plans in MAPGEN~\cite{bresina2005mixed} allow for more
+Hierarchical constraint-based plans in \hl{MAPGEN}~\cite{bresina2005mixed} allow for more
 general dependencies than series-parallel, providing additional expressive power but making the deadline problem even harder.
 
 The research literature contains numerous {\em randomized} approximation schemes that handle dependencies~\cite{Pearl,Yuan20061189}, especially for
