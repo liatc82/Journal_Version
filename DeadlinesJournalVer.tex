@@ -7,7 +7,6 @@
 
 % Use the postscript times font!
 \usepackage{times}
-
 % the following package is optional:
 \usepackage{latexsym} 
 \usepackage{multirow}
@@ -238,8 +237,8 @@ in time polynomial in $\frac{1}{\epsilon}$.
 Figure ~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $ V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with probability density function (PDF) describes the completion-time distribution. In this case $P_a(x)=P_b(x)=P_c(x)=P_d(x)=P_e(x)$.
 $$P_a(x)=
 \begin{cases}
-0.25 & x=1 \\
-0.75 & x=4 \\
+1/4 & x=1 \\
+3/4 & x=4 \\
 0 & otherwise
 \end{cases}$$
 This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c$ and $d$ in sequence and, when they finish, run $e$.
@@ -277,28 +276,28 @@ Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we will comp
 First, compute duration distribution for the node $B$. The children task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
 $$P_B(x)=P_{\max(a,b)}(x)=
 \begin{cases}
-0.0625 & x=1 \\
-0.9375 & x=4 \\
+1/16 & x=1 \\
+15/16 & x=4 \\
 0 & otherwise
 \end{cases}$$
 
 Second, compute duration distribution for node $C$. The children task nodes $c,d$, are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $c$ and $d$:  
 $$P_C(x)=P_{c+d}(x)=
 \begin{cases}
-0.0625 & x=2 \\
-0.375 & x=5 \\
-0.5625 & x=8 \\
+1/16 & x=2 \\
+3/8 & x=5 \\
+9/16 & x=8 \\
 0 & otherwise
 \end{cases}$$
 
 Last, compute duration distribution for node $A$, the root node. The children task nodes $B,C,e$ are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $B$, $C$ and $e$: 
 $$P_{\tau}=P_A(x)=P_{A+B+e}(x)=
 \begin{cases}
-9.7\cdot 10^{-4} & x=4 \\
-0.0234 & x=7 \\
-0.1582 & x=10 \\
-0.4218 & x=13 \\
-0.3955 & x=16 \\
+1/1024 & x=4 \\
+3/128 & x=7 \\
+81/512 & x=10 \\
+27/64 & x=13 \\
+405/1024 & x=16 \\
 0 & otherwise
 \end{cases}$$
 
@@ -531,7 +530,7 @@ in time $O((nm/\varepsilon)\log(m/\varepsilon))$ using $O(m/\varepsilon)$ memory
 
 %\vspace*{-0.3cm} 
 \begin{proof}
-From Lemma~\ref{SizeD}, the size of list $D$ in Algorithm~\ref{alg:sequence} is at most $m/\varepsilon$
+From Lemma~\ref{SizeD}, the size of list $D$ in Algorithm~\ref{alg:Trim} is at most $m/\varepsilon$
 just after the convolution, after which it is trimmed, so the space complexity is $O(m/\varepsilon)$.
 $\operatorname{Convolve}$ thus takes time $O((m/\varepsilon)\log(m/\varepsilon))$, where the logarithmic factor
 is required internally
@@ -630,7 +629,7 @@ run-time of the algorithm is $O((n m/\varepsilon) \log(m/\varepsilon))$.
 	
 \end{example}
 
-A significant advantage of the algorithm we are proposing is that it can be modified to give both an upper and a lower bound for the required probability. In the next paragraph, we describe the way we compute the lower bound and outline the correctness argument. The idea uses the same algorithm suggested (Alg.~\ref{alg:sequence}), but instead of trimming in \textbf{ascending order} (Alg.~\ref{alg:sequence}, line 10) it is performed in \textbf{decreasing order}, starting with the maximum value in the support. The lower bound version of the $\Trim$ operator is referred to as $\LTrim$ (Lower-bound Trim) here, and we provide a proof that $X\succeq_{\varepsilon}\LTrim(X,\varepsilon) $. 
+A significant advantage of the algorithm we are proposing is that it can be modified to give both an upper and a lower bound for the required probability. In the next paragraph, we describe the way we compute the lower bound and outline the correctness argument. The idea uses the same algorithm suggested (Alg.~\ref{alg:Trim}), but instead of trimming in \textbf{ascending order} (Alg.~\ref{alg:Trim}, line 10) it is performed in \textbf{decreasing order}, starting with the maximum value in the support. The lower bound version of the $\Trim$ operator is referred to as $\LTrim$ (Lower-bound Trim) here, and we provide a proof that $X\succeq_{\varepsilon}\LTrim(X,\varepsilon) $. 
 %In this short subsection we will suggest an algorithm which uses the inverted version of $\Trim$ and results a lower bound of the error.
 %\begin{center}
 %	\begin{algorithm}
@@ -1163,7 +1162,7 @@ takes this extra time only in cases where any algorithm that decides how to trim
 
 We show that the deadline problem is NP-hard, 
 even for a task tree consisting only of primitive tasks and one sequence node, i.e.
-{\em linear plans}~\cite{Russell:2003:AIM:773294,simmons2001planning}.%, aktolga2004java}. %TODO: add this refference
+{\em linear plans}~\cite{Russell:2003:AIM:773294,simmons2001planning,aktolga2004java}. 
 %We begin with a lemma on sums of random variables.
 
   %(we call the following problem SumDiscreteRV).
@@ -1173,7 +1172,7 @@ with finite supports, $T \in \mathbb{Z}$, and $p\in[0,1]$. Then, deciding  wheth
 \end{lemma}
 
 \begin{proof} 
-First proved \hl{in}~\cite{---} and also shown in~\cite{cohen2015estimating}, by reduction from \textit{SubsetSum}~\cite[problem number SP13]{Garey:1990:CIG:574848}.
+First proved in~\cite{mohring2001scheduling} by a reduction from \textit{Partition}~\cite[problem number SP]{Garey:1990:CIG:574848} and also shown in~\cite{cohen2015estimating}, by reduction from \textit{SubsetSum}~\cite[problem number SP13]{Garey:1990:CIG:574848}.
 %Recall that
 %$\textit{SubsetSum}$ is: given a set $S=\{s_{1},\dots,s_{n}\}$ of integers, and integer target value $T$, is there a subset of $S$ whose sum is exactly $T$? 
 %Given an instance of \textit{SubsetSum}, create
@@ -1864,7 +1863,7 @@ considering algorithmic issues. There is also a significant body of work on esti
 based on averaging or on limit theorems, and does not provide a guaranteed approximation scheme. 
 Temporal planing and in particular TPNs (temporal plan network) are presented in
 \cite{kim2001executing}, the model is similar to ours, but the focus is on lower/upper bounds, rather than probability distributions. 
-Hierarchical constraint-based plans in MAPGEN~\cite{bresina2005mixed} allow for more
+Hierarchical constraint-based plans in \hl{MAPGEN}~\cite{bresina2005mixed} allow for more
 general dependencies than series-parallel, providing additional expressive power but making the deadline problem even harder.
 
 The research literature contains numerous {\em randomized} approximation schemes that handle dependencies~\cite{Pearl,Yuan20061189}, especially for
