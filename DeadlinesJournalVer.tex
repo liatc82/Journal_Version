@@ -66,7 +66,7 @@
 \DeclareMathOperator{\seqOr}{seqOr} 
 \DeclareMathOperator{\parOr}{parOr} 
 \DeclareMathOperator{\prim}{primitive} 
-\DeclareMathOperator{\ch}{\textit{child}} 
+\DeclareMathOperator{\ch}{\operatorname{child}} 
 \DeclareMathOperator{\order}{\textit{type}} 
 \DeclareMathOperator{\info}{\textit{info}} 
 \DeclareMathOperator{\scc}{succ} 
@@ -959,24 +959,20 @@ First, we present the algorithm $\EstimateError$ that computes the approximation
 The main property of this algorithm is as follows:
 
 \begin{theorem}\label{theorem:approxEps0}
-	For a task tree $\tau$ and $\varepsilon_1, \dots, \varepsilon_{n_s}$, let 
-	$\varepsilon_0=p_v(\varepsilon_1, \dots, \varepsilon_{n_s}) $ where $p_v=\EstimateError(\tau)$, 
-	and let $X_{\tau}$ be a random variable representing the true
-	distribution of the completion time for $\tau$. Then,
-	$\CalcNetwork(\tau, \varepsilon_1, \dots, \varepsilon_{n_s}) \succeq_{\varepsilon_0} X_{\tau}$.
+	For a task tree $\tau$ and a function $\varepsilon$ that maps the sequence nodes in $\tau$ to numbers in $[0,1]$, let 
+	$\varepsilon_0=\EstimateError(\tau,\varepsilon)$, and let $X_{\tau}$ be a random variable representing the true
+	distribution of the completion time for $\tau$. Then, $\CalcNetwork(\tau, \varepsilon) \succeq_{\varepsilon_0} X_{\tau}$. 
 \end{theorem}
 
 \begin{proof}
-	By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node $ v_p 
-	$. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, $P_{v_p}=0$, 
-	therefore  $\CalcNetwork(\tau_{v_p}) \succeq_0 X_{\tau_{v_p}}$. 
-	Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $ d $ and $\varepsilon_{c_1}=(\varepsilon_{c_1,1}, \dots,\varepsilon_{c_1,n_s})$ $, \dots, $  $\varepsilon_{c_{|\ch(v_{root})|}} = (\varepsilon_{c_{|\ch(v_{root})|},1}, \dots, \varepsilon_{c_{|\ch(v_{root})|},n_s})$ accordingly. 
-	%$\overrightarrow{\varepsilon}_{c_1}, \dots, \overrightarrow{\varepsilon}_{c_{|\ch(v_{root})|}} $
+	By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node $v_p$. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, $P_{v_p}=0$, 
+	therefore  $\CalcNetwork(\tau_{v_p},\varepsilon) \succeq_0 X_{\tau_{v_p}}$. 
+	Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $ d $. 
 	If $v_{root}$ is a sequence node then,
-	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children nodes error and an additional $\varepsilon_{v_{root}}$ caused by the trim operator $P_{v_{root}}={\sum_{c \in \ch(v_{root})}{P_{c}}+ \varepsilon_{v_{root}}}$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that:$ \CalcNetwork(\tau_{v_{root}}, \varepsilon_{c_1}, \dots, \varepsilon_{c_{|\ch(v_{root})|}})$ $\succeq_{P_{v_{root}}(\varepsilon_{c_1}, \dots, \varepsilon_{c_{|\ch(v_{root})|}})} X_{\tau_{v_{root}}} $ as required.
+	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(v_{root})$ caused by the trim operator $\varepsilon_0={\varepsilon(v_{root})+\sum_{c \in \ch(v_{root})}{\EstimateError(c,\varepsilon)}}$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 	
 	If $v_{root}$ is a parallel node then,
-	by Lemma~\ref{tightPalTheorem}, $P_{v_{root}}=1-\prod_{c \in \ch(v_{root})}{(1-P_{c})}$ equivalent to \EstimateError line 11. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that:$ \CalcNetwork(\tau_{v_{root}}, \varepsilon_{c_1}, \dots, \varepsilon_{c_{|\ch(v_{root})|}})$ $\succeq_{P_{v_{root}}(\varepsilon_{c_1}, \dots, \varepsilon_{c_{|\ch(v_{root})|}})} X_{\tau_{v_{root}}} $ as required.
+	by Lemma~\ref{tightPalTheorem}, $\varepsilon_0=1-\prod_{c \in \ch(v_{root})}{(1-\EstimateError(c)}$ equivalent to \EstimateError line 11. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 \end{proof}
 
 %Our approach here is to assign a variable $\varepsilon_i$ to each node, representing the maximal error that this node may produce. Then, we propose to compute an inequality that these errors must satisfy if we want the total error of the tree to be below some given $\varepsilon_0$. This inequality is of the form $p_{v} \leq \varepsilon_0$ where $p_v$ is a polynomial that is defined recursively for each node, eventually also for the root node. 
