@@ -1049,11 +1049,10 @@ With these notations, we phrase the main property of the new algorithm as follow
 
 
 Based on this theorem, we propose the following pseudo-algorithm for computing a tight approximation for the make span of a task tree, as follows. Use some symbolic mathematical engine, such as Wolfram Mathematica, to find an $\varepsilon$ such that $\EstimateError(\tau,\varepsilon)$ is smaller than the approximation that you want to achieve; then, run $\CalcNetwork(\tau,\varepsilon)$ with this $\varepsilon$. This, of course, is only a pseudo algorithm because it is just a template, not dictating how to compute $\varepsilon$.
-
-The following lemma establishes that we can think of $\EstimateError(\tau,\varepsilon)$ as a polynomial $\{\varepsilon(v)\}_{v\in \tau}$.
+The following lemma establishes, however, that the computation of $varepsilon$ is feasible, at least in an approximated form, as we are talking about of reversing a polynomial of relatively small degree:
 
 \begin{lemma}\label{lemma:poly}
-Given a task tree $\tau$, if we consider $\EstimateError(\tau,\varepsilon)$ as a function of the variables $\{\varepsilon(v)\}_{v\in Seq}$ where $seq$ is the set of Sequence nodes in $\tau$, we have a polynomial of maximal degree $|Seq|$.  
+Given a task tree $\tau$, if we consider $\EstimateError(\tau,\varepsilon)$ as a function of the variables $\{\varepsilon(v)\}_{v\in Seq}$ where $Seq$ is the set of Sequence nodes in $\tau$, we have a polynomial of degree smaller or equal to $|Seq|$.  
 \end{lemma}
 \begin{proof}
 % Gera: we need to adjust this proof to the new notations.
@@ -1073,11 +1072,11 @@ Induction hypothesis: Assume the system of equations of a task tree with depth $
 %Primitive nodes do not carry any error, therefore, in procedure \EstimateError , line 3, we can see the error is 0. By Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children nodes error and an additional $n\varepsilon$ caused by the trim operator, equivalent to \EstimateError, line 7. By Lemma~\ref{palTheorem}, parallel node slightly increases the error as a function of the children nodes error equivalent to \EstimateError, line 11.
 %\end{proof}
 
+To establish the tightness of the proposed pseudo-algorithm, we give now an example of a task tree that cannot be estimated better than what is possible with a perfect instantiation of our template (i.e., a solver that gives the best $\varepsilon$). the terms ``cannot be estimated better'' in the preceding sentence refer only to approximation schemes that use only the structure of the tree, i.e., that are invariant to the choice of the random variables in the leaves as formalized in the next theorem:
 
 \begin{theorem}\label{theorem:tight}
-There is a task tree $\tau$, a bound $T$, and numbers $\varepsilon_1, \dots, \varepsilon_{n_s}$ 
-such that $F_{\CalcNetwork(\tau, \varepsilon_1, \dots, \varepsilon_{n_s})}( T) - F_{X_\tau}(T) = \varepsilon_0$ where $\varepsilon_0=p_v(\varepsilon_1, \dots, \varepsilon_{n_s}) $,
-$p_v=\EstimateError(\tau)$, and $X_\tau$ is the distribution of the completion time of $\tau$. 
+There is a task tree $\tau$, a bound $T$, and an $\varepsilon$ 
+such that $F_{\CalcNetwork(\tau, \varepsilon)}(T) - F_{X_\tau}(T) = \EstimateError(\tau, \varepsilon)$ where $X_\tau$ is a random variable representing the completion time of $\tau$. 
 \end{theorem}
 \begin{proof}
 See Example~\ref{exp:seq} and Example~\ref{expl:parallel}.
@@ -1086,8 +1085,8 @@ See Example~\ref{exp:seq} and Example~\ref{expl:parallel}.
 % Gera: add discussion here
 
 
-The above result establishes that $\CalcNetwork$ is tight in the sense that there is no $\varepsilon < \varepsilon_0$ 
-such that $\CalcNetwork(\tau, \varepsilon_1, \dots, \varepsilon_{n_s})$ is always $\succeq{\varepsilon_0}$ than $X_{\tau}$. 
+The above result establishes that $\CalcNetwork$ is tight in the sense that there is no $\varepsilon_0 < \CalcNetwork(\tau, \varepsilon)$ 
+such that $\CalcNetwork(\tau, \varepsilon)$ is always $\succeq{\varepsilon_0}$ than $X_{\tau}$. 
 If we look more closely at on the examples used
 to prove the theorem, we can say more about the tightness of our algorithm, as follows.
 Since the examples consist of task trees whose root nodes are both of
