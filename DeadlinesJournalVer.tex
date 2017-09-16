@@ -112,8 +112,10 @@ Beer-Sheva, Israel 84105\\
 
 \begin{abstract}
 Given a hierarchical plan (or schedule) with uncertain task times, we may need to determine
-the probability that a given plan will satisfy a given deadline.
-This problem is shown to be NP-hard for series-parallel hierarchies. We provide a polynomial-time approximation algorithm for it. 
+the probability that a given plan will satisfy a given deadline (or alternately, that its {\em makespan}
+is less than a given duration).
+This problem is shown to be NP-hard even for series-parallel hierarchies.
+We provide a deterministic polynomial-time approximation algorithm for makespan computation. 
 Computing the expected makespan of an hierarchical plan is also shown to be NP-hard.
 We examine the approximation bounds empirically and demonstrate 
 where our scheme is superior to sampling and to exact computation.%, using some task networks.
@@ -336,15 +338,28 @@ the $\Trim$ operator removes  consecutive domain values whose accumulated probab
 less than $\varepsilon$ and adds 
 their probability mass to the element in the support that precedes them.
 
-In our  algorithms, the PDF of a r.v. $X$ is represented by a sorted list $D_X$, 
-which consists of $d=(x, p')$ pairs, where $x\in \support(X)$
-and $p'$ is the probability $P(X{=}x)$. In the pair $d=(x, p')$, we denote the value $x$
+In our algorithms, the PDF of a r.v. $X$ is represented by a sorted list $D_X$, 
+which consists of $d=(p', x)$ pairs, where $x\in \support(X)$
+and $p'$ is the probability $P(X{=}x)$. In the pair $d=(p', x)$, we denote the value $x$
 by $val(d)$, and the probability $p'$ by $prob(d)$.
-If the input $D_X$ to Trim is sorted in increasing order of $x$,
+If the input $D_X$ to Trim is sorted in increasing order of $x$ (we denote this operator by $Trim_U(X, \varepsilon)$)
 then resulting variable $X'$ (represented by the output $D_{X'}$) 
 is a Kolmogorov $\varepsilon$ upper bound of $X$.
-(Likewise, if $D_X$ sorted in decreasing order of $x$,
-then $X'$ is a Kolmogorov $\varepsilon$ lower bound of $X$.)
+(Likewise, if $D_X$ sorted in decreasing order of $x$ (in this case we denote the trim operator
+ by $Trim_L(X, \varepsilon)$) then $X'$ is a Kolmogorov $\varepsilon$ lower bound of $X$.)
+
+%Eyal: copy from Eyal ver
+%---------------------------------
+
+%In our algorithms, the PDF of a r.v. $X$ is represented by a sorted list $D_X$, 
+%which consists of $d=(x, p')$ pairs, where $x\in \support(X)$
+%and $p'$ is the probability $P(X{=}x)$. In the pair $d=(x, p')$, we denote the value $x$
+%by $val(d)$, and the probability $p'$ by $prob(d)$.
+%If the input $D_X$ to Trim is sorted in increasing order of $x$,
+%then resulting variable $X'$ (represented by the output $D_{X'}$) 
+%is a Kolmogorov $\varepsilon$ upper bound of $X$.
+%(Likewise, if $D_X$ sorted in decreasing order of $x$,
+%then $X'$ is a Kolmogorov $\varepsilon$ lower bound of $X$.)
 
 %%%%%%%%%%%%%%%%%%%%%
 \begin{algorithm}
@@ -362,7 +377,7 @@ then $X'$ is a Kolmogorov $\varepsilon$ lower bound of $X$.)
 			\eIf{$p+prob(d) \leq \varepsilon$}{
 				$p=p+prob(d)$\;
 			}
-			{ Append $(val(d_{prev}), prob(d_{prev})+p)$ to $D'$\;
+			{ Append $(val(d_{prev}), prob(d_{prev})+p)$ to $D_{X'}$\;
 			  $d_{prev} = d$, $p=0$\;
 			}
                         $tail=rest(tail)$
@@ -381,14 +396,25 @@ not increase beyond a desired tolerance.
 Note that the size of the support can also be decreased by simple ``binning'' 
 schemes, but these do not provide the desired guarantees.
 
+%Eyal: copy from Eyal version
+%---------------------------------
+%\noindent We now show that with $D_X$ sorted in increasing order,
+%$\Trim(X,\varepsilon)$ is an Kolmogorov $\varepsilon$ upper bound of $X$.
+%\begin{lemma} \label{Trim}
+%$\Trim(X,\varepsilon)\succeq_\varepsilon X$
+%\end{lemma}
+%
+%\begin{proof}
+%Let $X'=\Trim(X,\varepsilon)$. 
+
 \noindent We now show that with $D_X$ sorted in increasing order,
-$\Trim(X,\varepsilon)$ is an Kolmogorov $\varepsilon$ upper bound of $X$.
+$\Trim(D_X,\varepsilon)$ is an Kolmogorov $\varepsilon$ upper bound of $X$.
 \begin{lemma} \label{Trim}
-$\Trim(X,\varepsilon)\succeq_\varepsilon X$
+$\Trim_U(X,\varepsilon)\succeq_\varepsilon X$
 \end{lemma}
 
 \begin{proof}
-Let $X'=\Trim(X,\varepsilon)$. 
+Let $X'=\Trim_U(X,\varepsilon)$. 
 Let $x_1{<}\cdots{<}x_m$ be the support of $X'$. 
 Because $\Trim$ adds the probabilities of elements that were removed from the support of $X$ 
 to the support element of $X'$ that precedes them, 
@@ -422,8 +448,14 @@ To bound the amount of memory needed for our approximation algorithm,
 the next lemma bounds the size of the support of the trimmed r.v.:
 %\vspace*{-0.1cm}
 
+%Eyal: copy from Eyal version
+%---------------------------------
+%\begin{lemma} \label{SizeD}
+%$|\operatorname{support}(\Trim(X,\varepsilon))| \leq 1/\varepsilon +1$
+%\end{lemma}
+
 \begin{lemma} \label{SizeD}
-$|\operatorname{support}(\Trim(X,\varepsilon))| \leq 1/\varepsilon +1$
+$|\operatorname{support}(\Trim(D_X,\varepsilon))| \leq 1/\varepsilon +1$
 \end{lemma}
 
 %\vspace*{-0.1cm} 
@@ -453,14 +485,14 @@ These lemmas highlight the main idea behind our approximation
 algorithm: the $\Trim$ operator trades off approximation error 
 for a reduced size of the support. 
 
-The makespan of a sequence operator is a random variable $X$ the sum 
+The makespan of a sequence operator is a random variable $X$, the sum 
 of the random variables $X_i$ of its children.
 Let $Y_i = X_i + Y_{i-1}$ for $1< i \leq n$, and $Y_1=X_1$.
 Thus $X$ is distributed as $Y_n$.
 
 As the children of a sequence node may be internal nodes in the task tree,
 the input distributions may already be approximations.
-Therefore, we compute the random variables $Y'_i = Trim(X'_i + Y'_{i-1}, \varepsilon)$,
+Therefore, we compute the random variables $Y'_i = Trim_U(X'_i + Y'_{i-1}, \varepsilon)$,
 where the $X'_i$ is a Kolmogorov $\epsilon_i $ upper bound of $X_i$
 and show that $Y'_n$ is a Kolmogorov $\delta $ upper bound of $X$, for an appropriate $\delta $.
 
@@ -628,6 +660,10 @@ run-time of the algorithm is $O((n m/\varepsilon) \log(m/\varepsilon))$.
 	
 \end{example}
 
+%Eyal: copy from Eyal version
+%---------------------------------
+% Eyal removed it all..
+
 A significant advantage of the algorithm we are proposing is that it can be modified to give both an upper and a lower bound for the required probability. In the next paragraph, we describe the way we compute the lower bound and outline the correctness argument. The idea uses the same algorithm suggested (Alg.~\ref{alg:Trim}), but instead of trimming in \textbf{ascending order} (Alg.~\ref{alg:Trim}, line 10) it is performed in \textbf{decreasing order}, starting with the maximum value in the support. The lower bound version of the $\Trim$ operator is referred to as $\LTrim$ (Lower-bound Trim) here, and we provide a proof that $X\succeq_{\varepsilon}\LTrim(X,\varepsilon) $. 
 %In this short subsection we will suggest an algorithm which uses the inverted version of $\Trim$ and results a lower bound of the error.
 %\begin{center}
@@ -685,7 +721,7 @@ Specifically, given a task tree $\tau$, and a random variable $X_\tau$ represent
 distribution of the completion time for the network, 
 then $X_\tau \succeq_\varepsilon \LNetwork(\tau,\varepsilon)$. The proof is the same as the proof for 
 Theorem\ref{alg:approx}, only switch right hand with left hand in each $\succeq_{\varepsilon}$.
-
+%------------------------------------------------
 
 \section{Parallel nodes}\label{sec:par}
 
@@ -876,8 +912,7 @@ We use the notation $|\tau|$ to denote the total number of nodes in $\tau$.
   }
 %----------------------------------5
   
-\caption{Network($\tau$, $\varepsilon$)} 
-\label{alg:approx}
+\caption{Network($\tau$, $\varepsilon$)}\label{alg:approx}
   
 \end{algorithm}
 
@@ -1273,7 +1308,7 @@ The following table shows the complexity of answering the deadline problem for a
 			\diag{.1em}{1.6cm}{Dist} {Struct}  &  Sequential & Parallel & Mixed \\ \hline \hline
 			Discrete & NP-hard (Lemma~\ref{SumDiscreteRV})&  Polynomial (Lemma ~\ref{TPar}) & NP-hard (Lemma~\ref{SumDiscreteRV}) \\ \hline
 			{Piecewise Polynomial} & NP-hard  & Polynomial (Lemma ~\ref{TPar}) &  NP-hard \\ \hline
-			Normal &  Polynomial (Sum of Normal random variables) & Polynomial  &  We don't know :-(\\
+			Normal &  Polynomial (Sum of Normal random variables) & Polynomial  &  open problem\\
 			\hline
 			
 		\end{tabular}
@@ -1575,8 +1610,11 @@ task network are represented by BN nodes that are {\em parents} of
 the BN node representing $v$. This results in a tree-shaped BN, 
 where it is well known that probabilistic reasoning can be done in time linear
 in the number of nodes, e.g., by belief propagation (message passing)~\cite{Pearl,Kim}. 
-However, there is a difficulty, ignored in this literature, in the potentially exponential size
-of variable domains, which our algorithm, essentially a limited form
+However, there is a difficulty, usually ignored in the UAI literature, in the potentially exponential size variable domains, which our algorithm, essentially a limited form
+%Eyal:from Eyal version
+%-------------------------
+%However, there is a difficulty, ignored in this literature, in the potentially exponential size
+%of variable domains, which our algorithm, essentially a limited form
 of approximate belief propagation from primitive task variables to the root, avoids by trimming.
 
 \begin{figure}
@@ -1701,7 +1739,7 @@ the makespan distribution may be achievable.
 
 
 
-Here we motivate and handle a special case of a small cutset. 
+Here we motivate and handle a special case of small cutsets. 
 Specifically, suppose that, in addition to the tree, we allow a small number of dependencies
 between primitive task distributions. Does our algorithm generalize to this case?
 The importance of this question is because such an extension is natural in some contexts. For example,
@@ -1759,48 +1797,56 @@ independent given $Y=y$. Consider the distribution:
 \[
 F_{X|Y=y}(x) = P(X\leq x| Y=y)
 \]
-For each value $Y=y$ we can run the approximation algorithm, to get upper and lower bounds.
-$F^-_{X|Y=y}(x)$ and  $F^+_{X|Y=y}(x)$. Due to Theorem~\ref{th:TNapprox}, we have
+For each value $Y=y$ we can run the approximation algorithm, to get upper 
+Kolmogorov bound $F^{X^+|Y=y}(x)$ and  lower Kolmogorov bound $F_{X^-|Y=y}(x)$. 
+Due to Theorem~\ref{th:TNapprox}, we have
 the following property, for all $x$:
 \[
-F^-_{X|Y=y}(x) \approx _\varepsilon F_{X|Y=y}(x) \approx _\varepsilon F^+_{X|Y=y}(x)
+F_{X^+|Y=y}(x) \succeq_\varepsilon F_{X|Y=y}(x) \succeq_\varepsilon F_{X^-|Y=y}(x)
 \]
 Now let:
 \[
-F^-_{X}(x) \sum_{y\in D(Y)} P(Y=y) F^-_{X|Y=y}(x)
+F_{X^-}(x) = \sum_{y\in D(Y)} P(Y=y) F_{X^-|Y=y}(x)
 \]
 and likewise:
 \[
-F^+_{X}(x) \sum_{y\in D(Y)} P(Y=y) F^+_{X|Y=y}(x)
+F_{X^+}(x) = \sum_{y\in D(Y)} P(Y=y) F_{X^+|Y=y}(x)
 \]
 
-\hl{To Eyal:} the $\approx$ symbol is not defined.
-
 \begin{theorem}
-Computing these values takes time $O(m^{|Y|})t$, where $t$ is the runtime
+Computing $F_{X^-}(x)$ and $F_{X^+}(x)$ takes time $O(m^{|Y|})t$, where $t$ is the runtime
 of our tree task network algorithm. The resulting approximation obeys, for all $x$:
 \[
-F^-_{X}(x) \approx _\varepsilon F_{X}(x) \approx _\varepsilon F^+_{X}(x)
+F_{X^+}(x) \succeq_\varepsilon F_{X}(x) \succeq_\varepsilon F_{X^-}(x)
 \]
 \end{theorem}
 
-Proof: the runtime bound is obvious, as a trivial implementation simply encurs $m^{|Y|}$
+\begin{proof}
+the runtime bound is obvious, as a trivial implementation simply encurs $m^{|Y|}$
 runs of the tree task network algorithm. The approximation bounds follow
 from the bounds for individual values $Y=y$, and from a convexity argument.
 For example, by construction, we have:
 \[
-F^-_{X}(x) -  F_{X}(x) =  \sum_{y\in D(Y)} P_{Y}(y)(F^-_{X|Y=y}(x) - F_{X|Y=y}(x))
+F_{X^-}(x) -  F_{X}(x) =  \sum_{y\in D(Y)} P_{Y}(y)(F_{X^-|Y=y}(x) - F_{X|Y=y}(x))
 \]
 The right hand side is a convex sum of quantities that are all between 0 and $\varepsilon$, which therefore
 must also be between 0 and $\varepsilon$.
+\end{proof}
 
 \section{Discussion and Related Work}\label{sec:discussion}
 
 Numerous issues remain unresolved, briefly discussed below.
-Trivial improvements to the $\Trim$ operator are possible, such as the inverse version of the operator used to
-generate a lower bound for the empirical results. Other candidate improvements are not performing trimming
-(or even stopping a trimming operation) if the current support size is below $1/\varepsilon$, which may increase accuracy but also
-the runtime. Another point is that in the combined algorithm, space and time complexity can be reduced by adding some $\Trim$ operations,
+%Eyal:copy from Eyal version
+%-------------------------------
+%Trivial improvements to the $\Trim$ operator are possible, such as the inverse version of the operator used to
+%generate a lower bound for the empirical results. Other candidate improvements are not performing trimming
+%(or even stopping a trimming operation) if the current support size is below $1/\varepsilon$, which may increase accuracy but also
+%the runtime. Another point is that in the combined algorithm, space and time complexity can be reduced by adding some $\Trim$ operations,
+Trivial improvements to the $\Trim$ operator are possible, 
+such as not performing trimming (or even stopping a trimming operation) if the current support 
+size is below $1/\varepsilon$, which may increase accuracy but also
+the runtime. Another point is that in the combined algorithm, 
+space and time complexity can be reduced by adding some $\Trim$ operations,
 especially after processing a parallel node, which is not done in our version. This may reduce accuracy, 
 a trade-off yet to be examined.
 Another option is, when given a specific threshold, trying for higher accuracy in just the region of the
