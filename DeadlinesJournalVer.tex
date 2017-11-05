@@ -201,20 +201,18 @@ Although other resources can be handled with our approach (\hl{e.g., memory}: ta
 The tasks trees that we analyze are composed of sequence nodes, parallel nodes and leaves that we call primitive tasks. A sequence node represents a composition of tasks in sequence. Its makespan is the the sum of the makespans of its child nodes. A parallel node represents a composition of tasks in parallel. Its makespan is the maximum of the makespan of its child nodes.
 The makespans of the primitive nodes at the leafs of the tree are uncertain, and described as probability distributions.
 We assume  that the distributions are  independent (but {\em not} necessarily identically distributed).
-We also assume initially that the random variables are discrete and have finite support (i.e. the number of values
-for which the probability is non-zero is finite).
-As the resource of interest is assumed to be completion time, we consider each leaf node, $v$, as a random variable that has
-a completion-time distribution $P_v$ and a cumulative 
-distribution function (CDF) $F_v$. More generally, in this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$.
+We also assume initially that the random variables are discrete and have finite support (i.e. the number of values for which the probability is non-zero is finite).
+\hl{In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is assumed to be completion time, we consider each leaf node, $v$, as a random variable, $X_v$, that has
+a completion-time distribution $P_{X_v}$ and a cumulative distribution function (CDF) $F_{X_v}$.
 
-For clarity, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. The symbol $\tau_{name}$ where the subscript contains a name of a node denotes the corresponding sub-tree (i.e., the node is the root of the sub-tree). We use the symbol $X'_{name}$ to denote an approximation of the random variable $X_{name}$.
-
+For clarity, we elaborate regarding some common notations in this article. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. %Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. 
+Second, We denote the symbol $\tau_{name}$ where the subscript contains a name of a node corresponding to the sub-tree, i.e., the node is the root of the sub-tree. Note, the notation $X_{\tau_{v}}$ and $X_v$ may have the same meaning, a random variable represents the makespan of the sub-tree $\tau_{v}$ which is actually the duration distribution of node $v$.
+Third, We use the symbol $X'_{name}$ to denote an approximation of the random variable $X_{name}$.}
 
 The main computational problem analyzed in this paper is the {\em deadline problem}: 
 \begin{definition}\label{Def:Deadline}
-	Given a task tree $\tau $ and a deadline $T$. 
-	Computing the probability that $\tau $ will satisfy the deadline $T$ 
-(i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
+Given a task tree $\tau $ and a deadline $T$. 
+Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
 \end{definition}
 In other words, given a task tree $\tau $ and a deadline $T$, what is the probability that $\tau $ 
 will succeed and terminate in time not greater than $T$? 
@@ -224,28 +222,24 @@ constant positive utility $U$ for all $t$ less than or equal to a deadline
 time $T$, and $0$ for all $t>T$. We also briefly consider a linear utility function, requiring
 computation of the expected completion time of $\tau$, and show that this {\em expectation problem} 
 is also NP-hard.
-
+%Liat: fixed notation in the following pg
 Stated in standard mathematical terms, leaf nodes represent primitive task durations as
-independent discrete random variables $X_i$. The duration of a sequence \hl{node} $S$ is a random
-\hl{variable}:
-\[
-X = \sum_{c\in child(S)} X_c
-\]
+independent discrete random variables \hl{$X_i$}. The duration of a sequence node $s$ is a random variable:
+$$
+X_s = \sum_{c\in child(s)} X_c
+$$
 where $X_c$ is a random variable representing the duration distribution of child node $c$.
-Likewise, the duration distribution of a parallel node is a random variable:
-\[
-X = \max_{c\in child(S)} X_c
-\]
-\hl{Let} $X_r$ be a random variable representing the duration distribution of the root,
-and denote the cumulative distribution function (CDF) of a 
-random variable $X$ by $F_X$. Then
-the probability that the plan meets the deadline $T$ is $F_{X_r}(T)$.
-Thus we need to compute the CDF, which is NP-hard~\cite{mohring2001scheduling}. We show how
-to deterministically approximate the CDF of the root with additive error at most $\varepsilon $
-in time polynomial in $1/\varepsilon$.
+Likewise, the duration distribution of a parallel node $p$ is a random variable:
+$$
+X_p = \max_{c\in child(p)} X_c
+$$
+Let $r$ be the root node of a task tree $\tau$ and $X_r$ be a random variable representing the duration distribution of the root.
+%and denote the cumulative distribution function (CDF) of a random variable $X$ by $F_X$. 
+Then the probability that the plan meets the deadline $T$ is $F_{X_r}(T)$.
+Thus we need to compute the CDF, which is NP-hard~\cite{mohring2001scheduling}. We show how to deterministically approximate the CDF of the root with additive error at most $\varepsilon$ in time polynomial in $1/\varepsilon$.
 
-Figure~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with probability density function (PDF) describes the completion-time distribution. In this case $P_a(x)=P_b(x)=P_c(x)=P_d(x)=P_e(x)$.
-$$P_a(x)=
+Figure~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with \hl{probability density function (PDF)} describes the completion-time distribution. In this case $P_{X_a}(x)=P_{X_b}(x)=P_{X_c}(x)=P_{X_d}(x)=P_{X_e}(x)$.
+$$P_{X_a}(x)=
 \begin{cases}
 1/4 & \text{if } x=1; \\
 3/4 & \text{if } x=4; \\
@@ -262,7 +256,7 @@ This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c
 	sloped,
 	every node/.style = {trapezium, trapezium left angle=60, trapezium right angle=-60, draw, align=center, top color=white, bottom color=blue!20,minimum height=0.5cm}
 	]
-	\node {$A$}  
+	\node [single arrow] {$A$}  
 	child { node {$B$} 
 		child{ node [rectangle] {$a$}}
 		child{ node [rectangle] {$b$}}
@@ -282,9 +276,9 @@ This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c
 
 \begin{example}
 
-Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we will compute the duration distribution in the form of PDF for each compound task node including the root node, and then we will return the probability for $\tau$ to satisfy a given deadline $T$. 
+Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we will compute the duration distribution in the form of \hl{PDF} for each compound task node including the root node, and then we will return the probability for $\tau$ to satisfy a given deadline $T$. 
 First, compute duration distribution for the node $B$. The children task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
-$$P_B(x)=P_{\max(a,b)}(x)=
+$$P_{X_B}(x)=P_{\max(X_a,X_b)}(x)=
 \begin{cases}
 1/16 & \text{if } x=1; \\
 15/16 & \text{if } x=4; \\
@@ -292,7 +286,7 @@ $$P_B(x)=P_{\max(a,b)}(x)=
 \end{cases}$$
 
 Second, compute duration distribution for node $C$. The children task nodes $c,d$, are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $c$ and $d$:  
-$$P_C(x)=P_{c+d}(x)=
+$$P_{X_C}(x)=P_{X_c+X_d}(x)=
 \begin{cases}
 1/16 & \text{if } x=2; \\
 3/8 & \text{if } x=5; \\
@@ -301,7 +295,7 @@ $$P_C(x)=P_{c+d}(x)=
 \end{cases}$$
 
 Last, compute duration distribution for node $A$, the root node. The children task nodes $B,C,e$ are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $B$, $C$ and $e$: 
-$$P_{\tau}=P_A(x)=P_{A+B+e}(x)=
+$$P_{X_{\tau}}=P_{X_A}(x)=P_{X_B+X_C+X_e}(x)=
 \begin{cases}
 1/1024 & \text{if } x=4; \\
 3/128 & \text{if } x=7; \\
@@ -311,7 +305,7 @@ $$P_{\tau}=P_A(x)=P_{A+B+e}(x)=
 0 & otherwise.
 \end{cases}$$
 
-For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$ the probability is  $F_{\tau}(8)=25/1024$ . 
+For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$ the probability is  $F_{X_{\tau}}(8)=25/1024$ . 
 \end{example}
  
 \section{Sum (sequence) nodes}\label{sec:seq}
@@ -327,25 +321,24 @@ the Kolmogorov distance~\cite{lilliefors1967kolmogorov} between $X$ and $X'$ is 
 \[
 d_K(X,X') = \sup_{x} |F_{X'}(x)-F_X(x)|
 \]
-Our notion of approximation uses the Kolmogorov distance. \hl{Let} $0\leq\epsilon<1$. %$1 > \epsilon \geq 0$.
-\hl{should be $\varepsilon$ or $\epsilon$???}If the following equation holds:
+Our notion of approximation uses the Kolmogorov distance. \hl{Let} $0\leq\varepsilon<1$. %$1 > \epsilon \geq 0$.
+If the following equation holds:
 \[
-\forall ~ x, ~ F_X(x)+\epsilon \geq F_{X'}(x) \geq F_X(x)
+\forall ~ x, ~ F_X(x)+\varepsilon \geq F_{X'}(x) \geq F_X(x)
 \]
-we say that the random variable $X'$ is a Kolmogorov $\epsilon$ upper bound of $X$,
-which we denote by $X' \succeq_\epsilon X$. Contrapositively, we call $X$ a  Kolmogorov $\epsilon$ lower
-bound of $X'$. Note that $X' \succeq_\epsilon X$ implies that $d_K(X,X') \leq \epsilon$,
+%Liat: added \hl{approximation} 
+we say that the random variable $X'$ is a Kolmogorov $\varepsilon$ upper bound \hl{approximation} of $X$,
+which we denote by $X' \succeq_\varepsilon X$. Contrapositively, we call $X$ a  Kolmogorov $\varepsilon$ lower
+bound \hl{approximation} of $X'$. Note that $X' \succeq_\varepsilon X$ implies that $d_K(X,X') \leq \varepsilon$,
 but not vice-versa.
 
 In our algorithms and examples,
 the PDF of a random variable $X$ is represented by a list $D_X$, 
-which \hl{consists of} $d=(p', x)$ pairs, where $x\in \support(X)$
+which consists of \hl{$d=(p', x)$} pairs, where $x\in \support(X)$
 and $p'$ is the probability $P(X{=}x)$. In the pair $d=(p', x)$, we denote the value $x$
 by $val(d)$, and the probability $p'$ by $prob(d)$.
-For example, let $X$ be a random variable distributed as: $[0.1:1, 0.1:2, 0.8:4]$, and $X'$
-a random variable distributed as $[0.2:1, 0.8:4]$. Then we have
-$X' \succeq_{0.1} X$. In order to achieve a Kolmogorov upper bound of $\varepsilon $,
-the $\Trim$ operator removes  consecutive domain values whose accumulated probability is
+For example, let $X$ be a random variable distributed as: $[0.1:1, 0.1:2, 0.8:4]$, and $X'$ a random variable distributed as $[0.2:1, 0.8:4]$. Then we have $X' \succeq_{0.1} X$. In order to achieve a \hl{Kolmogorov upper bound of $\varepsilon$},
+the $\Trim$ operator removes consecutive domain values whose accumulated probability is
 less than $\varepsilon$ and adds 
 their probability mass to the element in the support that precedes them.
 
@@ -510,7 +503,7 @@ and show that $Y'_n$ is a Kolmogorov $\delta $ upper bound of $X$, for an approp
 
 The distribution of the sum of random variables $X'_i + Y'_{i-1}$ is 
 computed by a discrete convolution, and Trim is
-computed as in Algorithm~\ref{alg:Trim}. That is, our approximation for a sequence operator (for $n\geq 2$) is \hl{given by}:
+computed as in Algorithm~\ref{alg:Trim}. That is, our approximation for a sequence operator (for $n\geq 2$) is given by: %Liat: add eq?
 \[
 Sequence(X'_1,\dots , X'_n,  \varepsilon) 
 = Trim(Convolve(X'_1, Sequence(X'_2, \dots , X'_n, \varepsilon)), \varepsilon)
@@ -807,10 +800,9 @@ computation will introduce exactly the higher bound predicted by Lemma~\ref{tigh
 
 \section{Task trees: mixed sequence/parallel}
 
-\hl{Given a task tree $\tau$ and a accuracy requirement $0<\varepsilon<1$, we generate a distribution for a random variable $X_{\tau}' $
-approximating the true duration distribution  $X_{\tau}$ for the task tree. 
+Given a task tree $\tau$ and a accuracy requirement $0<\varepsilon<1$, we generate a distribution for a random variable $X_{\tau}'$ approximating the true duration distribution  $X_{\tau}$ for the task tree. 
 We introduce the algorithm and prove that the algorithm indeed returns an $\varepsilon$-approximation of the completion time of the plan. 
-For a node $v$, let $\tau_v $ be the sub tree with $v$ as root and let $child_v$ be the set of children of $v$. }
+For a node $v$, let $\tau_v $ be the sub tree with $v$ as root and let $child(v)$ be the set of children of $v$.
 We use the notation $|\tau|$ to denote the total number of nodes in $\tau$.
 
 \begin{algorithm}
@@ -824,24 +816,24 @@ We use the notation $|\tau|$ to denote the total number of nodes in $\tau$.
   {
 
  Let $v$ be the root of $\tau$  // Hence, $\tau_v=\tau$ \;
-	$n_v = |child_v|$ \;
+	$n_v = |child(v)|$ \;
   \If{$v$ is a $\operatorname{Primitive}$ node}{
 	\Return the distribution of $v$\;
 			}
 	
   \If{$v$  is a $\operatorname{Sequence}$ node}{
-  	\For{$c \in child_v$} {
-	    $X_c$ = \Network($\tau_c$, $\frac{|\tau_c|\varepsilon}{|\tau_v|}$)\;
+  	\For{$c \in child(v)$} {
+	    \hl{$X'_c$} = \Network($\tau_c$, $\frac{|\tau_c|\varepsilon}{|\tau_v|}$)\;
 	 }
-	 \Return \Sequence($\{X_c\}_{c \in child_v}$, $\frac{\varepsilon}{n_v|\tau_v|}$)	
+	 \Return \Sequence(\hl{$\{X'_c\}_{c \in child(v)}$, $\frac{\varepsilon}{n_v|\tau_v|}$})	
 	 
 	}
 			
 	\If{$v$ is a $\operatorname{Parallel}$ node}{
-	 	\For{$c \in child_v$} {
-			$X_c$ = \Network($\tau_c$, $\min(\frac{|\tau_{c}|\varepsilon }{|\tau_v|}   ,\frac{1}{n_v (|\tau_v| n_v+1)})$)\;
+	 	\For{$c \in child(v)$} {
+			$X'_c$ = \Network($\tau_c$, $\min(\frac{|\tau_{c}|\varepsilon }{|\tau_v|}   ,\frac{1}{n_v (|\tau_v| n_v+1)})$)\;
 		}
-		\Return \Parallel($\{X_c\}_{c \in child_v}$)
+		\Return \Parallel($\{X'_c\}_{c \in child(v)}$)
 	}	
   }
 %----------------------------------5
@@ -865,13 +857,12 @@ distribution of the completion time for the network. Then $\Network (\tau , \var
 \begin{proof} 
 By induction on $|\tau|$. 
 Base: $|\tau|=1$, the node must be primitive, and $\Network$ will just return the distribution unchanged which is obviously an $\varepsilon$-approximation
-of itself. Suppose the claim is true for $1 \leq |\tau| < n$. Let $\tau$ be a task tree of size $n$ and
-let $v$ be the root of $\tau$. If $v$ is a $\operatorname{Sequence}$ node, by the induction hypothesis that $X_c\succeq_{|\tau_c|\varepsilon/|\tau_v|} X_{\tau_c}$, and by Theorem~\ref{appSeqTheorem}, the maximum accumulated error is 
-$\sum_{c \in child_v}
-{|\tau_c|\varepsilon}/|\tau_v| + {\varepsilon}/|\tau_v|$ = $(n-1)\varepsilon/|\tau_v|+{\varepsilon}/|\tau_v|= \varepsilon$ for $v$, therefore, $\Sequence(\{X_c\}_{c\in child_v}, {\varepsilon}/{n}) \succeq_\varepsilon X_\tau$ as required. 
-If $v$ is a $\operatorname{Parallel}$ node, by the induction hypothesis that $X_c  \succeq_{e_c} X_{\tau_c}$, where $e_c = \min(\frac{|\tau_{c}|\varepsilon}{|\tau_v|}, \frac{1}{n_v (|\tau_v| n_v+1)})$. 
+of itself. Suppose the claim is true for $1 \leq |\tau| < n$. Let $\tau$ be a task tree of size $n$ and let $v$ be the root of $\tau$. If $v$ is a $\operatorname{Sequence}$ node, by the induction hypothesis that $X'_c\succeq_{|\tau_c|\varepsilon/|\tau_v|} X_{c}$, and by Theorem~\ref{appSeqTheorem}, the maximum accumulated error is 
+$\sum_{c \in child(v)}
+{|\tau_c|\varepsilon}/|\tau_v| + {\varepsilon}/|\tau_v|$ = $(n-1)\varepsilon/|\tau_v|+{\varepsilon}/|\tau_v|= \varepsilon$ for $v$, therefore, $\Sequence(\{X'_c\}_{c\in child(v)}, {\varepsilon}/{n}) \succeq_\varepsilon X_\tau$ as required. 
+If $v$ is a $\operatorname{Parallel}$ node, by the induction hypothesis that $X'_c  \succeq_{e_c} X_{c}$, where $e_c = \min(\frac{|\tau_{c}|\varepsilon}{|\tau_v|}, \frac{1}{n_v (|\tau_v| n_v+1)})$. 
  
-\noindent So $\sum_{c\in child_v} e_c \leq   \sum_{c\in child_v} \frac{|\tau_{c}|\varepsilon}{|\tau_v|}  \leq \varepsilon  - \varepsilon/ |\tau_v|  $. Then, by Lemma~\ref{appPalTheorem}, using $K=|\tau_v|$ and $n=n_v$, we get that $\Parallel(\{X_c\}_{c\in child_v})\succeq_\varepsilon  X_\tau$ as required. 
+\noindent So $\sum_{c\in child(v)} e_c \leq   \sum_{c\in child(v)} \frac{|\tau_{c}|\varepsilon}{|\tau_v|}  \leq \varepsilon  - \varepsilon/ |\tau_v|  $. Then, by Lemma~\ref{appPalTheorem}, using $K=|\tau_v|$ and $n=n_v$, we get that $\Parallel(\{X'_c\}_{c\in child(v)})\succeq_\varepsilon  X_\tau$ as required. 
 \end{proof}
 
 \begin{theorem}\label{th:TTalgcomplexity}
@@ -916,19 +907,17 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 \end{theorem}
 
 \begin{proof}
-	By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node $v_p$. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{v_p}=0$}, 
-	therefore  $\CalcNetwork(\tau_{v_p},\varepsilon) \succeq_0 X_{\tau_{v_p}}$. 
-	Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ 
+By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node $v_p$. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{v_p}=0$}, therefore  $\CalcNetwork(\tau_{v_p},\varepsilon) \succeq_0 X_{\tau_{v_p}}$. Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ 
 	% TODO: move the definition of child way up
 	as a set of sub task trees, each of them with depth smaller than $ d $. 
 	If $v_{root}$ is a sequence node then,
-	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(v_{root})$ caused by the trim operator $$\varepsilon_0={\varepsilon(v_{root})+\sum_{c \in \ch(v_{root})}{\EstimateError(c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
-	
+	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(v_{root})$ caused by the trim operator $$\varepsilon_0={\varepsilon(v_{root})+\sum_{c \in \ch(v_{root})}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+%Liat: what about the epsilon?	
 	\hl{If $v_{root}$ is a parallel node then,}
-	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(v_{root})}{(1-\EstimateError(c))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(v_{root})}{(1-\EstimateError(\tau_c))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 \end{proof}
 
-
+%Liat: need to add X'_c or it should be X_c?
 \begin{algorithm}
   \DontPrintSemicolon
   \SetKwFunction{Sequence}{Sequence}
@@ -944,13 +933,13 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 	
   \If{$v$  is a $\operatorname{Sequence}$ node}{
   	\For{$c \in child(v)$} {
-	    $e_c=$ \EstimateError($c$, $\varepsilon$)\;
+	    $e_c=$ \EstimateError($\tau_c$, $\varepsilon$)\;
 	 }
 	 \Return $\varepsilon(v) + \sum_{c\in child(v)}e_{c}$	
 	}
 	\If{$v$ is a $\operatorname{Parallel}$ node}{
 	 	\For{$c \in child(v)$} {
-	    $e_c=$ \EstimateError($c$, $\varepsilon$)\;
+	    $e_c=$ \EstimateError($\tau_c$, $\varepsilon$)\;
 	 }
 		\Return $1-\prod_{c\in child(v)} (1-e_{c})$
 	}	
@@ -1010,8 +999,8 @@ Given a task tree $\tau$, if we consider $\EstimateError(\tau,\varepsilon)$ as a
 \begin{proof}
 By induction over the depth of $\tau$ denoted by $d$. Base: if $d=1$ we have a tree with a single primitive node $v_p$. In this case  $\EstimateError(\tau,\varepsilon)$ which is indeed a polynomial degree zero.
 Induction step: we refer to the children nodes of the root node, $\ch(v_{root})$, as a set of sub task trees, each of them with depth smaller than $d$. If $v_{root}$, is a sequence node 
-$$\EstimateError(\tau,\varepsilon)=\sum_{c\in \ch(v_{root})}\EstimateError(c,\varepsilon) +  \varepsilon.$$ 
-If $v_{root}$, is a parallel node  $$\EstimateError(\tau,\varepsilon)=1-\prod_{c\in \ch(v_{root})} (1-\EstimateError(c,\varepsilon)).$$ 
+$$\EstimateError(\tau,\varepsilon)=\sum_{c\in \ch(v_{root})}\EstimateError(\tau_c,\varepsilon) +  \varepsilon.$$ 
+If $v_{root}$, is a parallel node  $$\EstimateError(\tau,\varepsilon)=1-\prod_{c\in \ch(v_{root})} (1-\EstimateError(\tau_c,\varepsilon)).$$ 
 By the induction hypothesis we have that the degree of $\EstimateError(c,\varepsilon)$ is the number of sequence node in $c$, for each $c$, and the above equalities show that the degree is increased by one if and only if the root is a parallel node. 
 \end{proof}
 
@@ -1085,7 +1074,7 @@ Deciding if the probability that a task tree satisfies a deadline $T$ is above a
 \end{proof}
 
 Our next goal is to show that not only that the above decision problem is NP-hard but also to analyze the hardness of computing the exact probability $F_{\sum_{i=0}^{n} Y_{i}}(T)$. To this end, we note that 
-if $Pr(Y_i=y)=1/|\support(Y_i)|$ for every $i$ and every $y\in\support(Y_i)$, computing the probability $F_{\sum_{i=0}^{n} Y_{i}}(T)$ is equivalent, up to scaling by $\prod_{i=1}^n |\support(Y_i)|$, to counting the number of assignments to the random variables  such that $\sum_{i=0}^{n} Y_{i} \leq T$. 
+if \hl{$P(Y_i=y)=1/|\support(Y_i)|$} for every $i$ and every $y\in\support(Y_i)$, computing the probability $F_{\sum_{i=0}^{n} Y_{i}}(T)$ is equivalent, up to scaling by $\prod_{i=1}^n |\support(Y_i)|$, to counting the number of assignments to the random variables  such that $\sum_{i=0}^{n} Y_{i} \leq T$. 
 
 \begin{definition} 
 	Given the random variable $Y_1,\dots,Y_n$ and a deadline $T$,
