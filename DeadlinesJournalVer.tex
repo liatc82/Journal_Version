@@ -142,8 +142,8 @@ Ben Gurion University of The Negev\\
 Beer-Sheva, Israel 84105\\}
 
 \begin{abstract}
-	\hl{Given a hierarchical} plan (or schedule) with uncertain task times, we may need to determine the probability that a given plan will satisfy a given deadline (or alternately, that its {\em makespan} is less than a given duration).
-	This problem is NP-hard even for series-parallel hierarchies. We provide a deterministic polynomial-time approximation algorithm for makespan computation. 
+	% TODO: Extend this abstract to include also Eyal's part and the tightning analysis.
+	Given a hierarchical plan (or schedule) with uncertain task times, we may need to determine the probability that a given plan will satisfy a given deadline (or alternately, that its {\em makespan} is less than a given duration). This problem is NP-hard even for series-parallel hierarchies. We provide a deterministic polynomial-time approximation algorithm for makespan computation. 
 	Computing the expected makespan of a hierarchical plan is also shown to be NP-hard. We examine the approximation bounds empirically and demonstrate 
 	where our scheme is superior to sampling.% and to exact computation.%, using some task networks.
 \end{abstract}  
@@ -180,11 +180,12 @@ full distribution and consider only the expected resource consumption~\cite{bonf
 on providing guarantees for the probability of meeting deadlines. This type of analysis is needed, e.g., in
 Service-Level-Agreements (SLA) where guarantees of the form: ``response time less than 1mSec in at least 95\% of the cases'' are common~\cite{buyya2011sla}, 
 Section~\ref{sec:discussion} discusses additional related work.
+We assume that a hierarchical plan is given in the form of a tree, with uncertain resource consumption of the primitive actions in the network, provided as a probability distribution. The problem is to compute a property of interest of the distribution for the entire task network. In this paper, we focus mainly on the issue of computing the probability $P(X_\tau \leq T)$ of satisfying a deadline $T$ where $X_\tau$ is a random variable describing the distribution of the makespan of the plan. Since in the above-mentioned applications for these computations, one needs results in real-time (for monitoring) or multiple such computations (in comparing candidate plans), efficient computation here is crucial, and is more important than in, e.g., off-line planning.
 
-We assume that a hierarchical plan is given in the form of a tree, with uncertain resource consumption of the primitive actions in the network, provided as a probability distribution. The problem is to compute a property of interest of the distribution for the entire task network. In this paper, we focus mainly on the issue of computing the \hl{probability} $P(t\leq T)$ of satisfying a deadline $T$ (i.e. that the {\em makespan} $t$ of the plan is less than a given value). Since in the above-mentioned applications for these computations, one needs results in real-time (for monitoring) or multiple such computations (in comparing candidate plans), efficient computation here is crucial, and is more important than in, e.g., off-line planning.
+The decision problem we analyze is: given a task tree and a deadline, does the probability of meeting this deadline is above a given threshold. We show that this decision problem is NP-hard (see Section~\ref{sec:complexity}), the first contribution of this paper. We propose a deterministic polynomial-time approximation scheme for this problem, a second contribution of this paper. Error bounds are analyzed and are shown to be tight. For discrete random variables with finite support, finding the distribution of the maximum can be done in low-order polynomial time. However, when compounded with errors generated due to approximation in subtrees, handling this case requires careful analysis of the resulting error. The approximations developed for both sequence and parallel nodes are combined into an overall algorithm for task trees, with an analysis of the resulting error bounds, yielding a polynomial-time (additive error) approximation scheme for computing the probability of satisfying a deadline for the complete network, another contribution of this paper. 
+We also consider computing {\em expected} makespan. Since for discrete random variables, in parallel nodes one can compute an exact distribution efficiently, it is easy to compute an {\em expected makespan} in this case as well as for sequence nodes. Despite that,  we show that for trees with both parallel and sequence nodes, computing the expected makespan is hard.
 
-\hl{We show} that deciding if the probability of a task tree to satisfy a deadline $T$ is above a threshold $p$ is NP-hard (see Section~\ref{sec:complexity}), the first contribution of this paper. We propose a deterministic polynomial-time approximation scheme for this problem, a second contribution of this paper. Error bounds are analyzed and are shown to be tight. For discrete random variables with finite support, finding the distribution of the maximum can be done in low-order polynomial time. However, when compounded with errors generated due to approximation in subtrees, handling this case requires careful analysis of the resulting error. The approximations developed for both sequence and parallel nodes are combined into an overall algorithm for task trees, with an analysis of the resulting error bounds, yielding a polynomial-time (additive error) approximation scheme for computing the probability of satisfying a deadline for the complete network, another contribution of this paper. 
-We also consider computing {\em expected} makespan. Since for discrete random variables, in parallel nodes one can compute an exact distribution efficiently, it is easy to compute an {\em expected makespan} in this case as well as for sequence nodes. Despite that,  we show that for trees with both parallel and sequence nodes, computing the expected makespan \hl{is NP-hard}.
+% TODO: Eyal, can you please add your contributions to the above paragraph?
 
 Experiments are provided in order to examine the quality of approximation in practice when compared to the theoretical error bounds. A simple sampling scheme is also provided as a yardstick, even though the sampling does not come with error guarantees, but only bounds in probability. Finally, we examine our results in light of related work in the fields of planning and scheduling, as well as
 probabilistic reasoning. 
@@ -193,26 +194,29 @@ probabilistic reasoning.
 
 We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes.
 Primitive action nodes contain distributions over their resource consumption. 
-Although other resources can be handled with our approach (\hl{e.g. memory}: tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed), we will assume henceforth, in order to be more concrete, that the only resource of interest is time.
+% TODO: Liat will expand this.
+Although other resources can be handled with our approach (\hl{e.g., memory}: tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed), we will assume henceforth, in order to be more concrete, that the only resource of interest is time.
 %{(for example, if fuel is the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car).}
-A sequence node $v_s$ denotes a task that has been decomposed
+
+% TODO: Gera will remove the belo notations and add notational paragraph.
+A sequence node, $v_s$, denotes a task that has been decomposed
 into subtasks, represented by the children of $v_s$, which must be executed in sequence 
 in order to execute $v_s$.
 We assume that a subtask of $v_s$ begins as soon as its predecessor in the sequence terminates.
-Task $v_s$ terminates when its last subtask terminates.
-A parallel node $v_p$ also denotes a decomposed task, but subtasks begin execution in parallel
+A task $v_s$ terminates when its last subtask terminates.
+A parallel node, $v_p$, also denotes a decomposed task, but subtasks begin execution in parallel
 immediately when task $v_p$ begins execution;  $v_p$ terminates
 as soon as all of the children of $v_p$ terminate.
 
 Resource consumption is uncertain, and described as probability distributions in the leaf nodes.
 We assume  that the distributions are  independent (but {\em not} necessarily identically distributed).
-We also assume initially that the random variables  are discrete and have finite support (i.e. the number of values
+We also assume initially that the random variables are discrete and have finite support (i.e. the number of values
 for which the probability is non-zero is finite).
-As the resource of interest is assumed to be completion time, let each leaf node $v$ have
-a completion-time distribution $P_v$, in some cases represented as a cumulative 
-distribution function form (CDF) $F_v$.
+As the resource of interest is assumed to be completion time, we consider each leaf node, $v$, as a random variable that has
+a completion-time distribution $P_v$ and a cumulative 
+distribution function (CDF) $F_v$. More generally, in this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$.
 
-The main computational problem tackled in this paper is the {\em deadline problem}. 
+The main computational problem analyzed in this paper is the {\em deadline problem}: 
 \begin{definition}\label{Def:Deadline}
 	Given a task tree $\tau $ and a deadline $T$. 
 	Computing the probability that $\tau $ will satisfy the deadline $T$ 
@@ -920,7 +924,9 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 \begin{proof}
 	By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node $v_p$. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{v_p}=0$}, 
 	therefore  $\CalcNetwork(\tau_{v_p},\varepsilon) \succeq_0 X_{\tau_{v_p}}$. 
-	Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $ d $. 
+	Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ 
+	% TODO: move the definition of child way up
+	as a set of sub task trees, each of them with depth smaller than $ d $. 
 	If $v_{root}$ is a sequence node then,
 	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(v_{root})$ caused by the trim operator $$\varepsilon_0={\varepsilon(v_{root})+\sum_{c \in \ch(v_{root})}{\EstimateError(c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 	
