@@ -226,12 +226,12 @@ is also NP-hard.
 Stated in standard mathematical terms, leaf nodes represent primitive task durations as
 independent discrete random variables \hl{$X_i$}. The duration of a sequence node $s$ is a random variable:
 $$
-X_s = \sum_{c\in child(s)} X_c
+X_s = \sum_{c\in \ch(s)} X_c
 $$
 where $X_c$ is a random variable representing the duration distribution of child node $c$.
 Likewise, the duration distribution of a parallel node $p$ is a random variable:
 $$
-X_p = \max_{c\in child(p)} X_c
+X_p = \max_{c\in \ch(p)} X_c
 $$
 Let $r$ be the root node of a task tree $\tau$ and $X_r$ be a random variable representing the duration distribution of the root.
 %and denote the cumulative distribution function (CDF) of a random variable $X$ by $F_X$. 
@@ -802,7 +802,7 @@ computation will introduce exactly the higher bound predicted by Lemma~\ref{tigh
 
 Given a task tree $\tau$ and a accuracy requirement $0<\varepsilon<1$, we generate a distribution for a random variable $X_{\tau}'$ approximating the true duration distribution  $X_{\tau}$ for the task tree. 
 We introduce the algorithm and prove that the algorithm indeed returns an $\varepsilon$-approximation of the completion time of the plan. 
-For a node $v$, let $\tau_v $ be the sub tree with $v$ as root and let $child(v)$ be the set of children of $v$.
+For a node $v$, let $\tau_v $ be the sub tree with $v$ as root and let $\ch(v)$ be the set of children of $v$.
 We use the notation $|\tau|$ to denote the total number of nodes in $\tau$.
 
 \begin{algorithm}
@@ -816,24 +816,24 @@ We use the notation $|\tau|$ to denote the total number of nodes in $\tau$.
   {
 
  Let $v$ be the root of $\tau$  // Hence, $\tau_v=\tau$ \;
-	$n_v = |child(v)|$ \;
+	$n_v = |\ch(v)|$ \;
   \If{$v$ is a $\operatorname{Primitive}$ node}{
 	\Return the distribution of $v$\;
 			}
 	
   \If{$v$  is a $\operatorname{Sequence}$ node}{
-  	\For{$c \in child(v)$} {
+  	\For{$c \in \ch(v)$} {
 	    \hl{$X'_c$} = \Network($\tau_c$, $\frac{|\tau_c|\varepsilon}{|\tau_v|}$)\;
 	 }
-	 \Return \Sequence(\hl{$\{X'_c\}_{c \in child(v)}$, $\frac{\varepsilon}{n_v|\tau_v|}$})	
+	 \Return \Sequence(\hl{$\{X'_c\}_{c \in \ch(v)}$, $\frac{\varepsilon}{n_v|\tau_v|}$})	
 	 
 	}
 			
 	\If{$v$ is a $\operatorname{Parallel}$ node}{
-	 	\For{$c \in child(v)$} {
+	 	\For{$c \in \ch(v)$} {
 			$X'_c$ = \Network($\tau_c$, $\min(\frac{|\tau_{c}|\varepsilon }{|\tau_v|}   ,\frac{1}{n_v (|\tau_v| n_v+1)})$)\;
 		}
-		\Return \Parallel($\{X'_c\}_{c \in child(v)}$)
+		\Return \Parallel($\{X'_c\}_{c \in \ch(v)}$)
 	}	
   }
 %----------------------------------5
@@ -858,11 +858,11 @@ distribution of the completion time for the network. Then $\Network (\tau , \var
 By induction on $|\tau|$. 
 Base: $|\tau|=1$, the node must be primitive, and $\Network$ will just return the distribution unchanged which is obviously an $\varepsilon$-approximation
 of itself. Suppose the claim is true for $1 \leq |\tau| < n$. Let $\tau$ be a task tree of size $n$ and let $v$ be the root of $\tau$. If $v$ is a $\operatorname{Sequence}$ node, by the induction hypothesis that $X'_c\succeq_{|\tau_c|\varepsilon/|\tau_v|} X_{c}$, and by Theorem~\ref{appSeqTheorem}, the maximum accumulated error is 
-$\sum_{c \in child(v)}
-{|\tau_c|\varepsilon}/|\tau_v| + {\varepsilon}/|\tau_v|$ = $(n-1)\varepsilon/|\tau_v|+{\varepsilon}/|\tau_v|= \varepsilon$ for $v$, therefore, $\Sequence(\{X'_c\}_{c\in child(v)}, {\varepsilon}/{n}) \succeq_\varepsilon X_\tau$ as required. 
+$\sum_{c \in \ch(v)}
+{|\tau_c|\varepsilon}/|\tau_v| + {\varepsilon}/|\tau_v|$ = $(n-1)\varepsilon/|\tau_v|+{\varepsilon}/|\tau_v|= \varepsilon$ for $v$, therefore, $\Sequence(\{X'_c\}_{c\in \ch(v)}, {\varepsilon}/{n}) \succeq_\varepsilon X_\tau$ as required. 
 If $v$ is a $\operatorname{Parallel}$ node, by the induction hypothesis that $X'_c  \succeq_{e_c} X_{c}$, where $e_c = \min(\frac{|\tau_{c}|\varepsilon}{|\tau_v|}, \frac{1}{n_v (|\tau_v| n_v+1)})$. 
  
-\noindent So $\sum_{c\in child(v)} e_c \leq   \sum_{c\in child(v)} \frac{|\tau_{c}|\varepsilon}{|\tau_v|}  \leq \varepsilon  - \varepsilon/ |\tau_v|  $. Then, by Lemma~\ref{appPalTheorem}, using $K=|\tau_v|$ and $n=n_v$, we get that $\Parallel(\{X'_c\}_{c\in child(v)})\succeq_\varepsilon  X_\tau$ as required. 
+\noindent So $\sum_{c\in \ch(v)} e_c \leq   \sum_{c\in \ch(v)} \frac{|\tau_{c}|\varepsilon}{|\tau_v|}  \leq \varepsilon  - \varepsilon/ |\tau_v|  $. Then, by Lemma~\ref{appPalTheorem}, using $K=|\tau_v|$ and $n=n_v$, we get that $\Parallel(\{X'_c\}_{c\in \ch(v)})\succeq_\varepsilon  X_\tau$ as required. 
 \end{proof}
 
 \begin{theorem}\label{th:TTalgcomplexity}
@@ -907,15 +907,29 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 \end{theorem}
 
 \begin{proof}
-By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node $v_p$. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{v_p}=0$}, therefore  $\CalcNetwork(\tau_{v_p},\varepsilon) \succeq_0 X_{\tau_{v_p}}$. Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ 
+By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node \hl{$p$}. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{X_p}=0$}, therefore  $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ 
 	% TODO: move the definition of child way up
 	as a set of sub task trees, each of them with depth smaller than $ d $. 
-	If $v_{root}$ is a sequence node then,
-	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(v_{root})$ caused by the trim operator $$\varepsilon_0={\varepsilon(v_{root})+\sum_{c \in \ch(v_{root})}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+	If $r$ is a sequence node then,
+	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 %Liat: what about the epsilon?	
-	\hl{If $v_{root}$ is a parallel node then,}
-	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(v_{root})}{(1-\EstimateError(\tau_c))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+	\hl{If $r$ is a parallel node then,}
+	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 \end{proof}
+
+%Liat: Theorem 5 befor fix
+%\begin{proof}
+%By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node $v_p$. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{v_p}=0$}, therefore  $\CalcNetwork(\tau_{v_p},\varepsilon) \succeq_0 X_{\tau_{v_p}}$. Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ 
+%	% TODO: move the definition of child way up
+%	as a set of sub task trees, each of them with depth smaller than $ d $. 
+%	If $v_{root}$ is a sequence node then,
+%	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(v_{root})$ caused by the trim operator $$\varepsilon_0={\varepsilon(v_{root})+\sum_{c \in \ch(v_{root})}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+%%Liat: what about the epsilon?	
+%	\hl{If $v_{root}$ is a parallel node then,}
+%	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(v_{root})}{(1-\EstimateError(\tau_c))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+%\end{proof}
+
+
 
 %Liat: need to add X'_c or it should be X_c?
 \begin{algorithm}
@@ -932,16 +946,16 @@ By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single pri
 			}
 	
   \If{$v$  is a $\operatorname{Sequence}$ node}{
-  	\For{$c \in child(v)$} {
+  	\For{$c \in \ch(v)$} {
 	    $e_c=$ \EstimateError($\tau_c$, $\varepsilon$)\;
 	 }
-	 \Return $\varepsilon(v) + \sum_{c\in child(v)}e_{c}$	
+	 \Return $\varepsilon(v) + \sum_{c\in \ch(v)}e_{c}$	
 	}
 	\If{$v$ is a $\operatorname{Parallel}$ node}{
-	 	\For{$c \in child(v)$} {
+	 	\For{$c \in \ch(v)$} {
 	    $e_c=$ \EstimateError($\tau_c$, $\varepsilon$)\;
 	 }
-		\Return $1-\prod_{c\in child(v)} (1-e_{c})$
+		\Return $1-\prod_{c\in \ch(v)} (1-e_{c})$
 	}	
   }
 %----------------------------------5
@@ -968,18 +982,18 @@ By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single pri
 			}
 	
   \If{$v$  is a $\operatorname{Sequence}$ node}{
-  	\For{$c \in child(v)$} {
+  	\For{$c \in \ch(v)$} {
 	    $X_c = \CalcNetwork(\tau_c, \varepsilon)$\;
 	 }
-	 \Return \Sequence($\{X_c\}_{c \in child(v)}$, $\varepsilon(v)$)	
+	 \Return \Sequence($\{X_c\}_{c \in \ch(v)}$, $\varepsilon(v)$)	
 	 
 	}
 			
 	\If{$v$ is a $\operatorname{Parallel}$ node}{
-	 	\For{$c \in child(v)$} {
+	 	\For{$c \in \ch(v)$} {
 			$X_c = \CalcNetwork(\tau_c, \varepsilon)$\;
 		}
-		\Return \Parallel($\{X_c\}_{c \in child(v)}$)
+		\Return \Parallel($\{X_c\}_{c \in \ch(v)}$)
 	}	
   }
 %----------------------------------5
@@ -1256,7 +1270,7 @@ in some tasks the distribution is fixed (such as for load and unload) and in oth
 and on the distance to be travelled.
 
 After running our approximation algorithm we also ran a variant
-that uses an inverted version of the $\Trim$ operator, providing a {\em lower} bound of the CDF, as well as the upper bound
+that uses an \hl{inverted version of the} $\Trim$ operator, providing a {\em lower} bound of the CDF, as well as the upper bound
 generated by Algorithm~\ref{alg:approx}. Running both variants allows us to bound the actual error, costing
 only a doubling of the run-time. Despite the fact that our error bound is theoretically tight, in practice
 and with actual distributions, according to Tables~\ref{tab:errors1} and ~\ref{tab:errors2}, the resulting error
@@ -1363,7 +1377,7 @@ eventually the approximation algorithm overtook the sampling algorithm.
 	{\footnotesize
 		\begin{tabular}{|l|l|l|| p{1.5cm}|p{1.5cm}|p{1.8cm}||l|l|l|l|l|}
 			\hline
-			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approx. alg. err., given $\varepsilon$} & \multicolumn{5}{c|}{Sampling alg. err., given \# samples} \\ \cline{4-11} 
+			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approximation algorithm error, given $\varepsilon$} & \multicolumn{5}{c|}{Sampling algorithm error, given \# samples} \\ \cline{4-11} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} & \multicolumn{1}{c|}{$10^{6}$} & \multicolumn{1}{c|}{$10^{7}$} \\ \hline \hline
 			\multirow{3}{*}{Drive} & 47 & 2 & [-0.0052, 0.0086] & [-0.0004, 0.0004] & [-$3.2 {\cdot} 10^{-5}$, $3.4 {\cdot} 10^{-5}$] & 0.0206 & 0.0072 & 0.0031 & 0.0009 & 0.0001 \\ \cline{2-11} 
 			& 47 & 4 & [-0.0096, 0.019] & [-0.0009, 0.0013] & [-$9.2 {\cdot} 10^{-5}$, $1.3 {\cdot} 10^{-4}$] & 0.0476 & 0.0075 & 0.0046 & 0.0011 & 0.0001 \\\cline{2-11} 
@@ -1396,7 +1410,7 @@ eventually the approximation algorithm overtook the sampling algorithm.
 	{\footnotesize
 		\begin{tabular}{|l|l|l|l||l|l|l||l|l|l|l|l|}
 			\hline
-			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multirow{2}{*}{Exact} & \multicolumn{3}{c|}{Approx. alg., with $\varepsilon$} & \multicolumn{5}{c|}{Sampling alg., with \# samples} \\ \cline{5-12} 
+			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multirow{2}{*}{Exact} & \multicolumn{3}{c|}{Approx. algorithm, with $\varepsilon$} & \multicolumn{5}{c|}{Sampling algorithm, with \# samples} \\ \cline{5-12} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} &  & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} & \multicolumn{1}{c|}{$10^{6}$} & \multicolumn{1}{c|}{$10^{7}$} \\ \hline \hline
 			\multirow{2}{*}{Drive} & 47 & 2 & 1.49 & 0.141 & 1.14 & 1.49 & 0.187 & 1.92 & 19.11 & 190.4 & 1905 \\ \cline{2-12} 
 			& 47 & 4 & 18.9 & 0.34 & 7.91 & 16.11 & 0.21 & 2.1 & 20.95 &  211.5 & 2113.6\\ \cline{2-12}
@@ -1421,9 +1435,9 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \begin{table*}[tbh!]
 	{\footnotesize
-		\begin{tabular}{|l|l|l|| p{1.5cm}|p{1.5cm}|p{2.4cm}||l|l|l|}
+		\begin{tabular}{|l|l|l|| p{1.5cm}|p{1.5cm}|p{1.5cm}||p{1.1cm}|p{1.1cm}|p{1.1cm}|}
 			\hline
-			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approx. alg. err., given $\varepsilon$} & \multicolumn{3}{c|}{Sampling alg. err., given \# samples} \\ \cline{4-9} 
+			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approximation algo. error, given $\varepsilon$} & \multicolumn{3}{c|}{Sampling algo. error, given \# samples} \\ \cline{4-9} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} \\ \hline \hline
 			\multirow{2}{*}{Seq 10} & 10 & 4 & [-0.027, 0.041] & [-0.0027, 0.0041] & [-$2.2 {\cdot} 10^{-4}$, $2.5 {\cdot} 10^{-4}$] & 0.0224 & 0.008 & 0.0017  \\ \cline{2-9} 
 			& 10 & 10 &[-0.0316, 0.0615]  & [0.0033, 0.0067] & [$-2.6 {\cdot} 10^{-4}$, $5.2 {\cdot} 10^{-4}$] & 0.027 & 0.0117 & 0.0038  \\ \hline 
@@ -1447,9 +1461,9 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \begin{table*}[htb!]
 	{\footnotesize
-		\begin{tabular}{|l|l|l|l||l|l|l||l|l|l|}
+		\begin{tabular}{|l|l|l|l||l|l|l||p{1cm}|p{1cm}|p{1cm}|}
 			\hline
-			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multirow{2}{*}{Exact} & \multicolumn{3}{c|}{Approx. alg., with $\varepsilon$} & \multicolumn{3}{c|}{Sampling alg., with \# samples} \\ \cline{5-10} 
+			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multirow{2}{*}{Exact} & \multicolumn{3}{c|}{Approx. algorithm, with $\varepsilon$} & \multicolumn{3}{c|}{Sampling algorithm, with \# samples} \\ \cline{5-10} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} &  & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$}  \\ \hline \hline
 			\multirow{2}{*}{Seq 10} & 10 & 4 & 0.23 & 0.003 & 0.02 & 0.148  & 0.054 & 0.545 &5.336  \\ \cline{2-10} 
 			& 10 & 10 & 10.22 & 0.008 & 0.073 & 0.692 & 0.071 & 0.724 & 7.18  \\ \hline
@@ -1715,7 +1729,9 @@ must also be between 0 and $\varepsilon$.
 %generate a lower bound for the empirical results. Other candidate improvements are not performing trimming
 %(or even stopping a trimming operation) if the current support size is below $1/\varepsilon$, which may increase accuracy but also
 %the runtime. Another point is that in the combined algorithm, space and time complexity can be reduced by adding some $\Trim$ operations,
-Trivial improvements to the $\Trim$ operator are possible, 
+
+%Liat: maybe add more info?
+\hl{Trivial improvements} to the $\Trim$ operator are possible, 
 such as not performing trimming (or even stopping a trimming operation) if the current support 
 size is below $1/\varepsilon$, which may increase accuracy but also
 the runtime. Another point is that in the combined algorithm, 
@@ -1741,10 +1757,10 @@ Sampling algorithms may run into trouble if the target distribution contains maj
 other values but with extremely low probability. Our approximation algorithm can also be used as-is to estimate
 the CDF and then to approximate the expectation, but we do not expect it to perform well because our current $\Trim$
 operator only limits the amount of probability mass moved at each location to $\varepsilon$, but does not limit the
-``distance'' alnog the $x$ parameter over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of $Trim$ that bounds just this distance was
+``distance'' alnog the $x$ parameter over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of \hl{$Trim$} that bounds just this distance was
 shown to provide a polynomial-time approximation scheme
 for the expectations in EXPECTI-MIN-MAX game trees
-\cite{ShperbergShimonyFelner2017}, 
+\cite{shperbergmonte}, 
 if the utilities are bounded. Since the expectation
 operator involves convolution, these results should be
 applicable (with some adjustment) to task networks as well.
