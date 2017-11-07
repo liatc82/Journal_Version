@@ -202,29 +202,34 @@ The tasks trees that we analyze are composed of sequence nodes, parallel nodes a
 The makespans of the primitive nodes at the leafs of the tree are uncertain, and described as probability distributions.
 We assume  that the distributions are  independent (but {\em not} necessarily identically distributed).
 We also assume initially that the random variables are discrete and have finite support (i.e. the number of values for which the probability is non-zero is finite).
-\hl{In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is assumed to be completion time, we consider each leaf node, $v$, as a random variable, $X_v$, that has
+In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is completion time, we associate each leaf node, $v$, with the random variable, $X_v$, that represents the distribution of the 
 a completion-time distribution $P_{X_v}$ and a cumulative distribution function (CDF) $F_{X_v}$.
 
-For clarity, we elaborate regarding some common notations in this article. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. %Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. 
-Second, We denote the symbol $\tau_{name}$ where the subscript contains a name of a node corresponding to the sub-tree, i.e., the node is the root of the sub-tree. Note, the notation $X_{\tau_{v}}$ and $X_v$ may have the same meaning, a random variable represents the makespan of the sub-tree $\tau_{v}$ which is actually the duration distribution of node $v$.
-Third, We use the symbol $X'_{name}$ to denote an approximation of the random variable $X_{name}$.}
+For clarity, we use the following standard for notations in the paper. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. %Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. 
+Second, we use the symbol $\tau_{name}$ where the subscript contains a name of a node to denote the subtree starting at this node, i.e., the node is the root of the subtree. Note that $X_{\tau_{v}}$ and $X_v$ have the same meaning - a random variable representing the makespan of the subtree $\tau_{v}$.
+Last, we use primed versions of random variables to denote approximations, i.e., the symbol $X'_{name}$ denotes an approximation of the random variable $X_{name}$.
 
 The main computational problem analyzed in this paper is the {\em deadline problem}: 
 \begin{definition}\label{Def:Deadline}
-Given a task tree $\tau $ and a deadline $T$. 
-Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
+	Given a task tree $\tau $ and a deadline $T$, the \emph{deadline problem} is to compute $F_{X_\tau}(T)$.
 \end{definition}
-In other words, given a task tree $\tau $ and a deadline $T$, what is the probability that $\tau $ 
-will succeed and terminate in time not greater than $T$? 
+
+%\begin{definition}\label{Def:Deadline}
+%Given a task tree $\tau $ and a deadline $T$. 
+%Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
+%\end{definition}
+\hl{In words, given a task tree $\tau $ and a deadline $T$, what is the probability that $\tau $ 
+will succeed and terminate in time not greater than $T$?}
 
 The above {\em deadline problem} reflects a step utility function: a 
 constant positive utility $U$ for all $t$ less than or equal to a deadline 
 time $T$, and $0$ for all $t>T$. We also briefly consider a linear utility function, requiring
 computation of the expected completion time of $\tau$, and show that this {\em expectation problem} 
 is also NP-hard.
+% TODO: move the definition of child here
+% TODO: Say that we are now describing the random variable that assigned to each node in the tree.
 %Liat: fixed notation in the following pg
-Stated in standard mathematical terms, leaf nodes represent primitive task durations as
-independent discrete random variables \hl{$X_i$}. The duration of a sequence node $s$ is a random variable:
+The duration of a sequence node $s$ is a random variable:
 $$
 X_s = \sum_{c\in \ch(s)} X_c
 $$
@@ -305,16 +310,18 @@ $$P_{X_{\tau}}=P_{X_A}(x)=P_{X_B+X_C+X_e}(x)=
 0 & otherwise.
 \end{cases}$$
 
-For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$ the probability is  $F_{X_{\tau}}(8)=25/1024$ . 
+For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$, the probability is  $F_{X_{\tau}}(8)=25/1024$ . 
 \end{example}
  
 \section{Sum (sequence) nodes}\label{sec:seq}
 
 The size of the support (number of non-zero probability values) of the sum of random variables
 may be exponential in the number of variables, even for 2-valued variables.
-\hl{In fact, as shown} in~\cite{mohring2001scheduling}, computing the CDF of a sum of random variables at a given point is NP-hard.
+In fact, as shown in~\cite{mohring2001scheduling}, computing the CDF of a sum of random variables at a given point is NP-hard.
 We thus define a notion of approximation, 
-which we call an {\bf Kolmogorov upper bound} (defined below), and supply a $\Trim$ operator that reduces the support size, \hl{while} producing an approximation that is a Kolomogorov upper bound.
+which we call a {\bf Kolmogorov upper bound} (defined below), and supply an operator, we call $\Trim$, that 
+produces such an approximation.
+%produces a variable that is a Kolomogorov upper bound of the input and has that is reduces the support size, \hl{while} producing an approximation that is .
 
 Let $X$ and $X'$ be random variables; 
 the Kolmogorov distance~\cite{lilliefors1967kolmogorov} between $X$ and $X'$ is defined as:
@@ -334,8 +341,8 @@ but not vice-versa.
 
 In our algorithms and examples,
 the PDF of a random variable $X$ is represented by a list $D_X$, 
-which consists of \hl{$d=(p', x)$} pairs, where $x\in \support(X)$
-and $p'$ is the probability $P(X{=}x)$. In the pair $d=(p', x)$, we denote the value $x$
+which consists of \hl{$d=(p, x)$} pairs, where $x\in \support(X)$
+and $p$ is the probability $P(X{=}x)$. In the pair $d=(p', x)$, we denote the value $x$
 by $val(d)$, and the probability $p'$ by $prob(d)$.
 For example, let $X$ be a random variable distributed as: $[0.1:1, 0.1:2, 0.8:4]$, and $X'$ a random variable distributed as $[0.2:1, 0.8:4]$. Then we have $X' \succeq_{0.1} X$. In order to achieve a \hl{Kolmogorov upper bound of $\varepsilon$},
 the $\Trim$ operator removes consecutive domain values whose accumulated probability is
@@ -427,7 +434,7 @@ P_{X'}(x_i) = P_X(x_i) +  P_X(x_i < X < x_{i+1})
 \label{collect}
 \end{equation}
 (assuming $x_{m+1} = \infty$ for convenience.)
-The value $P_X(x_i < X < x_{i+1})$ equals the value of $p$ in
+The value $P_{\text{\hl{X}}}(x_i < X < x_{i+1})$ equals the value of $p$ in
 the algorithm when the Append is performed, and  the loop invariant $0 \leq p \leq \varepsilon$ holds by construction.
 For any value $x$, let $l_x=\max\{ i \colon x_i\leq x\}$, thus:
 \[
@@ -907,14 +914,16 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 \end{theorem}
 
 \begin{proof}
-By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node \hl{$p$}. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{X_p}=0$}, therefore  $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ 
-	% TODO: move the definition of child way up
-	as a set of sub task trees, each of them with depth smaller than $ d $. 
-	If $r$ is a sequence node then,
-	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
-%Liat: what about the epsilon?	
-	\hl{If $r$ is a parallel node then,}
-	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+By induction over the depth of $\tau$, denoted by $d$. Base: $ d=1$, a single primitive node $p$. 
+In this case, by line 3 of Algorithm~\ref{alg:calc}, $\CalcNetwork(\tau_p,\varepsilon)=X_p$ and, by line 3 of Algorithm~\ref{alg:BuildPolynomial},  $\EstimateError(\tau_p,\varepsilon)=0$ and the claim follows.
+% therefor $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$
+%Primitive nodes do not carry any error and, by line 3 of \EstimateError, $\EstimateError(\tau_p,\varepsilon)=0$, therefore  $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. 
+Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: let $r$ be the root of the tree whose depth is $d$, i.e., its child subtrees are of depth smaller than $d$.
+%we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $d$. 
+% TODO: move the definition of child way up
+If $r$ is a sequence node then,	by Theorem~\ref{appSeqTheorem}, sequence nodes produce an error which is the sum of all child nodes errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+	If $r$ is a parallel node then,
+	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c,\varepsilon))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the child subtrees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 \end{proof}
 
 %Liat: Theorem 5 befor fix
