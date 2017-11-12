@@ -498,16 +498,19 @@ the input distributions may already be approximations. To keep the size of
 the support small, we apply Trim after each random variable is added.
 \hl{Therefore, we compute the random variables 
 $Y'_i = Trim_U(X'_i + Y'_{i-1}, \varepsilon)$,
-where the $X'_i$ is a Kolmogorov $\epsilon_i $ upper bound of $X_i$
+where the $X'_i$ is a Kolmogorov $\varepsilon_i $ upper bound of $X_i$
 and show that $Y'_n$ is a Kolmogorov $\delta $ upper bound of $X$, for an appropriate $\delta $.}
 
 The distribution of the sum of random variables $X'_i + Y'_{i-1}$ is 
 computed by a discrete convolution, and Trim is
 computed as in Algorithm~\ref{alg:Trim}. That is, our approximation for a sequence operator (for $n\geq 2$) is given by: %Liat: add eq?
-\[
+\begin{equation}
+\label{eq:sequence}
 Sequence(X'_1,\dots , X'_n,  \varepsilon) 
 = Trim(Convolve(X'_1, Sequence(X'_2, \dots , X'_n, \varepsilon)), \varepsilon)
-\]
+\end{equation}
+% todo GERA: define Convolve
+
 We begin by bounding the approximation error propagated by convolution (sum of random variables ):
 
 \begin{lemma} \label{Convolv}
