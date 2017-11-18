@@ -98,7 +98,8 @@
 \DeclareMathOperator{\support}{support}
 \DeclareMathOperator{\Trim}{Trim}
 \DeclareMathOperator{\LTrim}{LTrim}
-\DeclareMathOperator{\seq}{sequence} 
+\DeclareMathOperator{\Sequence}{Sequence} 
+\DeclareMathOperator{\Convolve}{Convolve} 
 \DeclareMathOperator{\parl}{parallel} 
 \DeclareMathOperator{\seqOr}{seqOr} 
 \DeclareMathOperator{\parOr}{parOr} 
@@ -110,7 +111,7 @@
 \DeclareMathOperator{\dur}{dur} 
 \DeclareMathOperator{\Uni}{Uni} 
 \DeclareMathOperator{\comp}{compound}
-\SetKwFunction{Sequence}{Sequence} 
+%\SetKwFunction{Sequence}{Sequence} 
 \SetKwFunction{Convolv}{Conv}
 \SetKwFunction{LTrim}{LTrim}
 \SetKwFunction{Network}{Network}
@@ -193,42 +194,46 @@ probabilistic reasoning.
 \section{Problem statement}\label{sec:formal}
 
 We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes.
-Primitive action nodes contain distributions over their resource consumption. 
-% TODO: Liat will expand this.
-Although other resources can be handled with our approach (\hl{e.g., memory}: tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed), we will assume henceforth, in order to be more concrete, that the only resource of interest is time.
-%{(for example, if fuel is the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car).}
+Primitive action nodes contain distributions over their resource consumption. Although other resources can be handled with our approach, we will assume henceforth, in order to be more concrete, that the only resource of interest is time.
+
+%(for example, if fuel is the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car e.g., memory: tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed)
 
 The tasks trees that we analyze are composed of sequence nodes, parallel nodes and leaves that we call primitive tasks. A sequence node represents a composition of tasks in sequence. Its makespan is the the sum of the makespans of its child nodes. A parallel node represents a composition of tasks in parallel. Its makespan is the maximum of the makespan of its child nodes.
 The makespans of the primitive nodes at the leafs of the tree are uncertain, and described as probability distributions.
 We assume  that the distributions are  independent (but {\em not} necessarily identically distributed).
 We also assume initially that the random variables are discrete and have finite support (i.e. the number of values for which the probability is non-zero is finite).
-\hl{In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is assumed to be completion time, we consider each leaf node, $v$, as a random variable, $X_v$, that has
+In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is completion time, we associate each leaf node, $v$, with the random variable, $X_v$, that represents the distribution of the 
 a completion-time distribution $P_{X_v}$ and a cumulative distribution function (CDF) $F_{X_v}$.
 
-For clarity, we elaborate regarding some common notations in this article. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. %Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. 
-Second, We denote the symbol $\tau_{name}$ where the subscript contains a name of a node corresponding to the sub-tree, i.e., the node is the root of the sub-tree. Note, the notation $X_{\tau_{v}}$ and $X_v$ may have the same meaning, a random variable represents the makespan of the sub-tree $\tau_{v}$ which is actually the duration distribution of node $v$.
-Third, We use the symbol $X'_{name}$ to denote an approximation of the random variable $X_{name}$.}
+For clarity, we use the following standard for notations in the paper. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. %Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. 
+Second, we use the symbol $\tau_{name}$ where the subscript contains a name of a node to denote the subtree starting at this node, i.e., the node is the root of the subtree. Note that $X_{\tau_{v}}$ and $X_v$ have the same meaning - a random variable representing the makespan of the subtree $\tau_{v}$.
+Last, we use primed versions of random variables to denote approximations, i.e., the symbol $X'_{name}$ denotes an approximation of the random variable $X_{name}$.
 
 The main computational problem analyzed in this paper is the {\em deadline problem}: 
 \begin{definition}\label{Def:Deadline}
-Given a task tree $\tau $ and a deadline $T$. 
-Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
+	Given a task tree $\tau $ and a deadline $T$, the \emph{deadline problem} is to compute $F_{X_\tau}(T)$.
 \end{definition}
-In other words, given a task tree $\tau $ and a deadline $T$, what is the probability that $\tau $ 
-will succeed and terminate in time not greater than $T$? 
+
+%\begin{definition}\label{Def:Deadline}
+%Given a task tree $\tau $ and a deadline $T$. 
+%Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
+%\end{definition}
+\hl{In words, given a task tree $\tau $ and a deadline $T$, what is the probability that $\tau $ 
+will terminate in time less than $T$?}
 
 The above {\em deadline problem} reflects a step utility function: a 
 constant positive utility $U$ for all $t$ less than or equal to a deadline 
 time $T$, and $0$ for all $t>T$. We also briefly consider a linear utility function, requiring
 computation of the expected completion time of $\tau$, and show that this {\em expectation problem} 
-is also NP-hard.
-%Liat: fixed notation in the following pg
-Stated in standard mathematical terms, leaf nodes represent primitive task durations as
-independent discrete random variables \hl{$X_i$}. The duration of a sequence node $s$ is a random variable:
+is also NP-hard. 
+% TODO: move the definition of child here
+% TODO: Say that we are now describing the random variable that assigned to each node in the tree.
+The duration of a sequence node $s$ is a random variable:
 $$
 X_s = \sum_{c\in \ch(s)} X_c
 $$
-where $X_c$ is a random variable representing the duration distribution of child node $c$.
+where $X_c$ is a random variable representing the duration distribution of child node $c$. \hl{We denote by $\ch(v)$ the set of children of some node $v$.}
+
 Likewise, the duration distribution of a parallel node $p$ is a random variable:
 $$
 X_p = \max_{c\in \ch(p)} X_c
@@ -238,7 +243,7 @@ Let $r$ be the root node of a task tree $\tau$ and $X_r$ be a random variable re
 Then the probability that the plan meets the deadline $T$ is $F_{X_r}(T)$.
 Thus we need to compute the CDF, which is NP-hard~\cite{mohring2001scheduling}. We show how to deterministically approximate the CDF of the root with additive error at most $\varepsilon$ in time polynomial in $1/\varepsilon$.
 
-Figure~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with \hl{probability density function (PDF)} describes the completion-time distribution. In this case $P_{X_a}(x)=P_{X_b}(x)=P_{X_c}(x)=P_{X_d}(x)=P_{X_e}(x)$.
+Figure~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with probability mass function (PMF) describes the completion-time distribution. In this case $P_{X_a}(x)=P_{X_b}(x)=P_{X_c}(x)=P_{X_d}(x)=P_{X_e}(x)$.
 $$P_{X_a}(x)=
 \begin{cases}
 1/4 & \text{if } x=1; \\
@@ -276,7 +281,7 @@ This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c
 
 \begin{example}
 
-Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we will compute the duration distribution in the form of \hl{PDF} for each compound task node including the root node, and then we will return the probability for $\tau$ to satisfy a given deadline $T$. 
+Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we will compute the duration distribution in the form of PMF for each compound task node including the root node, and then we will return the probability for $\tau$ to satisfy a given deadline $T$. 
 First, compute duration distribution for the node $B$. The children task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
 $$P_{X_B}(x)=P_{\max(X_a,X_b)}(x)=
 \begin{cases}
@@ -305,50 +310,51 @@ $$P_{X_{\tau}}=P_{X_A}(x)=P_{X_B+X_C+X_e}(x)=
 0 & otherwise.
 \end{cases}$$
 
-For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$ the probability is  $F_{X_{\tau}}(8)=25/1024$ . 
+For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$, the probability is  $F_{X_{\tau}}(8)=25/1024$ . 
 \end{example}
  
 \section{Sum (sequence) nodes}\label{sec:seq}
 
 The size of the support (number of non-zero probability values) of the sum of random variables
 may be exponential in the number of variables, even for 2-valued variables.
-\hl{In fact, as shown} in~\cite{mohring2001scheduling}, computing the CDF of a sum of random variables at a given point is NP-hard.
+In fact, as shown in~\cite{mohring2001scheduling}, computing the CDF of a sum of random variables at a given point is NP-hard.
 We thus define a notion of approximation, 
-which we call an {\bf Kolmogorov upper bound} (defined below), and supply a $\Trim$ operator that reduces the support size, \hl{while} producing an approximation that is a Kolomogorov upper bound.
+which we call a {\bf Kolmogorov upper bound} (defined below), and supply an operator, we call $\Trim$, that 
+produces such an approximation.
+%produces a variable that is a Kolomogorov upper bound of the input and has that is reduces the support size, \hl{while} producing an approximation that is .
 
 Let $X$ and $X'$ be random variables; 
 the Kolmogorov distance~\cite{lilliefors1967kolmogorov} between $X$ and $X'$ is defined as:
 \[
 d_K(X,X') = \sup_{x} |F_{X'}(x)-F_X(x)|
 \]
-Our notion of approximation uses the Kolmogorov distance. \hl{Let} $0\leq\varepsilon<1$. %$1 > \epsilon \geq 0$.
+Our notion of approximation uses the Kolmogorov distance. Let $0\leq\varepsilon<1$. %$1 > \epsilon \geq 0$.
 If the following equation holds:
 \[
 \forall ~ x, ~ F_X(x)+\varepsilon \geq F_{X'}(x) \geq F_X(x)
 \]
-%Liat: added \hl{approximation} 
 we say that the random variable $X'$ is a Kolmogorov $\varepsilon$ upper bound \hl{approximation} of $X$,
 which we denote by $X' \succeq_\varepsilon X$. Contrapositively, we call $X$ a  Kolmogorov $\varepsilon$ lower
 bound \hl{approximation} of $X'$. Note that $X' \succeq_\varepsilon X$ implies that $d_K(X,X') \leq \varepsilon$,
 but not vice-versa.
 
 In our algorithms and examples,
-the PDF of a random variable $X$ is represented by a list $D_X$, 
-which consists of \hl{$d=(p', x)$} pairs, where $x\in \support(X)$
-and $p'$ is the probability $P(X{=}x)$. In the pair $d=(p', x)$, we denote the value $x$
-by $val(d)$, and the probability $p'$ by $prob(d)$.
+the PMF of a random variable $X$ is represented by a list $D_X$, 
+which consists of $d=(p, x)$ pairs, where $x\in \support(X)$
+and $p$ is the probability $P(X=x)$. In the pair $d=(p, x)$, we denote the value $x$
+by $val(d)$, and the probability $p$ by $prob(d)$.
 For example, let $X$ be a random variable distributed as: $[0.1:1, 0.1:2, 0.8:4]$, and $X'$ a random variable distributed as $[0.2:1, 0.8:4]$. Then we have $X' \succeq_{0.1} X$. In order to achieve a \hl{Kolmogorov upper bound of $\varepsilon$},
 the $\Trim$ operator removes consecutive domain values whose accumulated probability is
 less than $\varepsilon$ and adds 
 their probability mass to the element in the support that precedes them.
 
-If the input $D_X$ to Trim is sorted in increasing order of $x$ (we denote this operator by $Trim_U(X, \varepsilon)$)
+\hl{If the input $D_X$ to $\Trim$ is sorted in increasing order of $x$ (we denote this operator by $\Trim_U(X, \varepsilon)$)
 then resulting variable $X'$ (represented by the output $D_{X'}$) 
 is a Kolmogorov $\varepsilon$ upper bound of $X$.
-(Likewise, if $D_X$ sorted in decreasing order of $x$ 
-(in this case we denote the \hl{trim} operator
-by $Trim_L(X, \varepsilon)$) then $X'$ is a Kolmogorov $\varepsilon$ 
-lower bound of $X$.)
+Likewise, if $D_X$ sorted in decreasing order of $x$ 
+(in this case we denote the $\Trim$ operator
+by $\Trim_L(X, \varepsilon)$) then $X'$ is a Kolmogorov $\varepsilon$ 
+lower bound of $X$. From now on, in order to simplify, we will use the notation $\Trim$ instead of $\Trim_U$ but the meaning remains the same.}
 
 %Eyal: copy from Eyal ver
 %---------------------------------
@@ -366,10 +372,10 @@ lower bound of $X$.)
 %%%%%%%%%%%%%%%%%%%%%
 \begin{algorithm}
   \DontPrintSemicolon
-  \SetKwFunction{Trim}{Trim}
+  \SetKwFunction{Trimalgo}{Trim}
   \SetKwProg{myproc}{Procedure}{}{}
   \myproc{
-  \Trim{$D_X$,$\varepsilon$}
+  \Trimalgo{$D_X$,$\varepsilon$}
   }{ 
              $D_{X'}=()$, $p=0$ \;	  
   		$d_{prev} = first(D_X)$\;
@@ -387,7 +393,7 @@ lower bound of $X$.)
        		 Append $(val(d_{prev}), prob(d_{prev})+p)$ to  $D_{X'}$\;
   \Return $D_{X'}$}
      
-\caption{Trim operator}  
+\caption{\hl{Trim operator}}  
 \label{alg:Trim}
 \end{algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -409,25 +415,24 @@ schemes, but these may not provide the desired guarantees.
 %\begin{proof}
 %Let $X'=\Trim(X,\varepsilon)$. 
 
-%Liat: all kinds of Trim...
-\noindent We now show that with $D_X$ sorted in \hl{increasing order},
+\noindent We now show that with $D_X$ sorted in a increasing order,
 $\Trim(D_X,\varepsilon)$ is an Kolmogorov $\varepsilon$ upper bound of $X$.
 \begin{lemma} \label{Trim}
-$\Trim_U(X,\varepsilon)\succeq_\varepsilon X$
+$\Trim(X,\varepsilon)\succeq_\varepsilon X$
 \end{lemma}
 
 \begin{proof}
-Let $X'=\Trim_U(X,\varepsilon)$. 
+Let $X'=\Trim(X,\varepsilon)$. 
 Let $x_1{<}\cdots{<}x_m$ be the support of $X'$. 
 Because $\Trim$ adds the probabilities of elements that were removed from the support of $X$ 
 to the support element of $X'$ that precedes them, 
 we have for all $i$:
 \begin{equation}
-P_{X'}(x_i) = P_X(x_i) +  P_X(x_i < X < x_{i+1})
+P_{X'}(x_i) = P_X(x_i) +  P(x_i < X < x_{i+1})
 \label{collect}
 \end{equation}
 (assuming $x_{m+1} = \infty$ for convenience.)
-The value $P_X(x_i < X < x_{i+1})$ equals the value of $p$ in
+The value $P(x_i < X < x_{i+1})$ equals the value of $p$ in
 the algorithm when the Append is performed, and  the loop invariant $0 \leq p \leq \varepsilon$ holds by construction.
 For any value $x$, let $l_x=\max\{ i \colon x_i\leq x\}$, thus:
 \[
@@ -438,7 +443,7 @@ From Equation~\eqref{collect} we get:
 {
 \begin{align*}
 &F_{X'}(x) - F_{X}(x)  \\
- &{=} \sum_{i=0}^{l_x-1} (P_{X'}(x_i)- P_X(x_i\leq X <x_{i+1})) +(P_{X'}(x_{l_x})-P_X(x_{l_x} \leq X \leq x)) \\%[.25cm]
+ &{=} \sum_{i=0}^{l_x-1} (P_{X'}(x_i)- P(x_i\leq X <x_{i+1})) +(P_{X'}(x_{l_x})-P(x_{l_x} \leq X \leq x)) \\%[.25cm]
 &{=}P_{X'}(x_{l_x}) {-} (P(x_{l_x} {\leq} X {<} x_{l_x+1}) {-} P(x {<} X {<} x_{l_x+1})) \\
 &{=}P(x < X < x_{l_x+1}) \in (0,\varepsilon]
 \end{align*}}
@@ -488,7 +493,7 @@ is at most ${1}/{\varepsilon}+1$.
 %WAS REDUNDANT, removed
 
 
-\hl{The makespan of a sequence} operator is a random variable $X$, the sum 
+The makespan of a $\Sequence$ operator is a random variable $X$, the sum 
 of the random variables $X_i$ of its children.
 Let $Y_i = X_i + Y_{i-1}$ for $1< i \leq n$, and $Y_1=X_1$.
 Thus $X$ is distributed as $Y_n$.
@@ -497,20 +502,18 @@ As the children of a sequence node may be internal nodes in the task tree,
 the input distributions may already be approximations. To keep the size of
 the support small, we apply Trim after each random variable is added.
 \hl{Therefore, we compute the random variables 
-$Y'_i = Trim_U(X'_i + Y'_{i-1}, \varepsilon)$,
+$Y'_i = \Trim(X'_i + Y'_{i-1}, \varepsilon)$,
 where the $X'_i$ is a Kolmogorov $\varepsilon_i $ upper bound of $X_i$
 and show that $Y'_n$ is a Kolmogorov $\delta $ upper bound of $X$, for an appropriate $\delta $.}
 
 The distribution of the sum of random variables $X'_i + Y'_{i-1}$ is 
 computed by a discrete convolution, and Trim is
-computed as in Algorithm~\ref{alg:Trim}. That is, our approximation for a sequence operator (for $n\geq 2$) is given by: %Liat: add eq?
+computed as in Algorithm~\ref{alg:Trim}. That is, our approximation for a $\Sequence$ operator (for $n\geq 2$) is given by: 
 \begin{equation}
 \label{eq:sequence}
-Sequence(X'_1,\dots , X'_n,  \varepsilon) 
-= Trim(Convolve(X'_1, Sequence(X'_2, \dots , X'_n, \varepsilon)), \varepsilon)
+\Sequence(X'_1,\dots , X'_n,  \varepsilon) 
+= \Trim(\Convolve(X'_1, \Sequence(X'_2, \dots , X'_n, \varepsilon)), \varepsilon)
 \end{equation}
-% todo GERA: define Convolve
-
 We begin by bounding the approximation error propagated by convolution (sum of random variables ):
 
 \begin{lemma} \label{Convolv}
@@ -545,7 +548,7 @@ in polynomial time, as shown below:
 %\vspace*{-0.1cm} 
 
 \begin{theorem}
-If $X_i' \succeq_{\varepsilon_i} X_i$ for all $i \in\{1,\dots,n\}$ and $\hat{X}= Sequence(X_1',\dots,X_n', \varepsilon)$ then
+If $X_i' \succeq_{\varepsilon_i} X_i$ for all $i \in\{1,\dots,n\}$ and $\hat{X}= \Sequence(X_1',\dots,X_n', \varepsilon)$ then
 $\hat{X} \succeq_e \sum_{i=1}^{n} X_{i}$, where $e={\sum_{i=1}^n\varepsilon_i + n \varepsilon}$. 
 \label{appSeqTheorem}
 \end{theorem} 
@@ -565,7 +568,7 @@ $\varepsilon_1 +\dots+ \varepsilon_n$. From Lemma~\ref{Trim}, we get an addition
 
 \begin{theorem} \label{appSeqComplexTheorem}
 Assuming that $m \leq 1/\varepsilon$, the procedure
-$Sequence(X_1',\dots,X_n', \varepsilon)$ can be computed
+$\Sequence(X_1',\dots,X_n', \varepsilon)$ can be computed
 in time $O((nm/\varepsilon)\log(m/\varepsilon))$ using $O(m/\varepsilon)$ memory, where $m$ is the size of the largest support of any of the $X'_i$s.
 \end{theorem} 
 
@@ -575,7 +578,7 @@ From Lemma~\ref{SizeD}, the size of list $D$ in
 Algorithm~\ref{alg:Trim} is at most $m/\varepsilon$
 just after the convolution, after which it is trimmed, so the space complexity 
 is $O(m/\varepsilon)$.
-$\operatorname{Convolve}$ thus takes time $O((m/\varepsilon)\log(m/\varepsilon))$, where the logarithmic factor
+$\operatorname{Convolve}$ thus takes time of $O((m/\varepsilon)\log(m/\varepsilon))$, where the logarithmic factor
 is required internally
 for sorting. Since the runtime of  the $\Trim$ operator is linear, and the
 outer loop iterates $n$ times, the overall 
@@ -667,21 +670,21 @@ the bounds.
 	
 	Note that indeed trimming shifts the mass from $P_X(1)=\varepsilon/n$ to $P_{X'}(0)$.
 	This repeats in all steps so, after $n$ steps, we get a random variable $X'$ such that $P_{X'}(0) \xrightarrow{\,\,\delta \to 0\,\,} \varepsilon$. Therefore, 
-	$P_{Sequence(X_1,\dots,X_n,\varepsilon/n)}(0) {-} P_{X_1{+}\dots{+}X_n}(0)$
+	$P_{\Sequence(X_1,\dots,X_n,\varepsilon/n)}(0) {-} P_{X_1{+}\dots{+}X_n}(0)$
 	%\begin{align*}
 	%&P(Sequence(X_1,\dots,X_n,\varepsilon/n) {\leq} 0)  \\
 	%&             \hspace{4cm} - P(X_1+\dots+X_n \leq 0)
 	%\end{align*}
 	approaches $\varepsilon$ as $\delta$ approaches zero
 	which means that there exists no $\varepsilon' {<} \varepsilon$
-	such that $Sequence(X_1,\dots,X_n,\varepsilon/n) \succeq_{\varepsilon'} X_1 + \cdots + X_n$ for all $\delta >0$.
+	such that $\Sequence(X_1,\dots,X_n,\varepsilon/n) \succeq_{\varepsilon'} X_1 + \cdots + X_n$ for all $\delta >0$.
 	
 \end{example}
 
 Observe that if we replace all upper Kolmogorov bound approximations by 
 lower Kolmogorov bound approximations, all the results in this section
 still hold. Therefore, to obtain lower Kolmogorov bounds all that must be
-done is to repeat the computations using $Trim_L$, that is, keeping
+done is to repeat the computations using $\Trim_L$, that is, keeping
 the distribution representation sorted in reverse order.
 
 
@@ -701,8 +704,8 @@ F_{\max_{i\in[1:n]}X_i}(T)
 \label{eq:par}
 \end{align}
 
-\noindent where the last equality follows from independence of the random variables .
-We denote the construction of \hl{the CDF using} Equation~\eqref{eq:par} by $\Parallel(X_1,\dots , X_n)$.
+\noindent where the last equality follows from independence of the random variables.
+We denote the construction of the CDF using Equation~\eqref{eq:par} by $\Parallel(X_1,\dots , X_n)$.
 If the random variables  are all discrete with finite support, $\Parallel(X_1,\dots , X_n)$
 incurs linear space, and computation time $O(nm log(n))$.
 
@@ -740,7 +743,8 @@ $F_{\max_{i\in[1:n]}X'_i}
 %\vspace*{-0.7cm} 
 Since $F_{X_i'}(T) > F_{X_i}(T)$ for each $i$, this expression is nonnegative.
 \end{proof}
-%Liat: need to add some explanation for what is this lemma
+
+\hl{Indeed, both in} Lemma~\ref{appPalTheorem} and  Lemma~\ref{tightPalTheorem} we suggest an upper bound of the error resulted in the case where the input CDFs themselves are approximations. However, Lemma~\ref{appPalTheorem} is more suitable for proofing Theorem~\ref{th:TTalgcomplexity} and Lemma~\ref{appPalTheorem} is more suitable for proofing Theorem~\ref{theorem:approxEps0}. \hl{In order to tighten the analysis we present the following lemma.}
 \begin{lemma} \label{tightPalTheorem}
 For discrete random variables $X_1', \dots X_n'$, $X_1, \dots,X_n$, if for all $i=1,\dots,n$,  $X_i' \succeq_{\varepsilon_i} X_i$,
 then $\max\{X_1',\dots, X_n'\} \succeq_{e} \max\{X_1,\dots,X_n\}$ where $e=1-\prod_{i=1}^n (1-\varepsilon_i)$.
@@ -826,9 +830,9 @@ We use the notation $|\tau|$ to denote the total number of nodes in $\tau$.
 	
   \If{$v$  is a $\operatorname{Sequence}$ node}{
   	\For{$c \in \ch(v)$} {
-	    \hl{$X'_c$} = \Network($\tau_c$, $\frac{|\tau_c|\varepsilon}{|\tau_v|}$)\;
+	    $X'_c$ = \Network($\tau_c$, $\frac{|\tau_c|\varepsilon}{|\tau_v|}$)\;
 	 }
-	 \Return \Sequence(\hl{$\{X'_c\}_{c \in \ch(v)}$, $\frac{\varepsilon}{n_v|\tau_v|}$})	
+	 \Return \Sequence($\{X'_c\}_{c \in \ch(v)}$, $\frac{\varepsilon}{n_v|\tau_v|}$)	
 	 
 	}
 			
@@ -867,6 +871,8 @@ If $v$ is a $\operatorname{Parallel}$ node, by the induction hypothesis that $X'
  
 \noindent So $\sum_{c\in \ch(v)} e_c \leq   \sum_{c\in \ch(v)} \frac{|\tau_{c}|\varepsilon}{|\tau_v|}  \leq \varepsilon  - \varepsilon/ |\tau_v|  $. Then, by Lemma~\ref{appPalTheorem}, using $K=|\tau_v|$ and $n=n_v$, we get that $\Parallel(\{X'_c\}_{c\in \ch(v)})\succeq_\varepsilon  X_\tau$ as required. 
 \end{proof}
+
+
 
 \begin{theorem}\label{th:TTalgcomplexity}
 Let  $N$ be the size of the  task tree  $\tau$,  and $M$ the size of the maximal support of each of the primitive tasks.
@@ -910,36 +916,26 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 \end{theorem}
 
 \begin{proof}
-By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node \hl{$p$}. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{X_p}=0$}, therefore  $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ 
-	% TODO: move the definition of child way up
-	as a set of sub task trees, each of them with depth smaller than $ d $. 
-	If $r$ is a sequence node then,
-	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
-%Liat: what about the epsilon?	
-	\hl{If $r$ is a parallel node then,}
-	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+By induction over the depth of $\tau$, denoted by $d$. Base: $ d=1$, a single primitive node $p$. 
+In this case, by line 3 of Algorithm~\ref{alg:calc}, $\CalcNetwork(\tau_p,\varepsilon)=X_p$ and, by line 3 of Algorithm~\ref{alg:BuildPolynomial},  $\EstimateError(\tau_p,\varepsilon)=0$ and the claim follows.
+% therefor $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$
+%Primitive nodes do not carry any error and, by line 3 of \EstimateError, $\EstimateError(\tau_p,\varepsilon)=0$, therefore  $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. 
+Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: let $r$ be the root of the tree whose depth is $d$, i.e., its child subtrees are of depth smaller than $d$.
+%we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $d$. 
+% TODO: move the definition of child way up
+If $r$ is a sequence node then,	by Theorem~\ref{appSeqTheorem}, sequence nodes produce an error which is the sum of all child nodes errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+	If $r$ is a parallel node then,
+	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c,\varepsilon))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the child subtrees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 \end{proof}
 
-%Liat: Theorem 5 befor fix
-%\begin{proof}
-%By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single primitive node $v_p$. Primitive nodes do not carry any error, and by procedure \EstimateError line 3, \hl{$P_{v_p}=0$}, therefore  $\CalcNetwork(\tau_{v_p},\varepsilon) \succeq_0 X_{\tau_{v_p}}$. Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: we refer to the children nodes of the root node $\ch(v_{root})= \lbrace c_1, c_2,...,c_{|\ch(v_{root})|}\rbrace$ 
-%	% TODO: move the definition of child way up
-%	as a set of sub task trees, each of them with depth smaller than $ d $. 
-%	If $v_{root}$ is a sequence node then,
-%	by Theorem~\ref{appSeqTheorem}, sequence node produce an error which is the sum of all children node errors and an additional $\varepsilon(v_{root})$ caused by the trim operator $$\varepsilon_0={\varepsilon(v_{root})+\sum_{c \in \ch(v_{root})}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
-%%Liat: what about the epsilon?	
-%	\hl{If $v_{root}$ is a parallel node then,}
-%	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(v_{root})}{(1-\EstimateError(\tau_c))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{v_{root}}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
-%\end{proof}
 
+%\TODO write some intro regarding the algos
 
-
-%Liat: need to add X'_c or it should be X_c?
 \begin{algorithm}
   \DontPrintSemicolon
   \SetKwFunction{Sequence}{Sequence}
   \SetKwFunction{Parallel}{Parallel}
-  \SetKwFunction{BuildPolynomial}{BuildPolynomial}
+  \SetKwFunction{EstimateError}{EstimateError}
   %-----------------------------------%
   {
 
@@ -988,7 +984,7 @@ By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single pri
   	\For{$c \in \ch(v)$} {
 	    $X_c = \CalcNetwork(\tau_c, \varepsilon)$\;
 	 }
-	 \Return \Sequence($\{X_c\}_{c \in \ch(v)}$, $\varepsilon(v)$)	
+	 \Return \Sequence(\hl{$\{X_c\}_{c \in \ch(v)}$, $\varepsilon(v)$})	
 	 
 	}
 			
@@ -1001,7 +997,7 @@ By induction over the depth of $\tau$ denoted by $d$. Base: $ d=1$, a single pri
   }
 %----------------------------------5
   
-\caption{  \hl{$GenNetwork(\tau, \varepsilon)$}}
+\caption{ GenNetwork($\tau$, $\varepsilon$)}
 \label{alg:calc}
   
 \end{algorithm}
@@ -1014,10 +1010,10 @@ The following lemma establishes, however, that the computation of $\varepsilon$ 
 Given a task tree $\tau$, if we consider $\EstimateError(\tau,\varepsilon)$ as a function of the variables $\{\varepsilon(v)\}_{v\in Seq}$ where $Seq$ is the set of Sequence nodes in $\tau$, we have a polynomial of degree smaller or equal to $|Seq|$.  
 \end{lemma}
 \begin{proof}
-By induction over the depth of $\tau$ denoted by $d$. Base: if $d=1$ we have a tree with a single primitive node $v_p$. In this case  $\EstimateError(\tau,\varepsilon)$ which is indeed a polynomial degree zero.
-Induction step: we refer to the children nodes of the root node, $\ch(v_{root})$, as a set of sub task trees, each of them with depth smaller than $d$. If $v_{root}$, is a sequence node 
-$$\EstimateError(\tau,\varepsilon)=\sum_{c\in \ch(v_{root})}\EstimateError(\tau_c,\varepsilon) +  \varepsilon.$$ 
-If $v_{root}$, is a parallel node  $$\EstimateError(\tau,\varepsilon)=1-\prod_{c\in \ch(v_{root})} (1-\EstimateError(\tau_c,\varepsilon)).$$ 
+By induction over the depth of $\tau$ denoted by $d$. Base: if $d=1$ we have a tree with a single primitive node $p$. In this case  $\EstimateError(\tau,\varepsilon)$ which is indeed a polynomial degree zero.
+Induction step: we refer to the children nodes of the root node $r$, $\ch(r)$, as a set of sub task trees, each of them with depth smaller than $d$. If $r$, is a sequence node 
+$$\EstimateError(\tau,\varepsilon)=\sum_{c\in \ch(r)}\EstimateError(\tau_c,\varepsilon) +  \varepsilon.$$ 
+If $r$, is a parallel node  $$\EstimateError(\tau,\varepsilon)=1-\prod_{c\in \ch(r)} (1-\EstimateError(\tau_c,\varepsilon)).$$ 
 By the induction hypothesis we have that the degree of $\EstimateError(c,\varepsilon)$ is the number of sequence node in $c$, for each $c$, and the above equalities show that the degree is increased by one if and only if the root is a parallel node. 
 \end{proof}
 
@@ -1047,13 +1043,13 @@ See Example~\ref{exp:seq} and Example~\ref{expl:parallel}.
 
 
 The above result establishes that $\CalcNetwork$ is tight in the sense that there is no $\varepsilon_0 < \CalcNetwork(\tau, \varepsilon)$ 
-such that $\CalcNetwork(\tau, \varepsilon)$ is always \hl{$\succeq_{\varepsilon_0}$} than $X_{\tau}$. 
+such that $\CalcNetwork(\tau, \varepsilon)$ is always $\succeq_{\varepsilon_0}$ than $X_{\tau}$. 
 If we look more closely at on the examples used
 to prove the theorem, we can say more about the tightness of our algorithm, as follows.
 Since the examples consist of task trees whose root nodes are both of
 type sequence and of type parallel, we get that any algorithm that traverses the tree
 recursively like we do, cannot do better than $\CalcNetwork$ in terms of computing a
-random variable that is \hl{$\succeq_{\varepsilon}$} than $X_{\tau}$ with a smaller $\varepsilon$. 
+random variable that is $\succeq_{\varepsilon}$ than $X_{\tau}$ with a smaller $\varepsilon$. 
 More formally, if we restrict the discussions to algorithms where the trimming of the variables in a subtree
 depend only on the structure of the subtree (not on siblings or parents or the CDFs of the variables), then 
 $\CalcNetwork$ applies the maximal possible trimming (assuming that we have an optimal solution to $\EstimateError$). 
@@ -1066,7 +1062,7 @@ takes this extra time only in cases where any algorithm that decides how to trim
 (and not on the CDFs of the random variables or on other parts of the tree) would.
 
 
-%Liat: need mor refs to the ijcai paper
+%todo: need more refs from the ijcai paper
 \section{Complexity results}\label{sec:complexity}
 
 The deadline problem is NP-hard, 
@@ -1091,7 +1087,7 @@ Deciding if the probability that a task tree satisfies a deadline $T$ is above a
 \end{proof}
 
 Our next goal is to show that not only that the above decision problem is NP-hard but also to analyze the hardness of computing the exact probability $F_{\sum_{i=0}^{n} Y_{i}}(T)$. To this end, we note that 
-if \hl{$P(Y_i=y)=1/|\support(Y_i)|$} for every $i$ and every $y\in\support(Y_i)$, computing the probability $F_{\sum_{i=0}^{n} Y_{i}}(T)$ is equivalent, up to scaling by $\prod_{i=1}^n |\support(Y_i)|$, to counting the number of assignments to the random variables  such that $\sum_{i=0}^{n} Y_{i} \leq T$. 
+if $P_{Y_i}(y)=1/|\support(Y_i)|$ for every $i$ and every $y\in\support(Y_i)$, computing the probability $F_{\sum_{i=0}^{n} Y_{i}}(T)$ is equivalent, up to scaling by $\prod_{i=1}^n |\support(Y_i)|$, to counting the number of assignments to the random variables  such that $\sum_{i=0}^{n} Y_{i} \leq T$. 
 
 \begin{definition} 
 	Given the random variable $Y_1,\dots,Y_n$ and a deadline $T$,
@@ -1106,7 +1102,7 @@ We will show that \#deadline-probability is \#P-complete by providing a reductio
 \#deadline-probability is \#P-complete.
 \end{theorem}
 
-\begin{proof} By reduction from \#knapsack. Given an instance of \#knapsack, create the two-valued random variables $Y_{1},\dots,Y_{n} $ with $P(Y_i=w_i)=1/2$ and $P(Y_i=0)=1/2$ and choose $T=W$. By construction, $|S|=2^n \cdot F_{\sum_{i=1}^{n} Y_{i}}(T)$ (where $S$ is as explained above). Since, every assignment is chosen with probability $1/2^n$, we get that $|S|$ is the number of assignments such that $\sum_{i=1}^{n} Y_{i} \leq T$. Thus, if we could count the number of such assignments, we could also count the size of $S$. This establishes that the problem is \#P-complete. 
+\begin{proof} By reduction from \#knapsack. Given an instance of \#knapsack, create the two-valued random variables $Y_{1},\dots,Y_{n} $ with $P_{Y_i}(w_i)=1/2$ and $P_{Y_i}(0)=1/2$ and choose $T=W$. By construction, $|S|=2^n \cdot F_{\sum_{i=1}^{n} Y_{i}}(T)$ (where $S$ is as explained above). Since, every assignment is chosen with probability $1/2^n$, we get that $|S|$ is the number of assignments such that $\sum_{i=1}^{n} Y_{i} \leq T$. Thus, if we could count the number of such assignments, we could also count the size of $S$. This establishes that the problem is \#P-complete. 
 \end{proof}
 
 Finally, we consider the linear utility function, i.e. the problem of computing an expected makespan of a task network.
@@ -1124,9 +1120,9 @@ Computing the expected completion time of a task network is NP-hard.
 By reduction from subset sum, defined as:
 given a set $S=\{s_{1},\dots,s_{n}\}$ of integers, and integer target value $T$, is there a subset of $S$ whose sum is exactly $T$? 
 Given an instance of \textit{SubsetSum}, create
-the two-valued random variables  $Y_{1},\dots,Y_{n} $ with $P(Y_i=s_i)=1/2$ and $P(Y_i=0)=1/2$. 
+the two-valued random variables  $Y_{1},\dots,Y_{n} $ with $P_{Y_i}(s_i)=1/2$ and $P_{Y_i}(0)=1/2$. 
 By construction, there exists a subset of $S$ summing 
-to $T$ if and only if $P(\sum_{i=0}^{n} Y_{i}=T)>0$.
+to $T$ if and only if $P_{\sum_{i=0}^{n} Y_{i}}(T)>0$.
 Construct random variables  (``primitive tasks'') $Y_i$ .
 Denote by $X$ the random variable $\sum_{i=1}^{n} Y_{i}$. Construct one parallel node
 with two children, one being the a sequence node having the
@@ -1165,7 +1161,7 @@ To complete the picture, we also state the complexity of the deadline problem  f
 
 \begin{lemma} \label{TPar}
 	Let $Y=\{Y_1,\dots,Y_n\}$ be a set of independent random variables specified by the same type of %probability distribution functions 
-	CDF (either all are Discrete, all are Normal, or all are Piecewise polynomial) and let $T \in \mathbb{R}$. Then, deciding $P(\max\{Y_1,\dots,Y_n\} \leq T) $ 
+	CDF (either all are Discrete, all are Normal, or all are Piecewise polynomial) and let $T \in \mathbb{R}$. Then, deciding \hl{$F_{\max\{Y_1,\dots,Y_n\}}(T)$} %$P(\max\{Y_1,\dots,Y_n\} \leq T) $ 
 	%and $P(\min\{Y_1,\dots,Y_n\}\leq T) $ 
 	can be done in polynomial-time.%\footnote{Here, we measure the size of the input by $n$, the number of random variables, and by the variable $m$, the (maximal) size of the support of each of the variables. The run time is polynomial in both variables.}
 \end{lemma}
@@ -1272,8 +1268,7 @@ The duration distribution of all primitive tasks is uniform but the support para
 in some tasks the distribution is fixed (such as for load and unload) and in others the distribution depends on the velocity of the vehicle
 and on the distance to be travelled.
 
-After running our approximation algorithm we also ran a variant
-that uses an \hl{inverted version of the} $\Trim$ operator, providing a {\em lower} bound of the CDF, as well as the upper bound
+After running our approximation algorithm we also \hl{ran $\Trim_L$ which uses an inverted version of the} $\Trim$ operator, providing a {\em lower} bound of the CDF, as well as the upper bound
 generated by Algorithm~\ref{alg:approx}. Running both variants allows us to bound the actual error, costing
 only a doubling of the run-time. Despite the fact that our error bound is theoretically tight, in practice
 and with actual distributions, according to Tables~\ref{tab:errors1} and ~\ref{tab:errors2}, the resulting error
@@ -1378,7 +1373,7 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \begin{table*}[tbh!]
 	{\footnotesize
-		\begin{tabular}{|l|l|l|| p{1.5cm}|p{1.5cm}|p{1.8cm}||l|l|l|l|l|}
+		\begin{tabular}{|l|l|l|| p{1.1cm}|p{1.1cm}|p{1.4cm}||p{0.6cm}|p{0.6cm}|p{0.6cm}|p{0.6cm}|p{0.6cm}|}
 			\hline
 			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approximation algorithm error, given $\varepsilon$} & \multicolumn{5}{c|}{Sampling algorithm error, given \# samples} \\ \cline{4-11} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} & \multicolumn{1}{c|}{$10^{6}$} & \multicolumn{1}{c|}{$10^{7}$} \\ \hline \hline
@@ -1438,7 +1433,7 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \begin{table*}[tbh!]
 	{\footnotesize
-		\begin{tabular}{|l|l|l|| p{1.5cm}|p{1.5cm}|p{1.5cm}||p{1.1cm}|p{1.1cm}|p{1.1cm}|}
+		\begin{tabular}{|l|l|l|| p{1.1cm}|p{1.1cm}|p{1.4cm}||p{1.1cm}|p{1.1cm}|p{1.1cm}|}
 			\hline
 			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approximation algo. error, given $\varepsilon$} & \multicolumn{3}{c|}{Sampling algo. error, given \# samples} \\ \cline{4-9} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} \\ \hline \hline
@@ -1694,7 +1689,7 @@ the following property, for all $x$:
 \[
 F_{X^+|Y=y}(x) \succeq_\varepsilon F_{X|Y=y}(x) \succeq_\varepsilon F_{X^-|Y=y}(x)
 \]
-Now let:
+\hl{Now let}:
 \[
 F_{X^-}(x) = \sum_{y\in D(Y)} P(Y=y) F_{X^-|Y=y}(x)
 \]
@@ -1725,19 +1720,10 @@ must also be between 0 and $\varepsilon$.
 
 \section{Discussion and Related Work}\label{sec:discussion}
 
-%Numerous issues remain unresolved, briefly discussed below.
-%Eyal:copy from Eyal version
-%-------------------------------
-%Trivial improvements to the $\Trim$ operator are possible, such as the inverse version of the operator used to
-%generate a lower bound for the empirical results. Other candidate improvements are not performing trimming
-%(or even stopping a trimming operation) if the current support size is below $1/\varepsilon$, which may increase accuracy but also
-%the runtime. Another point is that in the combined algorithm, space and time complexity can be reduced by adding some $\Trim$ operations,
-
-%Liat: maybe add more info?
-\hl{Trivial improvements} to the $\Trim$ operator are possible, 
-such as not performing trimming (or even stopping a trimming operation) if the current support 
+%Todo: Add optrim?
+\hl{Numerous issues remain unresolved, briefly discussed below. Although the $\Trim$ operator provides nice and efficient approximation, improvements are possible. For instance, not perform trimming (or even stop a trimming operation) if the current support 
 size is below $1/\varepsilon$, which may increase accuracy but also
-the runtime. Another point is that in the combined algorithm, 
+the runtime}. Another point is that in the combined algorithm, 
 space and time complexity can be reduced by adding some $\Trim$ operations,
 especially after processing a parallel node, which is not done in our version. This may reduce accuracy, 
 a trade-off yet to be examined.
@@ -1745,7 +1731,7 @@ Another option is, when given a specific threshold, trying for higher accuracy i
 threshold, but how to do that is non-trivial. For {\em sampling} schemes such methods are known, including adaptive 
 sampling~\cite{bucher1988adaptive,lipton1990practical},
 stratified sampling, and other schemes.
-It may be possible to apply such schemes to deterministic algorithms as well - an interesting issue for future work.
+It may be possible to apply such schemes to deterministic algorithms as well - an interesting issue for future work. 
 
 Extension to continuous distributions: our algorithm can handle them by
 pre-running a version of the $\Trim$ operator on the primitive task distribution. Since one cannot iterate over support values
@@ -1760,7 +1746,7 @@ Sampling algorithms may run into trouble if the target distribution contains maj
 other values but with extremely low probability. Our approximation algorithm can also be used as-is to estimate
 the CDF and then to approximate the expectation, but we do not expect it to perform well because our current $\Trim$
 operator only limits the amount of probability mass moved at each location to $\varepsilon$, but does not limit the
-``distance'' alnog the $x$ parameter over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of \hl{$Trim$} that bounds just this distance was
+``distance'' alnog the $x$ parameter over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of $\Trim$ that bounds just this distance was
 shown to provide a polynomial-time approximation scheme
 for the expectations in EXPECTI-MIN-MAX game trees
 \cite{shperbergmonte}, 
