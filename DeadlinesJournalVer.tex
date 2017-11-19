@@ -218,21 +218,21 @@ The main computational problem analyzed in this paper is the {\em deadline probl
 %Given a task tree $\tau $ and a deadline $T$. 
 %Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
 %\end{definition}
-\hl{In words, given a task tree $\tau $ and a deadline $T$, what is the probability that $\tau $ 
-will terminate in time less than $T$?}
+In words, given a task tree $\tau $ and a deadline $T$, we ask what is the probability that the plan modeled by $\tau$ terminates in time less than $T$?
 
 The above {\em deadline problem} reflects a step utility function: a 
 constant positive utility $U$ for all $t$ less than or equal to a deadline 
 time $T$, and $0$ for all $t>T$. We also briefly consider a linear utility function, requiring
 computation of the expected completion time of $\tau$, and show that this {\em expectation problem} 
 is also NP-hard. 
-% TODO: move the definition of child here
-% TODO: Say that we are now describing the random variable that assigned to each node in the tree.
 The duration of a sequence node $s$ is a random variable:
+
 $$
 X_s = \sum_{c\in \ch(s)} X_c
 $$
-where $X_c$ is a random variable representing the duration distribution of child node $c$. \hl{We denote by $\ch(v)$ the set of children of some node $v$.}
+where $X_c$ is a random variable representing the duration of the plan modeled by the subtree rooted at the child node $c$ and $\ch(s)$ is the set of children of $s$.
+
+%\hl{We denote by $\ch(v)$ the set of children of some node $v$.}
 
 Likewise, the duration distribution of a parallel node $p$ is a random variable:
 $$
@@ -344,17 +344,19 @@ which consists of $d=(p, x)$ pairs, where $x\in \support(X)$
 and $p$ is the probability $P(X=x)$. In the pair $d=(p, x)$, we denote the value $x$
 by $val(d)$, and the probability $p$ by $prob(d)$.
 For example, let $X$ be a random variable distributed as: $[0.1:1, 0.1:2, 0.8:4]$, and $X'$ a random variable distributed as $[0.2:1, 0.8:4]$. Then we have $X' \succeq_{0.1} X$. In order to achieve a \hl{Kolmogorov upper bound of $\varepsilon$},
-the $\Trim$ operator removes consecutive domain values whose accumulated probability is
+the $\Trim_U$ operator removes consecutive domain values whose accumulated probability is
 less than $\varepsilon$ and adds 
 their probability mass to the element in the support that precedes them.
 
-\hl{If the input $D_X$ to $\Trim$ is sorted in increasing order of $x$ (we denote this operator by $\Trim_U(X, \varepsilon)$)
+If the input $D_X$ to $\Trim$ is sorted in increasing order of $x$ (we denote this operator by $\Trim_U(X, \varepsilon)$)
 then resulting variable $X'$ (represented by the output $D_{X'}$) 
 is a Kolmogorov $\varepsilon$ upper bound of $X$.
 Likewise, if $D_X$ sorted in decreasing order of $x$ 
 (in this case we denote the $\Trim$ operator
 by $\Trim_L(X, \varepsilon)$) then $X'$ is a Kolmogorov $\varepsilon$ 
-lower bound of $X$. From now on, in order to simplify, we will use the notation $\Trim$ instead of $\Trim_U$ but the meaning remains the same.}
+lower bound of $X$. 
+
+From now on, in order to simplify, we will use the notation $\Trim$ instead of $\Trim_U$. Note that we could have chosen to use $\Trim_L$ instead and get a symmetric version of all the results.
 
 %Eyal: copy from Eyal ver
 %---------------------------------
@@ -393,7 +395,8 @@ lower bound of $X$. From now on, in order to simplify, we will use the notation 
        		 Append $(val(d_{prev}), prob(d_{prev})+p)$ to  $D_{X'}$\;
   \Return $D_{X'}$}
      
-\caption{\hl{Trim operator}}  
+%\caption{\hl{Trim operator}}  
+\caption{An implementation of the $\Trim$ operator}  
 \label{alg:Trim}
 \end{algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -500,11 +503,11 @@ Thus $X$ is distributed as $Y_n$.
 
 As the children of a sequence node may be internal nodes in the task tree,
 the input distributions may already be approximations. To keep the size of
-the support small, we apply Trim after each random variable is added.
-\hl{Therefore, we compute the random variables 
+the support small, we apply Trim after the addition of each random variable, i.e., 
+we compute the random variables 
 $Y'_i = \Trim(X'_i + Y'_{i-1}, \varepsilon)$,
 where the $X'_i$ is a Kolmogorov $\varepsilon_i $ upper bound of $X_i$
-and show that $Y'_n$ is a Kolmogorov $\delta $ upper bound of $X$, for an appropriate $\delta $.}
+and show that $Y'_n$ is a Kolmogorov $\delta $ upper bound of $X$, for an appropriate $\delta $.
 
 The distribution of the sum of random variables $X'_i + Y'_{i-1}$ is 
 computed by a discrete convolution, and Trim is
@@ -922,14 +925,14 @@ In this case, by line 3 of Algorithm~\ref{alg:calc}, $\CalcNetwork(\tau_p,\varep
 %Primitive nodes do not carry any error and, by line 3 of \EstimateError, $\EstimateError(\tau_p,\varepsilon)=0$, therefore  $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. 
 Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: let $r$ be the root of the tree whose depth is $d$, i.e., its child subtrees are of depth smaller than $d$.
 %we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $d$. 
-% TODO: move the definition of child way up
+
 If $r$ is a sequence node then,	by Theorem~\ref{appSeqTheorem}, sequence nodes produce an error which is the sum of all child nodes errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 	If $r$ is a parallel node then,
 	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c,\varepsilon))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the child subtrees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 \end{proof}
 
 
-%\TODO write some intro regarding the algos
+%TODO: write some intro regarding the algos
 
 \begin{algorithm}
   \DontPrintSemicolon
@@ -1160,10 +1163,9 @@ $F_{X}( T)$, and thus also $P(X=T)$, in polynomial time.
 To complete the picture, we also state the complexity of the deadline problem  for trees with only parallel nodes:
 
 \begin{lemma} \label{TPar}
-	Let $Y=\{Y_1,\dots,Y_n\}$ be a set of independent random variables specified by the same type of %probability distribution functions 
-	CDF (either all are Discrete, all are Normal, or all are Piecewise polynomial) and let $T \in \mathbb{R}$. Then, deciding \hl{$F_{\max\{Y_1,\dots,Y_n\}}(T)$} %$P(\max\{Y_1,\dots,Y_n\} \leq T) $ 
-	%and $P(\min\{Y_1,\dots,Y_n\}\leq T) $ 
-	can be done in polynomial-time.%\footnote{Here, we measure the size of the input by $n$, the number of random variables, and by the variable $m$, the (maximal) size of the support of each of the variables. The run time is polynomial in both variables.}
+	Let $Y=\{Y_1,\dots,Y_n\}$ be a set of independent random variables specified by
+	CDF  and let $T \in \mathbb{R}$. Then,  $F_{\max\{Y_1,\dots,Y_n\}}(T)$
+	can be computed in polynomial-time.
 \end{lemma}
 \begin{proof}
 	See~\eqref{eq:par}.
@@ -1268,7 +1270,7 @@ The duration distribution of all primitive tasks is uniform but the support para
 in some tasks the distribution is fixed (such as for load and unload) and in others the distribution depends on the velocity of the vehicle
 and on the distance to be travelled.
 
-After running our approximation algorithm we also \hl{ran $\Trim_L$ which uses an inverted version of the} $\Trim$ operator, providing a {\em lower} bound of the CDF, as well as the upper bound
+After running our approximation algorithm we also ran $\Trim_L$ which uses a reversed version of the $\Trim$ operator, providing a {\em lower} bound of the CDF, as well as the upper bound
 generated by Algorithm~\ref{alg:approx}. Running both variants allows us to bound the actual error, costing
 only a doubling of the run-time. Despite the fact that our error bound is theoretically tight, in practice
 and with actual distributions, according to Tables~\ref{tab:errors1} and ~\ref{tab:errors2}, the resulting error
