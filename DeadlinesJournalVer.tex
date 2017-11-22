@@ -104,7 +104,7 @@
 \DeclareMathOperator{\seqOr}{seqOr} 
 \DeclareMathOperator{\parOr}{parOr} 
 \DeclareMathOperator{\prim}{primitive} 
-\DeclareMathOperator{\ch}{\operatorname{child}} 
+\DeclareMathOperator{\ch}{\operatorname{children}} 
 \DeclareMathOperator{\order}{\textit{type}} 
 \DeclareMathOperator{\info}{\textit{info}} 
 \DeclareMathOperator{\scc}{succ} 
@@ -117,10 +117,14 @@
 \SetKwFunction{Network}{Network}
 \SetKwFunction{LNetwork}{LNetwork}
 \SetKwFunction{Parallel}{Parallel}
-\SetKwFunction{CalcNetwork}{GenNetwork}
+\SetKwFunction{GenNetwork}{GenNetwork}
 \SetKwFunction{Solve}{Solve}
 \SetKwFunction{NetworkTight}{NetworkTight}
-\SetKwFunction{BuildPolynomialm}{BuildPolynomialm}
+\SetKwFunction{EstimateError}{EstimateError}
+
+\usepackage{array}
+\usepackage{ragged2e}
+\newcolumntype{X}[1]{>{\RaggedRight\hspace{0pt}}p{#1}}
 
 
 \pdfinfo{
@@ -194,7 +198,8 @@ probabilistic reasoning.
 \section{Problem statement}\label{sec:formal}
 
 We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes.
-Primitive action nodes contain distributions over their resource consumption. Although other resources can be handled with our approach, we will assume henceforth, in order to be more concrete, that the only resource of interest is time.
+Primitive action nodes contain distributions over their resource consumption. \hl{Many resources can be modelled by using our approach, for example, fuel as the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car. Another example is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed.
+Although other resources can be handled with our approach, we will assume henceforth, in order to be more concrete, that the only resource of interest is time.}
 
 %(for example, if fuel is the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car e.g., memory: tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed)
 
@@ -376,9 +381,7 @@ From now on, in order to simplify, we will use the notation $\Trim$ instead of $
   \DontPrintSemicolon
   \SetKwFunction{Trimalgo}{Trim}
   \SetKwProg{myproc}{Procedure}{}{}
-  \myproc{
-  \Trimalgo{$D_X$,$\varepsilon$}
-  }{ 
+  { 
              $D_{X'}=()$, $p=0$ \;	  
   		$d_{prev} = first(D_X)$\;
                 $tail = rest(D_X)$ \;
@@ -396,7 +399,7 @@ From now on, in order to simplify, we will use the notation $\Trim$ instead of $
   \Return $D_{X'}$}
      
 %\caption{\hl{Trim operator}}  
-\caption{An implementation of the $\Trim$ operator}  
+\caption{$\Trim$($D_X$,$\varepsilon$)  }
 \label{alg:Trim}
 \end{algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -905,35 +908,14 @@ In this section we propose a tighter analysis. The term tight here means that we
 Consider, as an extreme example, a simple task tree with a sequence node at the root and below it only parallel nodes. The total error of our approximation algorithm (\Network) in this case is only due to the invocation of \Sequence at the tail of the recursion. The \Network algorithm, however,  acts as if all the other nodes add additional errors. Eventually, the \Sequence
 computation produces a very small error which takes the toll of an unnecessary computation time. 
 
+We will present now a recursive approximation algorithm with a tighter bound on the error parameter for every sequence node. Specifically, we propose the generalized algorithm $\GenNetwork$ (listed as Algorithm~\ref{alg:GenNetwork} below) whose main property is given using the algorithm $\EstimateError$ (listed as Algorithm~\ref{alg:EstimateError} below) as follows:
 
-We will present now a recursive approximation algorithm with a tighter bound on the error parameter for every sequence node. Specifically, we propose the generalized algorithm $\CalcNetwork$ (listed as Algorithm~\ref{alg:calc} below) whose main property is given using the algorithm $\EstimateError$ (listed as Algorithm~\ref{alg:BuildPolynomial} below) as follows:
+%The following algorithm, $\EstimateError$, listed as Algorithm~\ref{alg:EstimateError},
+%\hl{computes the approximation error for a tree} $\tau$ given a function $\varepsilon$ that maps each of the nodes in $\tau$ to the parameter passed in line 7 of the $\Network$ procedure.
 
-%The algorithm $\EstimateError$, listed as Algorithm~\ref{alg:BuildPolynomial}, computes the approximation error for a tree $\tau$ given a function $\varepsilon$ that maps each of the network nodes in $\tau$ to the parameter passed in line 7 of the $\Network$ procedure, i.e., we use a generalized version of $\Network$, called $\CalcNetwork$ listed as Algorithm~\ref{alg:calc} below. 
+
+%i.e., we use a generalized version of $\Network$, called $\GenNetwork$ listed as Algorithm~\ref{alg:GenNetwork} below. 
 %With these notations, we phrase the main property of the new algorithm as follows:
-
-
-\begin{theorem}\label{theorem:approxEps0}
-	For a task tree $\tau$ and a function $\varepsilon$ that maps the sequence nodes in $\tau$ to numbers in $[0,1]$, let 
-	$\varepsilon_0=\EstimateError(\tau,\varepsilon)$, and let $X_{\tau}$ be a random variable for the true
-	distribution of the completion time of $\tau$; then, $\CalcNetwork(\tau, \varepsilon) \succeq_{\varepsilon_0} X_{\tau}$. 
-\end{theorem}
-
-\begin{proof}
-By induction over the depth of $\tau$, denoted by $d$. Base: $ d=1$, a single primitive node $p$. 
-In this case, by line 3 of Algorithm~\ref{alg:calc}, $\CalcNetwork(\tau_p,\varepsilon)=X_p$ and, by line 3 of Algorithm~\ref{alg:BuildPolynomial},  $\EstimateError(\tau_p,\varepsilon)=0$ and the claim follows.
-% therefor $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$
-%Primitive nodes do not carry any error and, by line 3 of \EstimateError, $\EstimateError(\tau_p,\varepsilon)=0$, therefore  $\CalcNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. 
-Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: let $r$ be the root of the tree whose depth is $d$, i.e., its child subtrees are of depth smaller than $d$.
-%we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $d$. 
-
-If $r$ is a sequence node then,	by Theorem~\ref{appSeqTheorem}, sequence nodes produce an error which is the sum of all child nodes errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
-	If $r$ is a parallel node then,
-	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c,\varepsilon))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the child subtrees satisfy the lemma and we get that $\CalcNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
-\end{proof}
-
-
-%TODO: write some intro regarding the algos
-
 \begin{algorithm}
   \DontPrintSemicolon
   \SetKwFunction{Sequence}{Sequence}
@@ -963,9 +945,11 @@ If $r$ is a sequence node then,	by Theorem~\ref{appSeqTheorem}, sequence nodes p
 %----------------------------------5
   
 \caption{EstimateError($\tau$, $\varepsilon$) }
-\label{alg:BuildPolynomial}
+\label{alg:EstimateError}
   
 \end{algorithm}
+
+%Todo: add some intro for the algos
 
 
 \begin{algorithm}
@@ -985,28 +969,47 @@ If $r$ is a sequence node then,	by Theorem~\ref{appSeqTheorem}, sequence nodes p
 	
   \If{$v$  is a $\operatorname{Sequence}$ node}{
   	\For{$c \in \ch(v)$} {
-	    $X_c = \CalcNetwork(\tau_c, \varepsilon)$\;
+	    $X'_c = \GenNetwork(\tau_c, \varepsilon)$\;
 	 }
-	 \Return \Sequence(\hl{$\{X_c\}_{c \in \ch(v)}$, $\varepsilon(v)$})	
+	 \Return \Sequence($\{X'_c\}_{c \in \ch(v)}$, $\varepsilon(v)$)	
 	 
 	}
 			
 	\If{$v$ is a $\operatorname{Parallel}$ node}{
 	 	\For{$c \in \ch(v)$} {
-			$X_c = \CalcNetwork(\tau_c, \varepsilon)$\;
+			$X'_c = \GenNetwork(\tau_c, \varepsilon)$\;
 		}
-		\Return \Parallel($\{X_c\}_{c \in \ch(v)}$)
+		\Return \Parallel($\{X'_c\}_{c \in \ch(v)}$)
 	}	
   }
 %----------------------------------5
   
 \caption{ GenNetwork($\tau$, $\varepsilon$)}
-\label{alg:calc}
+\label{alg:GenNetwork}
   
 \end{algorithm}
 
+\begin{theorem}\label{theorem:approxEps0}
+	For a task tree $\tau$ and a function $\varepsilon$ that maps the sequence nodes in $\tau$ to numbers in $[0,1]$, let 
+	$\varepsilon_0=\EstimateError(\tau,\varepsilon)$, and let $X_{\tau}$ be a random variable for the true
+	distribution of the completion time of $\tau$; then, $\GenNetwork(\tau, \varepsilon) \succeq_{\varepsilon_0} X_{\tau}$. 
+\end{theorem}
 
-Based on this theorem, we propose the following pseudo-algorithm for computing a tight approximation for the makespan of a task tree, as follows. Use some symbolic mathematical engine, such as Wolfram Mathematica (\url{www.wolfram.com/mathematica/}), to find a function $\varepsilon$ such that $\EstimateError(\tau,\varepsilon)$ is smaller than the approximation that you want to achieve; then, run $\CalcNetwork(\tau,\varepsilon)$ with this $\varepsilon$. This, of course, is only a pseudo algorithm because it is just a template, not dictating how to compute $\varepsilon$.
+\begin{proof}
+By induction over the depth of $\tau$, denoted by $d$. Base: $ d=1$, a single primitive node $p$. 
+In this case, by line 3 of Algorithm~\ref{alg:GenNetwork}, $\GenNetwork(\tau_p,\varepsilon)=X_p$ and, by line 3 of Algorithm~\ref{alg:EstimateError},  $\EstimateError(\tau_p,\varepsilon)=0$ and the claim follows.
+% therefor $\GenNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$
+%Primitive nodes do not carry any error and, by line 3 of \EstimateError, $\EstimateError(\tau_p,\varepsilon)=0$, therefore  $\GenNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. 
+Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: let $r$ be the root of the tree whose depth is $d$, i.e., its child subtrees are of depth smaller than $d$.
+%we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $d$. 
+
+If $r$ is a sequence node then,	by Theorem~\ref{appSeqTheorem}, sequence nodes produce an error which is the sum of all child nodes errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\GenNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+	If $r$ is a parallel node then,
+	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c,\varepsilon))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the child subtrees satisfy the lemma and we get that $\GenNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+\end{proof}
+
+
+Based on this theorem, we propose the following pseudo-algorithm for computing a tight approximation for the makespan of a task tree, as follows. Use some symbolic mathematical engine, such as Wolfram Mathematica (\url{www.wolfram.com/mathematica/}), to find a function $\varepsilon$ such that $\EstimateError(\tau,\varepsilon)$ is smaller than the approximation that you want to achieve; then, run $\GenNetwork(\tau,\varepsilon)$ with this $\varepsilon$. This, of course, is only a pseudo algorithm because it is just a template, not dictating how to compute $\varepsilon$.
 The following lemma establishes, however, that the computation of $\varepsilon$ is feasible, at least in an approximated form, as it involves reversing a polynomial of relatively small degree:
 
 \begin{lemma}\label{lemma:poly}
@@ -1036,7 +1039,7 @@ To establish the tightness of the proposed pseudo-algorithm, we give now an exam
 
 \begin{theorem}\label{theorem:tight}
 There is a task tree $\tau$, a bound $T$, and an $\varepsilon$ 
-such that $F_{\CalcNetwork(\tau, \varepsilon)}(T) - F_{X_\tau}(T) = \EstimateError(\tau, \varepsilon)$ where $X_\tau$ is a random variable representing the completion time of $\tau$. 
+such that $F_{\GenNetwork(\tau, \varepsilon)}(T) - F_{X_\tau}(T) = \EstimateError(\tau, \varepsilon)$ where $X_\tau$ is a random variable representing the completion time of $\tau$. 
 \end{theorem}
 \begin{proof}
 See Example~\ref{exp:seq} and Example~\ref{expl:parallel}.
@@ -1045,22 +1048,22 @@ See Example~\ref{exp:seq} and Example~\ref{expl:parallel}.
 % Gera: add discussion here
 
 
-The above result establishes that $\CalcNetwork$ is tight in the sense that there is no $\varepsilon_0 < \CalcNetwork(\tau, \varepsilon)$ 
-such that $\CalcNetwork(\tau, \varepsilon)$ is always $\succeq_{\varepsilon_0}$ than $X_{\tau}$. 
+The above result establishes that $\GenNetwork$ is tight in the sense that there is no $\varepsilon_0 < \GenNetwork(\tau, \varepsilon)$ 
+such that $\GenNetwork(\tau, \varepsilon)$ is always $\succeq_{\varepsilon_0}$ than $X_{\tau}$. 
 If we look more closely at on the examples used
 to prove the theorem, we can say more about the tightness of our algorithm, as follows.
 Since the examples consist of task trees whose root nodes are both of
 type sequence and of type parallel, we get that any algorithm that traverses the tree
-recursively like we do, cannot do better than $\CalcNetwork$ in terms of computing a
+recursively like we do, cannot do better than $\GenNetwork$ in terms of computing a
 random variable that is $\succeq_{\varepsilon}$ than $X_{\tau}$ with a smaller $\varepsilon$. 
 More formally, if we restrict the discussions to algorithms where the trimming of the variables in a subtree
 depend only on the structure of the subtree (not on siblings or parents or the CDFs of the variables), then 
-$\CalcNetwork$ applies the maximal possible trimming (assuming that we have an optimal solution to $\EstimateError$). 
-This means that $\CalcNetwork$ is an improvement over 
+$\GenNetwork$ applies the maximal possible trimming (assuming that we have an optimal solution to $\EstimateError$). 
+This means that $\GenNetwork$ is an improvement over 
 $\Network$ (Algorithm~\label{alg:approx}) that satisfies this assumption. 
 Practically, the improvement is in allowing more trimming and, by that, saving unnecessary computations. 
-Specifically, both $\CalcNetwork$ and $\Network$ are guaranteed to give a satisfactory answer but they may sometimes compute 
-an approximation that is better than required in the price of taking more run-time. $\CalcNetwork$ is better in that it
+Specifically, both $\GenNetwork$ and $\Network$ are guaranteed to give a satisfactory answer but they may sometimes compute 
+an approximation that is better than required in the price of taking more run-time. $\GenNetwork$ is better in that it
 takes this extra time only in cases where any algorithm that decides how to trim based only on the shape of the subtree 
 (and not on the CDFs of the random variables or on other parts of the tree) would.
 
@@ -1375,9 +1378,9 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \begin{table*}[tbh!]
 	{\footnotesize
-		\begin{tabular}{|l|l|l|| p{1.1cm}|p{1.1cm}|p{1.4cm}||p{0.6cm}|p{0.6cm}|p{0.6cm}|p{0.6cm}|p{0.6cm}|}
+		\begin{tabular}{|p{0.1cm}|p{0.1cm}|p{0.2cm}|| p{1.05cm}|p{1.05cm}|p{1.4cm}||X{0.6cm}|X{0.6cm}|X{0.6cm}|X{0.6cm}|X{0.6cm}|}
 			\hline
-			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approximation algorithm error, given $\varepsilon$} & \multicolumn{5}{c|}{Sampling algorithm error, given \# samples} \\ \cline{4-11} 
+			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approximation algorithm error, given $\varepsilon$} & \multicolumn{5}{c|}{Sample algorithm error, given \# samples} \\ \cline{4-11} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} & \multicolumn{1}{c|}{$10^{6}$} & \multicolumn{1}{c|}{$10^{7}$} \\ \hline \hline
 			\multirow{3}{*}{Drive} & 47 & 2 & [-0.0052, 0.0086] & [-0.0004, 0.0004] & [-$3.2 {\cdot} 10^{-5}$, $3.4 {\cdot} 10^{-5}$] & 0.0206 & 0.0072 & 0.0031 & 0.0009 & 0.0001 \\ \cline{2-11} 
 			& 47 & 4 & [-0.0096, 0.019] & [-0.0009, 0.0013] & [-$9.2 {\cdot} 10^{-5}$, $1.3 {\cdot} 10^{-4}$] & 0.0476 & 0.0075 & 0.0046 & 0.0011 & 0.0001 \\\cline{2-11} 
@@ -1408,7 +1411,7 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \begin{table*}[htb!]
 	{\footnotesize
-		\begin{tabular}{|l|l|l|l||l|l|l||l|l|l|l|l|}
+		\begin{tabular}{|X{1.2cm}|l|l|l||l|l|l||X{0.65cm}|X{0.65cm}|X{0.65cm}|X{0.65cm}|X{0.8cm}|}
 			\hline
 			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multirow{2}{*}{Exact} & \multicolumn{3}{c|}{Approx. algorithm, with $\varepsilon$} & \multicolumn{5}{c|}{Sampling algorithm, with \# samples} \\ \cline{5-12} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} &  & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} & \multicolumn{1}{c|}{$10^{6}$} & \multicolumn{1}{c|}{$10^{7}$} \\ \hline \hline
@@ -1435,9 +1438,9 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \begin{table*}[tbh!]
 	{\footnotesize
-		\begin{tabular}{|l|l|l|| p{1.1cm}|p{1.1cm}|p{1.4cm}||p{1.1cm}|p{1.1cm}|p{1.1cm}|}
+		\begin{tabular}{|l|l|l|| p{1.1cm}|p{1.1cm}|p{1.4cm}||p{0.9cm}|p{0.9cm}|p{0.9cm}|}
 			\hline
-			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approximation algo. error, given $\varepsilon$} & \multicolumn{3}{c|}{Sampling algo. error, given \# samples} \\ \cline{4-9} 
+			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approximation algo. error, given $\varepsilon$} & \multicolumn{3}{c|}{Sample algo. error, given \# samples} \\ \cline{4-9} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} \\ \hline \hline
 			\multirow{2}{*}{Seq 10} & 10 & 4 & [-0.027, 0.041] & [-0.0027, 0.0041] & [-$2.2 {\cdot} 10^{-4}$, $2.5 {\cdot} 10^{-4}$] & 0.0224 & 0.008 & 0.0017  \\ \cline{2-9} 
 			& 10 & 10 &[-0.0316, 0.0615]  & [0.0033, 0.0067] & [$-2.6 {\cdot} 10^{-4}$, $5.2 {\cdot} 10^{-4}$] & 0.027 & 0.0117 & 0.0038  \\ \hline 
@@ -1461,9 +1464,9 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \begin{table*}[htb!]
 	{\footnotesize
-		\begin{tabular}{|l|l|l|l||l|l|l||p{1cm}|p{1cm}|p{1cm}|}
+		\begin{tabular}{|l|l|l|l||l|l|l||p{0.9cm}|p{0.9cm}|p{0.9cm}|}
 			\hline
-			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multirow{2}{*}{Exact} & \multicolumn{3}{c|}{Approx. algorithm, with $\varepsilon$} & \multicolumn{3}{c|}{Sampling algorithm, with \# samples} \\ \cline{5-10} 
+			\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multirow{2}{*}{Exact} & \multicolumn{3}{c|}{Approx. algorithm, with $\varepsilon$} & \multicolumn{3}{c|}{Sample algorithm, with \# samples} \\ \cline{5-10} 
 			\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} &  & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$}  \\ \hline \hline
 			\multirow{2}{*}{Seq 10} & 10 & 4 & 0.23 & 0.003 & 0.02 & 0.148  & 0.054 & 0.545 &5.336  \\ \cline{2-10} 
 			& 10 & 10 & 10.22 & 0.008 & 0.073 & 0.692 & 0.071 & 0.724 & 7.18  \\ \hline
@@ -1691,13 +1694,13 @@ the following property, for all $x$:
 \[
 F_{X^+|Y=y}(x) \succeq_\varepsilon F_{X|Y=y}(x) \succeq_\varepsilon F_{X^-|Y=y}(x)
 \]
-\hl{Now let}:
+Now let:
 \[
-F_{X^-}(x) = \sum_{y\in D(Y)} P(Y=y) F_{X^-|Y=y}(x)
+F_{X^-}(x) = \sum_{y\in D(Y)} P_Y(y) F_{X^-|Y=y}(x)
 \]
 and likewise:
 \[
-F_{X^+}(x) = \sum_{y\in D(Y)} P(Y=y) F_{X^+|Y=y}(x)
+F_{X^+}(x) = \sum_{y\in D(Y)} P_Y(y) F_{X^+|Y=y}(x)
 \]
 
 \begin{theorem}
@@ -1709,7 +1712,7 @@ F_{X^+}(x) \succeq_\varepsilon F_{X}(x) \succeq_\varepsilon F_{X^-}(x)
 \end{theorem}
 
 \begin{proof}
-the runtime bound is obvious, as a trivial implementation simply encurs $m^{|Y|}$
+the runtime bound is obvious, as a trivial implementation simply \hl{encurs} $m^{|Y|}$
 runs of the tree task network algorithm. The approximation bounds follow
 from the bounds for individual values $Y=y$, and from a convexity argument.
 For example, by construction, we have:
