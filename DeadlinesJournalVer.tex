@@ -136,7 +136,7 @@
 
 \begin{frontmatter}
 
-\title{Estimating the Probability of Meeting a Deadline \\ in Hierarchical Plans}
+\title{Estimating the Probability of Meeting a \\ Deadline in Hierarchical Plans}
 
 %% Group authors per affiliation:
 \author{Liat Cohen}
@@ -198,8 +198,9 @@ probabilistic reasoning.
 \section{Problem statement}\label{sec:formal}
 
 We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes.
-Primitive action nodes contain distributions over their resource consumption. \hl{Many resources can be modelled by using our approach, for example, fuel as the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car. Another example is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed.
-Although other resources can be handled with our approach, we will assume henceforth, in order to be more concrete, that the only resource of interest is time.}
+Primitive action nodes contain distributions over their resource consumption. Many resources can be modeled using the proposed approach. 
+%For example, if the resource of interest is fuel one can consider parallel execution as bus or carpool and sequential execution as using a private car. 
+For example if the resource of interest is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed. Note that the role parallel and sequence node is inversed here. We will assume henceforth, in order to be more concrete, that the resource of interest is time, i.e., that parallel nodes represent maximum and sequence nodes represent sum.
 
 %(for example, if fuel is the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car e.g., memory: tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed)
 
@@ -750,7 +751,7 @@ $F_{\max_{i\in[1:n]}X'_i}
 Since $F_{X_i'}(T) > F_{X_i}(T)$ for each $i$, this expression is nonnegative.
 \end{proof}
 
-\hl{Indeed, both in} Lemma~\ref{appPalTheorem} and  Lemma~\ref{tightPalTheorem} we suggest an upper bound of the error resulted in the case where the input CDFs themselves are approximations. However, Lemma~\ref{appPalTheorem} is more suitable for proofing Theorem~\ref{th:TTalgcomplexity} and Lemma~\ref{appPalTheorem} is more suitable for proofing Theorem~\ref{theorem:approxEps0}. \hl{In order to tighten the analysis we present the following lemma.}
+Both in Lemma~\ref{appPalTheorem} and in Lemma~\ref{tightPalTheorem} we suggest an upper bound of the error resulted in the case where the input CDFs themselves are approximations. However, Lemma~\ref{appPalTheorem} is designed to facilitate the proof of Theorem~\ref{th:TTalgcomplexity} and Lemma~\ref{appPalTheorem} is designed to facilitate the proof Theorem~\ref{theorem:approxEps0}. 
 \begin{lemma} \label{tightPalTheorem}
 For discrete random variables $X_1', \dots X_n'$, $X_1, \dots,X_n$, if for all $i=1,\dots,n$,  $X_i' \succeq_{\varepsilon_i} X_i$,
 then $\max\{X_1',\dots, X_n'\} \succeq_{e} \max\{X_1,\dots,X_n\}$ where $e=1-\prod_{i=1}^n (1-\varepsilon_i)$.
@@ -1712,7 +1713,7 @@ F_{X^+}(x) \succeq_\varepsilon F_{X}(x) \succeq_\varepsilon F_{X^-}(x)
 \end{theorem}
 
 \begin{proof}
-the runtime bound is obvious, as a trivial implementation simply \hl{encurs} $m^{|Y|}$
+The runtime bound is obvious, as a trivial implementation simply takes $m^{|Y|}$
 runs of the tree task network algorithm. The approximation bounds follow
 from the bounds for individual values $Y=y$, and from a convexity argument.
 For example, by construction, we have:
@@ -1723,7 +1724,7 @@ The right hand side is a convex sum of quantities that are all between 0 and $\v
 must also be between 0 and $\varepsilon$.
 \end{proof}
 
-\section{Discussion and Related Work}\label{sec:discussion}
+\section{Discussion}\label{sec:discussion}
 %TODO: Add ref about optrim?
 
 We proposed an operator for trimming the support of random variables such that the resulting trimmed variable is an approximation of the variable that has a bigger support. As the motivation in this paper was to estimate the probabilities of meeting deadlines in hierarchical plans, the notion of approximation used is a one-sided version of the Kolmogorov metric, that reflects the fact that in such estimations we allow over-, not under- approximations. The core of the paper is devoted to an analysis of the prorogation of the estimation errors in the computation of the random variable that represents the makespan of a hierarchical plan. Based on this analysis, the paper proposes recursive algorithms that can compute an approximation of this makespan in time and memory that are polynomial in the sizes of the supports of the primitive tasks, the size of the tree, and of the inverse of the required accuracy ($1/\varepsilon$).
@@ -1736,11 +1737,7 @@ In the following paragraphs we discuss directions for future research and ideas 
 \paragraph{\bf Add a trim after a parallel node} Another point is that in the combined algorithm,  space and time complexity can be reduced by adding some $\Trim$ operations,
 especially after processing a parallel node, which is not done in our version. This may reduce accuracy,  a trade-off yet to be examined.
 
-\paragraph{\bf Focused trimming} Another option is, when given a specific threshold, trying for higher accuracy in just the region of the
-threshold, but how to do that is non-trivial. For {\em sampling} schemes such methods are known, including adaptive 
-sampling~\cite{bucher1988adaptive,lipton1990practical},
-stratified sampling, and other schemes.
-It may be possible to apply such schemes to deterministic algorithms as well - an interesting issue for future work. 
+\paragraph{\bf Focused trimming} Another option is, when given a specific threshold, trying for higher accuracy in just the region of the threshold, but how to do that is non-trivial. For {\em sampling} schemes such methods are known, including adaptive sampling~\cite{bucher1988adaptive,lipton1990praccctical}, stratified sampling, and other schemes. It may be possible to apply such schemes to deterministic algorithms as well - an interesting issue for future work. 
 
 \paragraph{\bf Extension to continuous distributions} Our algorithm can handle them by
 pre-running a version of the $\Trim$ operator on the primitive task distribution. Since one cannot iterate over support values
@@ -1751,7 +1748,17 @@ for many types of distributions. %In fact, this is precisely how Gaussian distri
 
 \paragraph{\bf Approximating expectations} We showed that the expectation problem is also NP-hard. A natural question is on approximation algorithms for the expectation problem, but the answer here is not so obvious. Sampling algorithms may run into trouble if the target distribution contains major outliers, i.e. values very far from other values but with extremely low probability. Our approximation algorithm can also be used as-is to estimate the CDF and then to approximate the expectation, but we do not expect it to perform well because our current $\Trim$ operator only limits the amount of probability mass moved at each location to $\varepsilon$, but does not limit the ``distance'' alnog the $x$ parameter over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of $\Trim$ that bounds just this distance was shown to provide a polynomial-time approximation scheme for the expectations in EXPECTI-MIN-MAX game trees \cite{shperbergmonte},  if the utilities are bounded. Since the expectation operator involves convolution, these results should be applicable (with some adjustment) to task networks as well.
 
+\paragraph{\bf Optimal trimming} 
+
+\paragraph{\bf Compact representations of the random variables} 
+
+\paragraph{\bf Split weights} In the proposed $\Trim$ algorithm, the inner loop goes until $p+prob(d) \leq \varepsilon$ and, when this condition is not met, the value of $prod(d)$ is left for the next iteration. A possible improvement, not included in the base version for simplicity, is to add to $p$ the part of $prob(d)$ up to $\varepsilon$ (i.e., have $p=\varepsilon$) and leave only the remaining part of $prob(d)$ to the next iteration.
+
+
+
 \section{Related work}
+The paper contains many references to related work mentioned in the relevant context. Following is some more related work in the general context.
+
 Related work on computing makespan distributions includes~\cite{hong2013computing}, which examines sum of  Bernoulli distributed random variables .
 Other work examines both deterministic~\cite{mercier2007discrete} and  Monte-Carlo techniques~\cite{bucher1988adaptive,lipton1990practical}. 
 Distribution of maximum of random variables  was studied in~\cite{devroye1980generating}, with a focus mostly on continuous distributions.
@@ -1762,12 +1769,11 @@ Nevertheless, our results are orthogonal as the source of the complexity in~\cit
 whereas in our setting the complexity is due to the size of the support. In fact for linear plans (an NP-hard case in our setting),
 the probability of meeting the deadline can be computed in low-order polynomial time for Bernoulli distributions, using straightforward dynamic programming.
 Makespan distributions in series parallel networks in the i.i.d. case was examined in~\cite{gutjahr1992average}, without   
-considering algorithmic issues. There is also a significant body of work on estimating the makespan of plans and schedules
-\cite{herroelen2005project,fu2010towards,beck2007proactive}, within a context of a planner or scheduler. The analysis in these papers is
+considering algorithmic issues. There is also a significant body of work on estimating the makespan of plans and schedules~\cite{herroelen2005project,fu2010towards,beck2007proactive}, within a context of a planner or scheduler. The analysis in these papers is
 based on averaging or on limit theorems, and does not provide a guaranteed approximation scheme. 
 Temporal planing and in particular TPNs (temporal plan network) are presented in
 \cite{kim2001executing}, the model is similar to ours, but the focus is on lower/upper bounds, rather than probability distributions. 
-Hierarchical constraint-based plans in \hl{MAPGEN}~\cite{bresina2005mixed} allow for more
+Hierarchical constraint-based plans in MAPGEN~\cite{MAPGEN} allow for more
 general dependencies than series-parallel, providing additional expressive power but making the deadline problem even harder.
 The research literature contains numerous {\em randomized} approximation schemes that handle dependencies~\cite{Pearl,Yuan20061189}, especially for
 the case with {\em no evidence}. In fact, our implementation of the sampling scheme in ROBIL handled dependent durations.
