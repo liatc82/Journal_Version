@@ -1724,43 +1724,34 @@ must also be between 0 and $\varepsilon$.
 \end{proof}
 
 \section{Discussion and Related Work}\label{sec:discussion}
-
 %TODO: Add ref about optrim?
-\hl{Numerous issues remain unresolved, briefly discussed below. Although the $\Trim$ operator provides nice and efficient approximation, improvements are possible. For instance, not perform trimming (or even stop a trimming operation) if the current support 
-size is below $1/\varepsilon$, which may increase accuracy but also
-the runtime}. Another point is that in the combined algorithm, 
-space and time complexity can be reduced by adding some $\Trim$ operations,
-especially after processing a parallel node, which is not done in our version. This may reduce accuracy, 
-a trade-off yet to be examined.
-\hl{Another option is, when given a specific threshold, trying for higher accuracy in just the region of the
-threshold, but how to do that is non-trivial.}
-%TODO: add more info about the new Trim algo - split distribution to equal to epsilon
-For {\em sampling} schemes such methods are known, including adaptive 
+
+We proposed an operator for trimming the support of random variables such that the resulting trimmed variable is an approximation of the variable that has a bigger support. As the motivation in this paper was to estimate the probabilities of meeting deadlines in hierarchical plans, the notion of approximation used is a one-sided version of the Kolmogorov metric, that reflects the fact that in such estimations we allow over-, not under- approximations. The core of the paper is devoted to an analysis of the prorogation of the estimation errors in the computation of the random variable that represents the makespan of a hierarchical plan. Based on this analysis, the paper proposes recursive algorithms that can compute an approximation of this makespan in time and memory that are polynomial in the sizes of the supports of the primitive tasks, the size of the tree, and of the inverse of the required accuracy ($1/\varepsilon$).
+
+In the following paragraphs we discuss directions for future research and ideas for possible technical improvements of the proposed techniques. Some of these improvements are easy to implement and the reason for not including them in the first place was for clarity of the presentation, other require future research.
+
+
+\paragraph{\bf Avoid trimming variables with a small support} In the proposed algorithm, for ease of analysis and because we wanted to keep the code simple, we trimmed all the input and intermediate variables, whatever the size of their support is. This may be required, in a worst case, so doing so does not affect the complexity results, but it may give inferior run time and memory performance in the average case. We therefore, recommend to only trim variables that are small. This can be added as an initial test inside the Trim procedure.
+
+\paragraph{\bf Add a trim after a parallel node} Another point is that in the combined algorithm,  space and time complexity can be reduced by adding some $\Trim$ operations,
+especially after processing a parallel node, which is not done in our version. This may reduce accuracy,  a trade-off yet to be examined.
+
+\paragraph{\bf Focused trimming} Another option is, when given a specific threshold, trying for higher accuracy in just the region of the
+threshold, but how to do that is non-trivial. For {\em sampling} schemes such methods are known, including adaptive 
 sampling~\cite{bucher1988adaptive,lipton1990practical},
 stratified sampling, and other schemes.
 It may be possible to apply such schemes to deterministic algorithms as well - an interesting issue for future work. 
 
-Extension to continuous distributions: our algorithm can handle them by
+\paragraph{\bf Extension to continuous distributions} Our algorithm can handle them by
 pre-running a version of the $\Trim$ operator on the primitive task distribution. Since one cannot iterate over support values
 in a continuous distribution, start with the smallest support value (even if it is $- \infty$), and find the value at which the CDF
 increases by $\varepsilon$. This requires access to the inverse of the CDF, which is available, either exactly or approximately,
 for many types of distributions. %In fact, this is precisely how Gaussian distributions were handled in our
 %empirical evaluation.
 
-We showed that the expectation problem is also NP-hard.
-A natural question is on approximation algorithms for the expectation problem, but the answer here is not so obvious.
-Sampling algorithms may run into trouble if the target distribution contains major outliers, i.e. values very far from
-other values but with extremely low probability. Our approximation algorithm can also be used as-is to estimate
-the CDF and then to approximate the expectation, but we do not expect it to perform well because our current $\Trim$
-operator only limits the amount of probability mass moved at each location to $\varepsilon$, but does not limit the
-``distance'' alnog the $x$ parameter over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of $\Trim$ that bounds just this distance was
-shown to provide a polynomial-time approximation scheme
-for the expectations in EXPECTI-MIN-MAX game trees
-\cite{shperbergmonte}, 
-if the utilities are bounded. Since the expectation
-operator involves convolution, these results should be
-applicable (with some adjustment) to task networks as well.
+\paragraph{\bf Approximating expectations} We showed that the expectation problem is also NP-hard. A natural question is on approximation algorithms for the expectation problem, but the answer here is not so obvious. Sampling algorithms may run into trouble if the target distribution contains major outliers, i.e. values very far from other values but with extremely low probability. Our approximation algorithm can also be used as-is to estimate the CDF and then to approximate the expectation, but we do not expect it to perform well because our current $\Trim$ operator only limits the amount of probability mass moved at each location to $\varepsilon$, but does not limit the ``distance'' alnog the $x$ parameter over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of $\Trim$ that bounds just this distance was shown to provide a polynomial-time approximation scheme for the expectations in EXPECTI-MIN-MAX game trees \cite{shperbergmonte},  if the utilities are bounded. Since the expectation operator involves convolution, these results should be applicable (with some adjustment) to task networks as well.
 
+\section{Related work}
 Related work on computing makespan distributions includes~\cite{hong2013computing}, which examines sum of  Bernoulli distributed random variables .
 Other work examines both deterministic~\cite{mercier2007discrete} and  Monte-Carlo techniques~\cite{bucher1988adaptive,lipton1990practical}. 
 Distribution of maximum of random variables  was studied in~\cite{devroye1980generating}, with a focus mostly on continuous distributions.
@@ -1778,18 +1769,16 @@ Temporal planing and in particular TPNs (temporal plan network) are presented in
 \cite{kim2001executing}, the model is similar to ours, but the focus is on lower/upper bounds, rather than probability distributions. 
 Hierarchical constraint-based plans in \hl{MAPGEN}~\cite{bresina2005mixed} allow for more
 general dependencies than series-parallel, providing additional expressive power but making the deadline problem even harder.
-
 The research literature contains numerous {\em randomized} approximation schemes that handle dependencies~\cite{Pearl,Yuan20061189}, especially for
 the case with {\em no evidence}. In fact, our implementation of the sampling scheme in ROBIL handled dependent durations.
 It is unclear whether such sampling schemes can be adapted to handle dependencies {\em and} arbitrary evidence, such as: ``the completion time of
 compound task $X$ in the network is known to be exactly one hour from now''.
 
 
-Finally, one might consider additional commonly used utility functions, such as a ``soft'' deadline: the utility is a constant $U$ before the deadline $T$, decreasing linearly to 0
-until $T+G$ for some ``grace'' duration $G$, and 0 thereafter.
 \paragraph{Acknowledgments.} This research was supported by the ROBIL project, and by the Lynne and William Frankel Center for Computer Science at Ben-Gurion University.
 %\clearpage
 
+\section*{Refferences}
 \bibliography{ijcai15}
 
 
