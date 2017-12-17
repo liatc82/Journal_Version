@@ -1,0 +1,214 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{gabaldon2002programming}
+A.~Gabaldon, Programming hierarchical task networks in the situation calculus,
+  in: AIPS’02 Workshop on On-line Planning and Scheduling, 2002.
+
+\bibitem{erol1994htn}
+K.~Erol, J.~Hendler, D.~S. Nau, {HTN} planning: Complexity and expressivity,
+  in: AAAI, 1994.
+
+\bibitem{nau1998control}
+D.~S. Nau, S.~J. Smith, K.~Erol, et~al., Control strategies in {HTN} planning:
+  Theory versus practice, in: AAAI/IAAI, 1998, pp. 1127--1133.
+
+\bibitem{nau2003shop2}
+D.~S. Nau, T.-C. Au, O.~Ilghami, U.~Kuter, J.~W. Murdock, D.~Wu, F.~Yaman,
+  {SHOP2}: An {HTN} planning system, J. Artif. Intell. Res. (JAIR) 20 (2003)
+  379--404.
+
+\bibitem{kelly2008offline}
+J.~P. Kelly, A.~Botea, S.~Koenig, Offline planning with {H}ierarchical {T}ask
+  {N}etworks in video games., in: AIIDE, 2008, pp. 60--65.
+
+\bibitem{bonfietti2014disregarding}
+A.~Bonfietti, M.~Lombardi, M.~Milano, Disregarding duration uncertainty in
+  partial order schedules? {Yes}, we can!, in: CPAIOR, 2014, pp. 210--225.
+
+\bibitem{buyya2011sla}
+R.~Buyya, S.~K. Garg, R.~N. Calheiros, {SLA}-oriented resource provisioning for
+  cloud computing: {Challenges}, architecture, and solutions, in: Cloud and
+  Service Computing (CSC), 2011.
+
+\bibitem{mohring2001scheduling}
+R.~M{\"o}hring, Scheduling under uncertainty: Bounding the makespan
+  distribution, Computational Discrete Mathematics (2001) 79--97.
+
+\bibitem{lilliefors1967kolmogorov}
+H.~W. Lilliefors, On the {K}olmogorov-{S}mirnov test for normality with mean
+  and variance unknown, Journal of the American Statistical Association
+  62~(318) (1967) 399--402.
+
+\bibitem{Russell:2003:AIM:773294}
+S.~J. Russell, P.~Norvig, Artificial Intelligence: A Modern Approach, 2nd
+  Edition, Pearson Education, 2003.
+
+\bibitem{simmons2001planning}
+R.~Simmons, {Planning, Execution \& Learning 1. Linear \& Non-Linear Planning},
+  (Script). Carnegie Mellon University, USA.
+
+\bibitem{aktolga2004java}
+E.~Aktolga, A java planner for blocksworld problems, University of Osnabrueck.
+
+\bibitem{Garey:1990:CIG:574848}
+M.~R. Garey, D.~S. Johnson, Computers and Intractability; {A} Guide to the
+  Theory of {NP}-Completeness, W. H. Freeman \& Co., NY, USA, 1990.
+
+\bibitem{cohen2015estimating}
+L.~Cohen, S.~E. Shimony, G.~Weiss, Estimating the probability of meeting a
+  deadline in hierarchical plans, in: Twenty-Fourth International Joint
+  Conference on Artificial Intelligence, 2015.
+
+\bibitem{arora2009computational}
+S.~Arora, B.~Barak, Computational complexity: a modern approach, Cambridge
+  University Press, 2009.
+
+\bibitem{Pearl}
+J.~Pearl, Probabilistic Reasoning in Intelligent Systems: {Networks} of
+  Plausible Inference, Morgan Kaufmann, San Mateo, CA, 1988.
+
+\bibitem{Kim}
+J.~H. Kim, J.~Pearl, A computation model for causal and diagnostic reasoning in
+  inference systems, in: IJCAI, 1983.
+
+\bibitem{Dagum.aij}
+P.~Dagum, M.~Luby, Approximating probabilistic inference in {B}ayesian belief
+  networks is {NP}-hard, Artificial Intelligence 60 (1) (1993) 141--153.
+
+\bibitem{Cooper.ai}
+G.~F. Cooper, The computational complexity of probabilistic inference using
+  {B}ayesian belief networks, Artificial Intelligence 42 (2-3) (1990) 393--405.
+
+\bibitem{Bodlaender:2006:TCA:2092758.2092759}
+H.~L. Bodlaender, Treewidth: Characterizations, applications, and computations,
+  in: WG, 2006, pp. 1--14.
+
+\bibitem{ShimonyDomshlak.aiRN2003}
+S.~E. Shimony, C.~Domshlak, Complexity of probabilistic reasoning in
+  directed-path singly connected {B}ayes networks, Artificial Intelligence 151
+  (2003) 213--225.
+
+\bibitem{bucher1988adaptive}
+C.~G. Bucher, Adaptive sampling{:} an iterative fast {M}onte {C}arlo procedure,
+  Structural Safety 5~(2) (1988) 119--126.
+
+\bibitem{shperbergmonte}
+S.~S. Shperberg, S.~E. Shimony, A.~Felner, Monte-carlo tree search using batch
+  value of perfect information.
+
+\bibitem{cohen2018}
+L.~Cohen, T.~Grinshpoun, G.~Weiss, Optimal approximation of random variables
+  for estimating the probability of meeting a plan deadline, in: AAAI, 2018.
+
+\bibitem{hong2013computing}
+Y.~Hong, On computing the distribution function for the poisson binomial
+  distribution, Computational Statistics \& Data Analysis 59 (2013) 41--51.
+
+\bibitem{mercier2007discrete}
+S.~Mercier, Discrete random bounds for general random variables and
+  applications to reliability, European j. of operational research 177~(1)
+  (2007) 378--405.
+
+\bibitem{lipton1990practical}
+R.~J. Lipton, J.~F. Naughton, D.~A. Schneider, Practical selectivity estimation
+  through adaptive sampling, Vol.~19, ACM, 1990.
+
+\bibitem{devroye1980generating}
+L.~Devroye, Generating the maximum of independent identically distributed
+  random variables, Computers \& Mathematics with Applications 6~(3) (1980)
+  305--315.
+
+\bibitem{hagstrom1988computational}
+J.~N. Hagstrom, Computational complexity of {PERT} problems, Networks 18~(2)
+  (1988) 139--147.
+
+\bibitem{gutjahr1992average}
+W.~J. Gutjahr, G.~C. Pflug, Average execution times of series--parallel
+  networks, S{\'e}minaire Lotharingien de Combinatoire 29 (1992) 9.
+
+\bibitem{herroelen2005project}
+W.~Herroelen, R.~Leus, Project scheduling under uncertainty: {Survey} and
+  research potentials, European journal of operational research 165~(2) (2005)
+  289--306.
+
+\bibitem{fu2010towards}
+N.~Fu, P.~Varakantham, H.~C. Lau, Towards finding robust execution strategies
+  for {RCPSP/max} with durational uncertainty., in: ICAPS, 2010, pp. 73--80.
+
+\bibitem{beck2007proactive}
+J.~C. Beck, N.~Wilson, Proactive algorithms for job shop scheduling with
+  probabilistic durations., J. Artif. Intell. Res.(JAIR) 28 (2007) 183--232.
+
+\bibitem{kim2001executing}
+P.~Kim, B.~C. Williams, M.~Abramson, Executing reactive, model-based programs
+  through graph-based temporal planning, in: IJCAI, 2001, pp. 487--493.
+
+\bibitem{MAPGEN}
+M.~Ai-Chang, J.~Bresina, L.~Charest, A.~Chase, J.~Cheng-jung Hsu, A.~Jonsson,
+  B.~Kanefsky, P.~Morris, K.~Rajan, J.~Yglesias, B.~G.~Chafin, W.~C.~Dias,
+  P.~Maldague, Mapgen: Mixed-initiative planning and scheduling for the mars
+  exploration rover mission 19 (2004) 8--12.
+
+\bibitem{Yuan20061189}
+C.~Yuan, M.~J. Druzdzel,
+  \href{http://www.sciencedirect.com/science/article/pii/S0895717705005443}{Importance
+  sampling algorithms for {Bayesian} networks: {Principle}s and performance},
+  Mathematical and Computer Modelling 43~(9–10) (2006) 1189 -- 1207.
+\newblock \href {http://dx.doi.org/http://dx.doi.org/10.1016/j.mcm.2005.05.020}
+  {\path{doi:http://dx.doi.org/10.1016/j.mcm.2005.05.020}}.
+\newline\urlprefix\url{http://www.sciencedirect.com/science/article/pii/S0895717705005443}
+
+\bibitem{erol1996complexity}
+K.~Erol, J.~Hendler, D.~S. Nau, Complexity results for {HTN} planning, Annals
+  of Mathematics and Artificial Intelligence 18~(1) (1996) 69--93.
+
+\bibitem{kvarnstrom2000talplanner}
+J.~Kvarnstr{\"o}m, P.~Doherty, {TALplanner}: {A} temporal logic based forward
+  chaining planner, Annals of Mathematics and Artificial Intelligence 30~(1-4)
+  (2000) 119--169.
+
+\bibitem{gelenbe1989multiprocessor}
+E.~Gelenbe, Multiprocessor performance, Wiley, 1989.
+
+\bibitem{evans2004algorithms}
+D.~L. Evans, L.~M. Leemis, Algorithms for computing the distributions of sums
+  of discrete random variables, Mathematical and Computer Modelling 40~(13)
+  (2004) 1429--1452.
+
+\bibitem{bromiley2013products}
+P.~A. Bromiley, Products and convolutions of gaussian probability density
+  functions (2013).
+
+\bibitem{lai2006knapsack}
+K.~Lai, M.~Goemans, The knapsack problem and fully polynomial time
+  approximation schemes ({FPTAS}), Retrieved November 3 (2006) 2012.
+
+\bibitem{lawler1979fast}
+E.~L. Lawler, Fast approximation algorithms for knapsack problems, Mathematics
+  of Operations Research 4~(4) (1979) 339--356.
+
+\bibitem{Cormen:2001:IA:580470}
+T.~H. Cormen, C.~Stein, R.~L. Rivest, C.~E. Leiserson, Introduction to
+  Algorithms, 2nd Edition, McGraw-Hill Higher Education, 2001.
+
+\bibitem{dyer2003approximate}
+M.~Dyer, Approximate counting by dynamic programming, in: Proceedings of the
+  thirty-fifth annual ACM symposium on Theory of computing, ACM, 2003, pp.
+  693--699.
+
+\bibitem{morris2004random}
+B.~Morris, A.~Sinclair, Random walks on truncated cubes and sampling 0-1
+  knapsack solutions, SIAM journal on computing 34~(1) (2004) 195--226.
+
+\bibitem{gopalan2011fptas}
+P.~Gopalan, A.~Klivans, R.~Meka, D.~Stefankovic, S.~Vempala, E.~Vigoda, An
+  {FPTAS} for\# knapsack and related counting problems, in: Foundations of
+  Computer Science (FOCS), 2011 IEEE 52nd Annual Symposium on, IEEE, 2011, pp.
+  817--826.
+
+\end{thebibliography}
