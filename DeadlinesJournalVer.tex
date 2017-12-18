@@ -148,9 +148,7 @@ Beer-Sheva, Israel 84105\\}
 
 \begin{abstract}
 	% TODO: Extend this abstract to include also Eyal's part and the tightning analysis.
-	Given a hierarchical plan (or schedule) with uncertain task times, we may need to determine the probability that a given plan will satisfy a given deadline (or alternately, that its {\em makespan} is less than a given duration). This problem is NP-hard even for series-parallel hierarchies. We provide a deterministic polynomial-time approximation algorithm for makespan computation. 
-	Computing the expected makespan of a hierarchical plan is also shown to be NP-hard. We examine the approximation bounds empirically and demonstrate 
-	where our scheme is superior to sampling and to exact computation using some task networks. \hl{Tightening the analysis, P-trees,  } 
+	Given a hierarchical plan (or schedule) with uncertain task times, we propose a deterministic polynomial (time and memory) algorithm for estimating the probability that its meets a deadline, or, alternately, that its {\em makespan} is less than a given duration. Approximation is needed as it is known that this problem is NP-hard even for sequential plans (just, a sum of random variables). In addition, we show two new complexity results: (1) Counting the number of events that do not cross deadline is \#P-hard; (2)~Computing the expected makespan of a hierarchical plan is NP-hard. For the proposed approximation algorithm, we establish formal approximation bounds and show that the time and memory complexities grow polynomially with the required accuracy, the number of nodes in the plan, and with the size of the support of the random variables that represent the durations of the primitive tasks. We examine these approximation bounds empirically and demonstrate, using task networks taken from the literature, how our scheme outperforms sampling techniques and exact computation in terms of accuracy and run-time. As the empirical data shows much better error bounds than guaranteed, we also suggest a method for tightening the bounds in some cases. 
 \end{abstract}  
 
 \begin{keyword}
