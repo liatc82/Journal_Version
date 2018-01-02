@@ -187,8 +187,9 @@ We assume that a hierarchical plan is given in the form of a tree, with uncertai
 In this paper, we focus on the distribution 
 (the random variable $X_\tau$) of the plan represented by a tree ($\tau$),
 mostly the issue of computing the probability $P(X_\tau \leq T)$ of satisfying a deadline $T$. Since in the above-mentioned applications for these computations, one needs results in real-time (for monitoring) or multiple such computations (in comparing candidate plans), efficient computation here is crucial, and is more important than in, e.g., off-line planning.
+%The decision problem we analyze is: given a task tree and a deadline, does the probability of meeting this deadline is above a given threshold. We show that this decision problem is NP-hard (see Section~\ref{sec:complexity}), the first contribution of this paper.
 We propose a deterministic polynomial-time approximation scheme for this problem, when the primitive task durations are jointly independent
-(Sections \ref{sec:seq,sec:par,sec:trees}). 
+(Sections~\ref{sec:seq},~\ref{sec:par},~\ref{sec:trees}). 
 Error bounds are analyzed and are shown to be tight. For discrete random variables with finite support, finding the distribution of the maximum can be done in low-order polynomial time. However, when compounded with errors generated due to approximation in subtrees, handling this case requires careful analysis of the resulting error. The approximations developed for both sequence and parallel nodes are combined into an overall algorithm for task trees, with an analysis of the resulting error bounds, yielding a polynomial-time (additive error) approximation scheme for computing the probability of satisfying a deadline for the complete network. 
 We also consider other complexity issues, such as
 computing {\em expected} makespan (Section \ref{sec:complexity}). Since for discrete random variables, in parallel nodes one can compute an exact distribution efficiently, it is easy to compute an {\em expected makespan} in this case as well as for sequence nodes. Despite that,  we show that for trees with both parallel and sequence nodes, computing the expected makespan is hard.
