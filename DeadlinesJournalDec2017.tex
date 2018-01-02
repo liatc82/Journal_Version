@@ -136,7 +136,7 @@
 
 \begin{frontmatter}
 
-\title{Estimating the Probability of Meeting a \\ Deadline in Hierarchical Plans\footnote{A short version of this paper was presented in IJCAI 2015~\cite{cohen2015estimating}}.}
+\title{Estimating the Probability of Meeting a \\ Deadline in Hierarchical Plans\footnote{A short version of this paper was published as \cite{cohen2015estimating}}.}
 
 %% Group authors per affiliation:
 \author{Liat Cohen}
@@ -147,8 +147,7 @@ Ben Gurion University of The Negev\\
 Beer-Sheva, Israel 84105\\}
 
 \begin{abstract}
-	% TODO: Extend this abstract to include also Eyal's part.
-	Given a hierarchical plan (or schedule) with uncertain task times, we propose a deterministic polynomial (time and memory) algorithm for estimating the probability that its meets a deadline, or, alternately, that its {\em makespan} is less than a given duration. Approximation is needed as it is known that this problem is NP-hard even for sequential plans (just, a sum of random variables). In addition, we show two new complexity results: (1) Counting the number of events that do not cross deadline is \#P-hard; (2)~Computing the expected makespan of a hierarchical plan is NP-hard. For the proposed approximation algorithm, we establish formal approximation bounds and show that the time and memory complexities grow polynomially with the required accuracy, the number of nodes in the plan, and with the size of the support of the random variables that represent the durations of the primitive tasks. We examine these approximation bounds empirically and demonstrate, using task networks taken from the literature, how our scheme outperforms sampling techniques and exact computation in terms of accuracy and run-time. As the empirical data shows much better error bounds than guaranteed, we also suggest a method for tightening the bounds in some cases. 
+		Given a hierarchical plan (or schedule) with uncertain task times, we propose a deterministic polynomial (time and memory) algorithm for estimating the probability that its meets a deadline, or, equivalently, that its {\em makespan} is less than a given duration. Approximation is needed as it is known that this problem is NP-hard even for sequential plans (sum of random variables). In addition, we show two new complexity results: (1) Counting the number of events that do not cross the deadline is \#P-hard; (2)~Computing the expected makespan of a hierarchical plan is NP-hard. For the proposed approximation algorithm, we establish formal approximation bounds and show that the time and memory complexities grow polynomially with the required accuracy, the number of nodes in the plan, and with the size of the support of the random variables that represent the durations of the primitive tasks. We examine these approximation bounds empirically and demonstrate, using task networks taken from the literature, how our scheme outperforms sampling techniques and exact computation in terms of accuracy and run-time. As the empirical data shows much better error bounds than guaranteed, we also suggest a method for tightening the bounds in some cases. 
 \end{abstract}  
 
 \begin{keyword}
@@ -183,35 +182,46 @@ full distribution and consider only the expected resource consumption~\cite{bonf
 on providing guarantees for the probability of meeting deadlines. This type of analysis is needed, e.g., in
 Service-Level-Agreements (SLA) where guarantees of the form: ``response time less than 1mSec in at least 95\% of the cases'' are common~\cite{buyya2011sla}, 
 Section~\ref{sec:discussion} discusses additional related work.
-We assume that a hierarchical plan is given in the form of a tree, with uncertain resource consumption of the primitive actions in the network, provided as a probability distribution. The problem is to compute a property of interest of the distribution for the entire task network. In this paper, we focus mainly on the issue of computing the probability $P(X_\tau \leq T)$ of satisfying a deadline $T$ where $X_\tau$ is a random variable describing the distribution of the makespan of the plan. Since in the above-mentioned applications for these computations, one needs results in real-time (for monitoring) or multiple such computations (in comparing candidate plans), efficient computation here is crucial, and is more important than in, e.g., off-line planning.
-
-The decision problem we analyze is: given a task tree and a deadline, does the probability of meeting this deadline is above a given threshold. We show that this decision problem is NP-hard (see Section~\ref{sec:complexity}), the first contribution of this paper. We propose a deterministic polynomial-time approximation scheme for this problem, a second contribution of this paper. Error bounds are analyzed and are shown to be tight. For discrete random variables with finite support, finding the distribution of the maximum can be done in low-order polynomial time. However, when compounded with errors generated due to approximation in subtrees, handling this case requires careful analysis of the resulting error. The approximations developed for both sequence and parallel nodes are combined into an overall algorithm for task trees, with an analysis of the resulting error bounds, yielding a polynomial-time (additive error) approximation scheme for computing the probability of satisfying a deadline for the complete network, another contribution of this paper. 
-We also consider computing {\em expected} makespan. Since for discrete random variables, in parallel nodes one can compute an exact distribution efficiently, it is easy to compute an {\em expected makespan} in this case as well as for sequence nodes. Despite that,  we show that for trees with both parallel and sequence nodes, computing the expected makespan is hard.
-
-% TODO: Eyal, can you please add your contributions to the above paragraph?
-
-Experiments are provided in order to examine the quality of approximation in practice when compared to the theoretical error bounds. A simple sampling scheme is also provided as a yardstick, even though the sampling does not come with error guarantees, but only bounds in probability. Finally, we examine our results in light of related work in the fields of planning and scheduling, as well as
-probabilistic reasoning. 
+We assume that a hierarchical plan is given in the form of a tree, with uncertain resource consumption of the primitive actions in the network, provided as a probability distribution. The problem is to compute a property of interest of the distribution for the entire task
+ network. 
+In this paper, we focus on the distribution 
+(the random variable $X_\tau$) of the plan represented by a tree ($\tau$),
+mostly the issue of computing the probability $P(X_\tau \leq T)$ of satisfying a deadline $T$. Since in the above-mentioned applications for these computations, one needs results in real-time (for monitoring) or multiple such computations (in comparing candidate plans), efficient computation here is crucial, and is more important than in, e.g., off-line planning.
+We propose a deterministic polynomial-time approximation scheme for this problem, when the primitive task durations are jointly independent
+(Sections \ref{sec:seq,sec:par,sec:trees}). 
+Error bounds are analyzed and are shown to be tight. For discrete random variables with finite support, finding the distribution of the maximum can be done in low-order polynomial time. However, when compounded with errors generated due to approximation in subtrees, handling this case requires careful analysis of the resulting error. The approximations developed for both sequence and parallel nodes are combined into an overall algorithm for task trees, with an analysis of the resulting error bounds, yielding a polynomial-time (additive error) approximation scheme for computing the probability of satisfying a deadline for the complete network. 
+We also consider other complexity issues, such as
+computing {\em expected} makespan (Section \ref{sec:complexity}). Since for discrete random variables, in parallel nodes one can compute an exact distribution efficiently, it is easy to compute an {\em expected makespan} in this case as well as for sequence nodes. Despite that,  we show that for trees with both parallel and sequence nodes, computing the expected makespan is hard.
+Experiments are provided in order to examine the quality of approximation in practice when compared to the theoretical 
+error bounds (Section \ref{sec:exp}). A simple sampling scheme is also provided as a yardstick, even though the sampling does not come with error guarantees, but only bounds in probability. 
+Finally, we relax the requirement that primitive task durations are independent, in a manner consistent with related work in planning and scheduling, as well as probabilistic 
+reasoning (Section \ref{sec:generalizations}). That is, we show how one
+can use a combination of cut-set conditioning to extend out algorithm to
+a pseudo-polynomial time approximation scheme; for the case where the primitive task durations are independent, except for possible dependency on a small set of variables, the runtime is exponential only in the cut-set size.
 
 \section{Problem statement}\label{sec:formal}
 
-We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes.
-Primitive action nodes contain distributions over their resource consumption. Many resources can be modeled using the proposed approach. 
-%For example, if the resource of interest is fuel one can consider parallel execution as bus or carpool and sequential execution as using a private car. 
-For example if the resource of interest is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed. Note that the role parallel and sequence node is inversed here. We will assume henceforth, in order to be more concrete, that the resource of interest is time, i.e., that parallel nodes represent maximum and sequence nodes represent sum.
+\hl{*** This section is disorganized and contains REPEATED
+sentences/issues. I do not know how to fix this, please read this
+SERIOUSLY and CRITICALLY and FIX ***}
+We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes (see Fig.~\ref{fig:hierarchical plan}).
 
-%(for example, if fuel is the given resource, one can consider parallel execution as bus or carpool and sequential execution as driving a private car e.g., memory: tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed)
+\hl{*** Example should be HERE ***}
+
+Primitive action nodes contain distributions over their resource consumption. Many resources can be modeled using this approach. 
+ 
+For example if the resource of interest is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed. Note that the role parallel and sequence node is reversed here. We will assume henceforth, in order to be more concrete, that the resource of interest is time, i.e., that parallel nodes represent maximum and sequence nodes represent sum.
 
 The tasks trees that we analyze are composed of sequence nodes, parallel nodes and leaves that we call primitive tasks. A sequence node represents a composition of tasks in sequence. Its makespan is the the sum of the makespans of its child nodes. A parallel node represents a composition of tasks in parallel. Its makespan is the maximum of the makespan of its child nodes.
 The makespans of the primitive nodes at the leafs of the tree are uncertain, and described as probability distributions.
-We assume  that the distributions are  independent (but {\em not} necessarily identically distributed).
-We also assume initially that the random variables are discrete and have finite support (i.e. the number of values for which the probability is non-zero is finite).
+We initially assume  that the distributions are  independent (but {\em not} necessarily identically distributed), and that
+the random variables representing the distributions are discrete and have finite support (i.e. the number of values for which the probability is non-zero is finite).
 In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is completion time, we associate each leaf node, $v$, with the random variable, $X_v$, that represents the distribution of the 
 a completion-time distribution $P_{X_v}$ and a cumulative distribution function (CDF) $F_{X_v}$.
 
 For clarity, we use the following standard for notations in the paper. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. %Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. 
-Second, we use the symbol $\tau_{name}$ where the subscript contains a name of a node to denote the subtree starting at this node, i.e., the node is the root of the subtree. Note that $X_{\tau_{v}}$ and $X_v$ have the same meaning - a random variable representing the makespan of the subtree $\tau_{v}$.
-Last, we use primed versions of random variables to denote approximations, i.e., the symbol $X'_{name}$ denotes an approximation of the random variable $X_{name}$.
+Second, we use the symbol $\tau_{name}$ where the subscript contains a name of a node to denote the subtree rooted  at $name$. Note that $X_{\tau_{v}}$ and $X_v$ have the same meaning - a random variable representing the makespan of the subtree $\tau_{v}$.
+Finally, we use primed versions of random variables to denote approximations, i.e., the symbol $X'_{v}$ denotes an approximation of the random variable $X_{v}$.
 
 The main computational problem analyzed in this paper is the {\em deadline problem}: 
 \begin{definition}\label{Def:Deadline}
@@ -222,11 +232,13 @@ The main computational problem analyzed in this paper is the {\em deadline probl
 %Given a task tree $\tau $ and a deadline $T$. 
 %Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
 %\end{definition}
-In words, given a task tree $\tau $ and a deadline $T$, we ask what is the probability that the plan modeled by $\tau$ terminates in time less than $T$?
+
+\hl{*** YUK, deleted the sentence below ***}
+%In words, given a task tree $\tau $ and a deadline $T$, we ask what is the probability that the plan modeled by $\tau$ terminates in time less than $T$?
 
 The above {\em deadline problem} reflects a step utility function: a 
 constant positive utility $U$ for all $t$ less than or equal to a deadline 
-time $T$, and $0$ for all $t>T$. We also briefly consider a linear utility function, requiring
+$T$, and $0$ for all $t>T$. We also briefly consider a linear utility function, requiring
 computation of the expected completion time of $\tau$, and show that this {\em expectation problem} 
 is also NP-hard. 
 The duration of a sequence node $s$ is a random variable:
@@ -247,7 +259,7 @@ Let $r$ be the root node of a task tree $\tau$ and $X_r$ be a random variable re
 Then the probability that the plan meets the deadline $T$ is $F_{X_r}(T)$.
 Thus we need to compute the CDF, which is NP-hard~\cite{mohring2001scheduling}. We show how to deterministically approximate the CDF of the root with additive error at most $\varepsilon$ in time polynomial in $1/\varepsilon$.
 
-Figure~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node implied by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with probability mass function (PMF) describes the completion-time distribution. In this case $P_{X_a}(x)=P_{X_b}(x)=P_{X_c}(x)=P_{X_d}(x)=P_{X_e}(x)$.
+Figure~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node denoted by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with a probability mass function (PMF) which describes its completion-time distribution. In this case $P_{X_a}(x)=P_{X_b}(x)=P_{X_c}(x)=P_{X_d}(x)=P_{X_e}(x)$.
 $$P_{X_a}(x)=
 \begin{cases}
 1/4 & \text{if } x=1; \\
@@ -285,8 +297,8 @@ This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c
 
 \begin{example}
 
-Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we will compute the duration distribution in the form of PMF for each compound task node including the root node, and then we will return the probability for $\tau$ to satisfy a given deadline $T$. 
-First, compute duration distribution for the node $B$. The children task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
+Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we show how to compute the duration distribution in the form of a  PMF for each compound task node. 
+First, compute the duration distribution for node $B$.The child task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
 $$P_{X_B}(x)=P_{\max(X_a,X_b)}(x)=
 \begin{cases}
 1/16 & \text{if } x=1; \\
@@ -294,7 +306,7 @@ $$P_{X_B}(x)=P_{\max(X_a,X_b)}(x)=
 0 & otherwise.
 \end{cases}$$
 
-Second, compute duration distribution for node $C$. The children task nodes $c,d$, are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $c$ and $d$:  
+Second, compute duration distribution for node $C$. The child task nodes $c,d$, are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $c$ and $d$:  
 $$P_{X_C}(x)=P_{X_c+X_d}(x)=
 \begin{cases}
 1/16 & \text{if } x=2; \\
@@ -303,7 +315,7 @@ $$P_{X_C}(x)=P_{X_c+X_d}(x)=
 0 & otherwise.
 \end{cases}$$
 
-Last, compute duration distribution for node $A$, the root node. The children task nodes $B,C,e$ are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $B$, $C$ and $e$: 
+Finally, compute the duration distribution for node $A$, the root node. The child task nodes $B,C,e$ are executed in sequence, therefore, we need to use convolution in order to compute the sum of the duration distributions of nodes $B$, $C$ and $e$: 
 $$P_{X_{\tau}}=P_{X_A}(x)=P_{X_B+X_C+X_e}(x)=
 \begin{cases}
 1/1024 & \text{if } x=4; \\
@@ -314,7 +326,7 @@ $$P_{X_{\tau}}=P_{X_A}(x)=P_{X_B+X_C+X_e}(x)=
 0 & otherwise.
 \end{cases}$$
 
-For every deadline $T$ we can easily return the probability for $\tau$ to satisfy $T$. If $T=8$, the probability is  $F_{X_{\tau}}(8)=25/1024$ . 
+For every deadline $T$ we can easily compute the probability for $\tau$ to satisfy $T$. For $T=8$, the probability is  $F_{X_{\tau}}(8)=25/1024$ . 
 \end{example}
  
 \section{Sum (sequence) nodes}\label{sec:seq}
@@ -323,8 +335,8 @@ The size of the support (number of non-zero probability values) of the sum of ra
 may be exponential in the number of variables, even for 2-valued variables.
 In fact, as shown in~\cite{mohring2001scheduling}, computing the CDF of a sum of random variables at a given point is NP-hard.
 We thus define a notion of approximation, 
-which we call a {\bf Kolmogorov upper bound} (defined below), and supply an operator, we call $\Trim$, that 
-produces such an approximation.
+which we call a {\bf Kolmogorov upper bound} (defined below), and 
+supply a $\Trim$ operator that allows us to produce such an approximation.
 %produces a variable that is a Kolomogorov upper bound of the input and has that is reduces the support size, \hl{while} producing an approximation that is .
 
 Let $X$ and $X'$ be random variables; 
@@ -337,9 +349,9 @@ If the following equation holds:
 \[
 \forall ~ x, ~ F_X(x)+\varepsilon \geq F_{X'}(x) \geq F_X(x)
 \]
-we say that the random variable $X'$ is a Kolmogorov $\varepsilon$ upper bound \hl{approximation} of $X$,
+we say that the random variable $X'$ is a Kolmogorov $\varepsilon$ upper bound approximation of $X$,
 which we denote by $X' \succeq_\varepsilon X$. Contrapositively, we call $X$ a  Kolmogorov $\varepsilon$ lower
-bound \hl{approximation} of $X'$. Note that $X' \succeq_\varepsilon X$ implies that $d_K(X,X') \leq \varepsilon$,
+bound approximation of $X'$. Note that $X' \succeq_\varepsilon X$ implies that $d_K(X,X') \leq \varepsilon$,
 but not vice-versa.
 
 In our algorithms and examples,
@@ -347,20 +359,26 @@ the PMF of a random variable $X$ is represented by a list $D_X$,
 which consists of $d=(p, x)$ pairs, where $x\in \support(X)$
 and $p$ is the probability $P(X=x)$. In the pair $d=(p, x)$, we denote the value $x$
 by $val(d)$, and the probability $p$ by $prob(d)$.
-For example, let $X$ be a random variable distributed as: $[0.1:1, 0.1:2, 0.8:4]$, and $X'$ a random variable distributed as $[0.2:1, 0.8:4]$. Then we have $X' \succeq_{0.1} X$. In order to achieve a \hl{Kolmogorov upper bound of $\varepsilon$},
-the $\Trim_U$ operator removes consecutive domain values whose accumulated probability is
+For example, let $X$ be a random variable distributed as: $[0.1:1, 0.1:2, 0.8:4]$, and $X'$ a random variable distributed as $[0.2:1, 0.8:4]$. Then we have $X' \succeq_{0.1} X$. In order to achieve a Kolmogorov $\varepsilon$ upper bound approximation,
+the $\Trim$ operator (see Algorithm 1) removes consecutive domain values whose accumulated probability is
 less than $\varepsilon$ and adds 
 their probability mass to the element in the support that precedes them.
 
-If the input $D_X$ to $\Trim$ is sorted in increasing order of $x$ (we denote this operator by $\Trim_U(X, \varepsilon)$)
+If the input $D_X$ to $\Trim$ is sorted in increasing order of $x$ (we denote this variant by $\Trim_U(X, \varepsilon)$)
 then resulting variable $X'$ (represented by the output $D_{X'}$) 
 is a Kolmogorov $\varepsilon$ upper bound of $X$.
-Likewise, if $D_X$ sorted in decreasing order of $x$ 
-(in this case we denote the $\Trim$ operator
-by $\Trim_L(X, \varepsilon)$) then $X'$ is a Kolmogorov $\varepsilon$ 
-lower bound of $X$. 
+Likewise, if $D_X$ sorted in decreasing order of $x$
+then $X'$ is a Kolmogorov $\varepsilon$ 
+lower bound of $X$. In the latter case we denote the $\Trim$ operator variant by $\Trim_L(X, \varepsilon)$).
 
-From now on, in order to simplify, we will use the notation $\Trim$ instead of $\Trim_U$. Note that we could have chosen to use $\Trim_L$ instead and get a symmetric version of all the results.
+%From now on, in order to simplify, we will use the notation $\Trim$ instead of $\Trim_U$. Note that we could have chosen to use $\Trim_L$ instead and get a symmetric version of all the results.
+
+\hl{*** No, I strongly disagree. I meant Trim as the algorithm in the figure,
+which is DIRECTION-NEUTRAL. The kind of approximation it produces depends
+on the way its input list is sorted. TrimU is an OPERATOR that uses Trim
+with a list sorted increasing value, hence NOT the same as Trim.
+Now someone "`fixed"' it (i.e. messed it up), please UNFIX it. ****
+*** Attempting to UNFIX this myself ***}
 
 %Eyal: copy from Eyal ver
 %---------------------------------
@@ -403,10 +421,11 @@ From now on, in order to simplify, we will use the notation $\Trim$ instead of $
 \end{algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Trimming decreases the support size, while introducing an error. The trick is
+Trimming decreases the support size, while introducing errors. The trick is
 to keep the support size under control, while making sure that the error does
-not increase beyond a desired tolerance.
-Note that the size of the support can also be decreased by simple ``binning'' 
+not increase beyond a desired bound.
+Note that the size of the support can also be
+ decreased by simple ``binning'' 
 schemes, but these may not provide the desired guarantees.
 
 %Eyal: copy from Eyal version
@@ -423,7 +442,7 @@ schemes, but these may not provide the desired guarantees.
 \noindent We now show that with $D_X$ sorted in a increasing order,
 $\Trim(D_X,\varepsilon)$ is an Kolmogorov $\varepsilon$ upper bound of $X$.
 \begin{lemma} \label{Trim}
-$\Trim(X,\varepsilon)\succeq_\varepsilon X$
+$\Trim_U(X,\varepsilon)\succeq_\varepsilon X$
 \end{lemma}
 
 \begin{proof}
@@ -507,7 +526,7 @@ As the children of a sequence node may be internal nodes in the task tree,
 the input distributions may already be approximations. To keep the size of
 the support small, we apply Trim after the addition of each random variable, i.e., 
 we compute the random variables 
-$Y'_i = \Trim(X'_i + Y'_{i-1}, \varepsilon)$,
+$Y'_i = \Trim_U(X'_i + Y'_{i-1}, \varepsilon)$,
 where the $X'_i$ is a Kolmogorov $\varepsilon_i $ upper bound of $X_i$
 and show that $Y'_n$ is a Kolmogorov $\delta $ upper bound of $X$, for an appropriate $\delta $.
 
@@ -517,7 +536,7 @@ computed as in Algorithm~\ref{alg:Trim}. That is, our approximation for a $\Sequ
 \begin{equation}
 \label{eq:sequence}
 \Sequence(X'_1,\dots , X'_n,  \varepsilon) 
-= \Trim(\Convolve(X'_1, \Sequence(X'_2, \dots , X'_n, \varepsilon)), \varepsilon)
+= \Trim_U(\Convolve(X'_1, \Sequence(X'_2, \dots , X'_n, \varepsilon)), \varepsilon)
 \end{equation}
 We begin by bounding the approximation error propagated by convolution (sum of random variables ):
 
@@ -590,7 +609,7 @@ outer loop iterates $n$ times, the overall
 run-time of the algorithm is $O((n m/\varepsilon) \log(m/\varepsilon))$.
 \end{proof}
 
-% TODO *** Why do we need to sort? If the input is sorted, and we keep it sorted? ***
+\hl{ *** Why do we need to sort? If the input is sorted, and we keep it sorted? ***}
 
 
 %To show that the error bound provided in Theorem~\ref{appSeqTheorem} is tight, we
@@ -620,9 +639,9 @@ run-time of the algorithm is $O((n m/\varepsilon) \log(m/\varepsilon))$.
 %
 %\end{example}
 %%\vspace*{-.4cm} 
-The following example shows that our error bound is tight, that is,
-a sequence of random variables where the error actually achieves
-the bounds.
+The following example, a sequence of random variables and its sum,
+achieves the error bounds, and thus
+shows that our error bound is tight.
 
 \begin{example}\label{exp:seq}
 	Let $0 {\leq} \varepsilon {<}1$ and $n {\in} \mathbb{N}$ such that $1{-}\varepsilon {>} {\varepsilon }/{n}$, i.e.,  
@@ -662,7 +681,7 @@ the bounds.
 	modifies the probability $P_{X}1)$ from slightly greater than  $\varepsilon/n$ to precisely $\varepsilon/n$, which will then allow it
 	to be trimmed.
 	
-	Then, if we apply $\Trim(X_1+X_2,\varepsilon/n)$, when $\delta$ is sufficiently small, we get the random variable $X'$ whose probability distribution is:
+	Then, if we apply $\Trim_U(X_1+X_2,\varepsilon/n)$, when $\delta$ is sufficiently small, we get the random variable $X'$ whose probability distribution is:
 	$$
 	P_{X'}(x) {=} 
 	\begin{cases}
@@ -674,7 +693,7 @@ the bounds.
 	$$ 
 	
 	Note that indeed trimming shifts the mass from $P_X(1)=\varepsilon/n$ to $P_{X'}(0)$.
-	This repeats in all steps so, after $n$ steps, we get a random variable $X'$ such that $P_{X'}(0) \xrightarrow{\,\,\delta \to 0\,\,} \varepsilon$. Therefore, 
+	This repeats in all steps, thus after $n$ steps we get a random variable $X'$ such that $P_{X'}(0) \xrightarrow{\,\,\delta \to 0\,\,} \varepsilon$. Therefore, 
 	$P_{\Sequence(X_1,\dots,X_n,\varepsilon/n)}(0) {-} P_{X_1{+}\dots{+}X_n}(0)$
 	%\begin{align*}
 	%&P(Sequence(X_1,\dots,X_n,\varepsilon/n) {\leq} 0)  \\
@@ -698,7 +717,7 @@ the distribution representation sorted in reverse order.
 \SetKwFunction{Parallel}{Parallel}
 
 Unlike sequence composition, the deadline problem for parallel composition
-is easy to compute, since the execution time of
+is computationally easy, since the execution time of
 a parallel composition is the maximum of the durations:
 \begin{align}
 %&P(\max\{X_1,\dots,X_n\}\leq T)= \nonumber \\
@@ -749,7 +768,7 @@ $F_{\max_{i\in[1:n]}X'_i}
 Since $F_{X_i'}(T) > F_{X_i}(T)$ for each $i$, this expression is nonnegative.
 \end{proof}
 
-Both in Lemma~\ref{appPalTheorem} and in Lemma~\ref{tightPalTheorem} we suggest an upper bound of the error resulted in the case where the input CDFs themselves are approximations. However, Lemma~\ref{appPalTheorem} is designed to facilitate the proof of Theorem~\ref{th:TTalgcomplexity} and Lemma~\ref{appPalTheorem} is designed to facilitate the proof Theorem~\ref{theorem:approxEps0}. 
+Lemma~\ref{appPalTheorem} and Lemma~\ref{tightPalTheorem} both suggest an upper bound of the error in the case where the input CDFs themselves are approximations. However, Lemma~\ref{appPalTheorem} is designed to facilitate the proof of Theorem~\ref{th:TTalgcomplexity} and Lemma~\ref{appPalTheorem} is designed to facilitate the proof Theorem~\ref{theorem:approxEps0}. 
 \begin{lemma} \label{tightPalTheorem}
 For discrete random variables $X_1', \dots X_n'$, $X_1, \dots,X_n$, if for all $i=1,\dots,n$,  $X_i' \succeq_{\varepsilon_i} X_i$,
 then $\max\{X_1',\dots, X_n'\} \succeq_{e} \max\{X_1,\dots,X_n\}$ where $e=1-\prod_{i=1}^n (1-\varepsilon_i)$.
@@ -810,7 +829,7 @@ sequence nodes where the $i$th sequence node has a single primitive-task child m
 computation will introduce exactly the higher bound predicted by Lemma~\ref{tightPalTheorem}, i.e, this bound is tight.
 \end{example}
 
-\section{Task trees: mixed sequence/parallel}
+\section{Task trees: mixed sequence/parallel}\label{sec:trees}
 
 Given a task tree $\tau$ and a accuracy requirement $0<\varepsilon<1$, we generate a distribution for a random variable $X_{\tau}'$ approximating the true duration distribution  $X_{\tau}$ for the task tree. 
 We introduce the algorithm and prove that the algorithm indeed returns an $\varepsilon$-approximation of the completion time of the plan. 
@@ -1067,6 +1086,7 @@ takes this extra time only in cases where any algorithm that decides how to trim
 (and not on the CDFs of the random variables or on other parts of the tree) would.
 
 
+
 \section{Complexity results}\label{sec:complexity}
 
 The deadline problem is NP-hard, 
@@ -1206,27 +1226,6 @@ To complete the picture, we also state the complexity of the deadline problem  f
 \section{Empirical Evaluation}\label{sec:exp}
 
 
-%\begin{table}[tbh]
-%{\tiny
-%\begin{tabular}{|l|l|l|| p{1.5cm}|p{1.5cm}|p{2.4cm}||l|l|l|l|l|}
-%\hline
-%\multicolumn{1}{|c|}{\multirow{2}{*}{Task Tree}} & \multicolumn{1}{c|}{\multirow{2}{*}{$N$}} & \multicolumn{1}{c|}{\multirow{2}{*}{$M$}} & \multicolumn{3}{c|}{Approx. alg. err., given $\varepsilon$} & \multicolumn{4}{c|}{Sampling alg. err., given \# samples} \\ \cline{4-10} 
-%\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{0.1} & \multicolumn{1}{c|}{0.01} & \multicolumn{1}{c|}{0.001} & \multicolumn{1}{c|}{$10^{3}$} & \multicolumn{1}{c|}{$10^{4}$} & \multicolumn{1}{c|}{$10^{5}$} & \multicolumn{1}{c|}{$10^{6}$} \\ \hline \hline
-%\multirow{3}{*}{Drive(DRC)} & 47 & 2 & [-0.0052, 0.0086] & [-0.0004, 0.0004] & [-$3.2 {\cdot} 10^{-5}$, $3.4 {\cdot} 10^{-5}$] & 0.0206 & 0.0072 & 0.0031 & 0.0009 \\ \cline{2-10} 
-% & 47 & 4 & [-0.0096, 0.019] & [-0.0009, 0.0013] & [-$9.2 {\cdot} 10^{-5}$, $1.3 {\cdot} 10^{-4}$] & 0.0476 & 0.0075 & 0.0046 & 0.0011 \\\cline{2-10} 
-% & 47 & 10 & [-0.014, 0.028] & [-0.0014, 0.0025] & [-$9.5 {\cdot} 10^{-5}$, $1.4 {\cdot} 10^{-4}$] & 0.0236 & 0.0083 & 0.0024 & 0.0015 \\ \hline
-%\multirow{2}{*}{Seq} & 10 & 4 & [-0.027, 0.041] & [-0.0027, 0.0041] & [-$2.2 {\cdot} 10^{-4}$, $2.5 {\cdot} 10^{-4}$] & 0.0224 & 0.008 & 0.0017 & 0.0016  \\ \cline{2-10} 
-% & 10 & 10 &[-0.0316, 0.0615]  & [0.0033, 0.0067] & [$-2.6 {\cdot} 10^{-4}$, $5.2 {\cdot} 10^{-4}$] & 0.027 & 0.0117 & 0.0038 & - \\ \hline 
-%\multirow{1}{*}{Random} & 50 & 4 & 0.007 & 0.0007 &  - & 0.0243 & 0.0084 & 0.0024& - \\   \hline
-%  \multirow{2}{*}{Logistics14} & 45 & 4  & 0.004 & 0.0004 & $3.3\cdot 10^{-5}$& 0.036 & 0.008 & 0.002 & 0.0006 \\ \cline{2-10}  
-% & 45 & 10  &0.005 & 0.0005 & 0 & 0.03 & 0.013 & 0.002 &0.001  \\ \hline
-%\end{tabular}
-%\caption{Estimation errors}
-%\label{tab:errors}
-%}
-%\vspace*{-0.5cm} 
-%\end{table}
-
 We examine our approximation bounds in practice, and compare the results to
 exact computation of the CDF and to a simple stochastic sampling scheme. Three types of task trees
 are used in this evaluation:
@@ -1269,17 +1268,20 @@ with children all being sequential plans. In Figure {\ref{fig:transport}} presen
 (package p2), (at p2 l2), (destination p2 l3), (available-truck t2), (at t2 home)$\}$.
 The duration distribution of all primitive tasks is uniform but the support parameters were determined by the type of the task, 
 in some tasks the distribution is fixed (such as for load and unload) and in others the distribution depends on the velocity of the vehicle
-and on the distance to be travelled.
+and on the distance to be traveled.
 
-After running our approximation algorithm we also ran $\Trim_L$ which uses a reversed version of the $\Trim$ operator, providing a {\em lower} bound of the CDF, as well as the upper bound
-generated by Algorithm~\ref{alg:approx}. Running both variants allows us to bound the actual error, costing
+After running our approximation algorithm, we re-ran 
+Algorithm~\ref{alg:approx} using $\Trim_L$ (Trim operator using a distribution representation sorted in a reverse order)
+instead of $\Trim_U$, thus getting a {\em lower} bound of the CDF, as well as the upper bound.
+Running both variants allows us to bound the actual error, costing
 only a doubling of the run-time. Despite the fact that our error bound is theoretically tight, in practice
 and with actual distributions, according to Tables~\ref{tab:errors1} and ~\ref{tab:errors2}, the resulting error
 in the algorithm was usually much better than the theoretical $\varepsilon$ bound.
 
 
 We ran the exact algorithm, our approximation algorithm with $\varepsilon \in \{ 0.1, 0.01, 0.001\}$, and a simple simulation with 
-$10^3$ to $10^7$ samples (number of samples is denoted by $s$ in the table), on networks from the DRC
+$10^3$ to $10^7$ samples 
+(number of samples is denoted by $s$ in the table), on networks from the DRC
 implementation, sequence nodes with 10, 20, and 50 children (number of nodes denoted by $N$ in the table), and 20 Logistics domain plans, and
 several values of $M$ (the notations $M, N$ are as in Theorem~\ref{th:TTalgcomplexity}). 
 Results for the various task trees are shown in tables~\ref{tab:errors1},~\ref{tab:errors2} (error comparison) and~\ref{tab:runtimes1},~\ref{tab:runtimes2} (runtime comparison).
@@ -1287,7 +1289,8 @@ Errors are the maximum error in the CDF, measured from the true result when avai
 when the exact algorithm timed out (over 2 hours). 
 The exact algorithm times out in many cases when the number of tasks is 20 or more, except when size of the support $M$ is very small, in which case it handles some more nodes, but still cannot handle 
 50 tasks even for $M=2$.
-Both our approximation algorithm and the sampling algorithm handle all these cases, as our algorithm's runtime is polynomial in $N$, $M$, and ${1}/{\varepsilon}$
+Both our approximation algorithm and the sampling algorithm handle all these cases, as our algorithm's runtime is polynomial in 
+$N$, $M$, and ${1}/{\varepsilon}$
 as is the sampling algorithm's (time linear in number of samples). 
 
 The advantage of the approximation algorithm is mainly in providing bounds with
@@ -1454,7 +1457,7 @@ eventually the approximation algorithm overtook the sampling algorithm.
 		\caption{Estimation errors for sequential plans}
 		\label{tab:errors2}
 	}
-	%\vspace*{-0.5cm} 
+
 \end{table*}
 
 
@@ -1487,8 +1490,7 @@ eventually the approximation algorithm overtook the sampling algorithm.
 
 \section{Dependencies and other generalizations}\label{sec:generalizations}
 
-Computing the distribution of the makespan in trees is considered a trivial problem in some contexts
-in probabilistic reasoning~\cite{Pearl}.
+Computing the distribution of the makespan in trees can be considered a simple problem in probabilistic reasoning~\cite{Pearl}.
 Specifically, given the task network, such as the one in Figure~\ref{fig:task-network},
 it is straightforward to represent the 
 distribution using a Bayes network (BN) that has one node
@@ -1529,10 +1531,11 @@ of approximate belief propagation from primitive task variables to the root, avo
 
 Looking at makespan distribution computation as probabilistic reasoning leads immediately to 
 the question on how to handle task completion times that have dependencies, represented as a BN. 
-Since reasoning in BNs is NP-hard even for binary-valued variables~\cite{Dagum.aij,Cooper.ai}, 
+Since reasoning in BNs is NP-hard even for binary-valued 
+variables~\cite{Dagum.aij,Cooper.ai}, 
 this is hard in general.
 But for cases where the BN toplogy is tractable, such as for BNs 
-with a small cutset,%~\cite{??}
+with a small cutset,
 BNs with bounded treewidth~\cite{Bodlaender:2006:TCA:2092758.2092759},
 or directed-path singly connected BNs~\cite{ShimonyDomshlak.aiRN2003},
 a deterministic polynomial-time approximation scheme for 
@@ -1631,7 +1634,7 @@ Here we motivate and handle a special case of small cutsets.
 Specifically, suppose that, in addition to the tree, we allow a small number of dependencies
 between primitive task distributions. Does our algorithm generalize to this case?
 The importance of this question is because such an extension is natural in some contexts. For example,
-in the logistics case we have a 2-level tree, with a toplogy similar to that of Figure ~\ref{fig:task-network}.
+in the logistics case we have a 2-level tree, with a topology similar to that of Figure ~\ref{fig:task-network}.
 The children of the sequence nodes are primitive tasks such as
 ``drive delivery truck 1 from Boston to NY'' (suppose this is primitive task A in  Figure ~\ref{fig:task-network}).
 Now, the duration of this action is a random variable
@@ -1644,9 +1647,9 @@ this dependency into account.
 Another case where we have dependency is when the same primitive action is 
 used in more than one composite task. Although this state cannot be represented in
 strict hierarchies, recall that timing relationships represented by HTNs can also be
-represented by directed acyclic perti nets. For example, the task network of Figure~\ref{fig:task-network}
-can be represented by the perti net of Figure~\ref{fig:petri-net-graph} (without the shaded arc). However, perti nets allow more general
-timing constraints: the language of trees is equlivalent to perti nets with a series-parallel
+represented by directed acyclic petri nets. For example, the task network of Figure~\ref{fig:task-network}
+can be represented by the petri net of Figure~\ref{fig:petri-net-graph} (without the shaded arc). However, petri nets allow more general
+timing constraints: the language of trees is equlivalent to petri nets with a series-parallel
 graph structure. Adding the shaded arc from A to D in the petri net of Figure~\ref{fig:petri-net-graph}, 
 we get a graph that is not series-parallel. Its equivalent in HTNs would be the non-tree structure
 shown in Figure~\ref{fig:non-tree-TN}, that shares primitive task A between composite tasks. 
@@ -1660,20 +1663,23 @@ for every possible value instantiation over all the cutset variables. The result
 are combined by weighted averaging. We propose to do the same in our case, but must prove
 that the approximation quality is maintained, as we indeed do below.
 
-We thus assume that all primitive task durations are independent, when conditioned on
-a small cutset $Y$ of the primitive task durations. The joint duration distribution over $Y$
+We thus assume that all primitive task durations are independent, given
+a small set $Y$ of the primitive task durations. (The set $Y$ is called a cutset, because it cuts the dependency graph). 
+The joint duration distribution over $Y$
 can be provided by a BN, or a complete table, or any other representation. We assume
 that the cardinality of the set $Y$ is sufficiently small that the joint domain
-size $m^{|Y|}$ is managable, in terms of memory and computation time if we have to
-iterate over all domain values. We are also given the duration distribution for any
+size $m^{|Y|}$ is reasonable, in terms of memory
+and computation time if we have to
+iterate over all joint domain values. We are also given the duration distribution for any
 other task, given every possible value assignment $y$ to the variables in $Y$.
 Together, this information fully defines the joint probability of all the 
 primitive task durations. 
 
 For example, in the case of Figure~\ref{fig:task-network-with-copy}, we can set $Y=\{ A\}$, so $Y$ is a singleton set.
 This is a somewhat degenerate example case, as
-the joint distribution can be represented trivially using $P(A'=a'|A=a)=1$,
-as  all other primitive task duration variables are independent of $A$.
+the joint distribution can be represented trivially using $P(A'=a'|A=a)=1$.
+All the other primitive task duration variables are independent of $A$, as
+well as jointly independent (both a-prioi, and given $A$).
 
 Let $X$ be the random variable denoting the makespan distribution of the
 root of the task network. We wish to estimate $F_X$, the cumulative distribution of $X$.
@@ -1685,7 +1691,7 @@ independent given $Y=y$. Consider the distribution:
 \[
 F_{X|Y=y}(x) = P(X\leq x| Y=y)
 \]
-For each value $Y=y$ we can run the approximation algorithm, to get upper 
+For each value assignment $Y=y$ we can run the approximation algorithm, to get upper 
 Kolmogorov bound $F_{X^+|Y=y}(x)$ and  lower Kolmogorov bound $F_{X^-|Y=y}(x)$. 
 Due to Theorem~\ref{th:TNapprox}, we have
 the following property, for all $x$:
@@ -1723,12 +1729,15 @@ must also be between 0 and $\varepsilon$.
 
 \section{Discussion}\label{sec:discussion}
 
-We proposed an operator for trimming the support of random variables such that the resulting trimmed variable is an approximation of the variable that has a bigger support. As the motivation in this paper was to estimate the probabilities of meeting deadlines in hierarchical plans, the notion of approximation used is a one-sided version of the Kolmogorov metric, that reflects the fact that in such estimations we allow over-, not under- approximations. The core of the paper is devoted to an analysis of the prorogation of the estimation errors in the computation of the random variable that represents the makespan of a hierarchical plan. Based on this analysis, the paper proposes recursive algorithms that can compute an approximation of this makespan in time and memory that are polynomial in the sizes of the supports of the primitive tasks, the size of the tree, and of the inverse of the required accuracy ($1/\varepsilon$).
+
+We proposed an operator (called Trim) for trimming 
+the support of a random variable
+(thereby reducing the size of its support) while introducing a bounded error. As the motivation in this paper was to estimate the probabilities of meeting deadlines in hierarchical plans, the notion of approximation used is a one-sided version of the Kolmogorov metric, that reflects the fact that in such estimations we allow over-, not under- approximations. The core of the paper is devoted to an analysis of the prorogation of the estimation errors in the computation of the random variable that represents the makespan of a hierarchical plan. Based on this analysis, the paper proposes recursive algorithms that can compute an approximation of this makespan distributions in time and memory that are polynomial in the sizes of the supports of the primitive task distributions, the size of the tree, and of the inverse of the required accuracy ($1/\varepsilon$).
 
 In the following paragraphs we discuss directions for future research and ideas for possible technical improvements of the proposed techniques. Some of these improvements are easy to implement and the reason for not including them in the first place was for clarity of the presentation, other require future research.
 
 
-\paragraph{Avoid trimming variables with a small support} In the proposed algorithm, for ease of analysis and because we wanted to keep the code simple, we trimmed all the input and intermediate variables, whatever the size of their support is. This may be required, in a worst case, so doing so does not affect the complexity results, but it may give inferior run time and memory performance in the average case. We therefore, recommend to only trim variables that are small. This can be added as an initial test inside the Trim procedure.
+\paragraph{Avoid trimming variables with a small support} In the proposed algorithm, for ease of analysis and because we wanted to keep the code simple, we trimmed all the input and intermediate variables, whatever the size of their support. This may be required in a worst case:  doing so does not affect the complexity results, but it may give inferior run time and memory performance in the average case. We therefore recommend not trimming variables that have small support. This can be added as an initial test inside the Trim procedure.
 
 \paragraph{Add a trim after a parallel node} Another point is that in the combined algorithm,  space and time complexity can be reduced by adding some $\Trim$ operations,
 especially after processing a parallel node, which is not done in our version. This may reduce accuracy,  a trade-off yet to be examined.
@@ -1739,14 +1748,14 @@ especially after processing a parallel node, which is not done in our version. T
 pre-running a version of the $\Trim$ operator on the primitive task distribution. Since one cannot iterate over support values
 in a continuous distribution, start with the smallest support value (even if it is $- \infty$), and find the value at which the CDF
 increases by $\varepsilon$. This requires access to the inverse of the CDF, which is available, either exactly or approximately,
-for many types of distributions. %In fact, this is precisely how Gaussian distributions were handled in our
-%empirical evaluation.
+for many types of distributions. In fact, this is how Gaussian distributions were handled in our
+empirical evaluation.
 
-\paragraph{Approximating expectations} We showed that the expectation problem is also NP-hard. A natural question is on approximation algorithms for the expectation problem, but the answer here is not so obvious. Sampling algorithms may run into trouble if the target distribution contains major outliers, i.e. values very far from other values but with extremely low probability. Our approximation algorithm can also be used as-is to estimate the CDF and then to approximate the expectation, but we do not expect it to perform well because our current $\Trim$ operator only limits the amount of probability mass moved at each location to $\varepsilon$, but does not limit the ``distance'' alnog the $x$ parameter over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of $\Trim$ that bounds just this distance was shown to provide a polynomial-time approximation scheme for the expectations in EXPECTI-MIN-MAX game trees~\cite{shperbergmonte},  if the utilities are bounded. Since the expectation operator involves convolution, these results should be applicable (with some adjustment) to task networks as well.
+\paragraph{Approximating expectations} We showed that the expectation problem is also NP-hard. A natural question is on approximation algorithms for the expectation problem, but the answer here is not so obvious. Sampling algorithms may run into trouble if the target distribution contains major outliers, i.e. values very far from other values but with extremely low probability. Our approximation algorithm can also be used as-is to estimate the CDF and then to approximate the expectation, but we do not expect it to perform well because our current $\Trim$ operator only limits the amount of probability mass moved at each location to $\varepsilon$, but does not limit the ``distance'' along the $x$ axis over which it is moved. The latter may be arbitrarily bad for estimating the expectation. Nevertheless, a different version of $\Trim$ that bounds just this distance was shown to provide a polynomial-time approximation scheme for the expectations in EXPECTI-MIN-MAX game trees~\cite{shperbergmonte},  if the utilities are bounded. Since the expectation operator involves convolution, these results should be applicable (with some adjustment) to task networks as well.
 
-\paragraph{Optimal trimming} While we proved that the trimming procedure proposed in this paper allows for approximation that improves polynomially with the time and memory invested. It is interesting to look for optimal approximations. In~\cite{cohen2018}, we showed that an optimal approximation of a single random variable can be obtained in polynomial time. Specifically, we showed that given a random variable $X$ and a target support size $m$, we can find the minimal $\varepsilon^*$ and a variable $X'$ such that $X'$ has support of size $m$ and $X \prec_{\varepsilon^*} X'$. Note that this does not directly give an optimal approximation of the makespan of a complete plan.
+\paragraph{Optimal trimming}  We proved that the trimming procedure proposed in this paper allows for an approximation that improves polynomially with the time and memory invested. It is interesting to look for optimal approximations. In~\cite{cohen2018}, we showed that an optimal approximation of a single random variable can be obtained in polynomial time. Specifically, we showed that given a random variable $X$ and a target support size $m$, we can find the minimal $\varepsilon^*$ and a variable $X'$ such that $X'$ has support of size $m$ and $X \prec_{\varepsilon^*} X'$. Note that this does not directly give an optimal approximation of the makespan of a complete plan.
 
-\paragraph{Compact representations of the random variables} One can view the work presented in this paper in the context of function approximation. In general, a function approximation problem is about the selection a function among a well-defined class that approximates a target function in a certain way. In our case, we approximate the CDF of a random variable with a piecewise constant function with a small number of pieces. As in other applications of function approximation, it is natural to ask whether more compact representations of the random variable exist. For example one can represent functions in a compressed from where a repeated entry can be specified once with a number that specifies the number of repetitions. Another approach would be to approximate using, e.g., splines instead of constant lines. The challenge will be, in any of these variants, to work directly on the compressed representation, as we do in this paper.
+\paragraph{Compact representations of the random variables} One can view the work presented in this paper in the context of function approximation. In general, a function approximation problem is about the selection of a function from a well-defined class that approximates a target function in a certain way. In our case, we approximate the CDF of a random variable with a piecewise constant function with a small number of pieces. As in other applications of function approximation, it is natural to ask whether more compact representations of the random variable exist. For example one can represent functions in a compressed from where a repeated entry can be specified once with a number that specifies the number of repetitions. Another approach would be to approximate using, e.g., splines instead of step functions. The challenge will be, in any of these variants, to work directly on the compressed representation, as we do in this paper.
 
 \paragraph{Split weights} In the proposed $\Trim$ algorithm, the inner loop goes until $p+prob(d) \leq \varepsilon$ and, when this condition is not met, the value of $prod(d)$ is left for the next iteration. A possible improvement, not included in the base version for simplicity, is to add to $p$ the part of $prob(d)$ up to $\varepsilon$ (i.e., have $p=\varepsilon$) and leave only the remaining part of $prob(d)$ to the next iteration.
 
@@ -1802,7 +1811,7 @@ compound task $X$ in the network is known to be exactly one hour from now''. Ano
 \paragraph{Acknowledgments.} This research was supported by the ROBIL project, and by the Lynne and William Frankel Center for Computer Science at Ben-Gurion University.
 %\clearpage
 
-\section*{Refferences}
+\section*{References}
 \bibliography{ijcai15}
 
 
