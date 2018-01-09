@@ -187,7 +187,7 @@ We assume that a hierarchical plan is given in the form of a tree, with uncertai
 In this paper, we focus on the distribution 
 (the random variable $X_\tau$) of the plan represented by a tree ($\tau$),
 mostly the issue of computing the probability $P(X_\tau \leq T)$ of satisfying a deadline $T$. Since in the above-mentioned applications for these computations, one needs results in real-time (for monitoring) or multiple such computations (in comparing candidate plans), efficient computation here is crucial, and is more important than in, e.g., off-line planning.
-%The decision problem we analyze is: given a task tree and a deadline, does the probability of meeting this deadline is above a given threshold. We show that this decision problem is NP-hard (see Section~\ref{sec:complexity}), the first contribution of this paper.
+
 We propose a deterministic polynomial-time approximation scheme for this problem, when the primitive task durations are jointly independent
 (Sections~\ref{sec:seq},~\ref{sec:par},~\ref{sec:trees}). 
 Error bounds are analyzed and are shown to be tight. For discrete random variables with finite support, finding the distribution of the maximum can be done in low-order polynomial time. However, when compounded with errors generated due to approximation in subtrees, handling this case requires careful analysis of the resulting error. The approximations developed for both sequence and parallel nodes are combined into an overall algorithm for task trees, with an analysis of the resulting error bounds, yielding a polynomial-time (additive error) approximation scheme for computing the probability of satisfying a deadline for the complete network. 
@@ -207,18 +207,15 @@ sentences/issues. I do not know how to fix this, please read this
 SERIOUSLY and CRITICALLY and FIX ***}
 We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes (see Fig.~\ref{fig:hierarchical plan}).
 
-\hl{*** Example should be HERE ***}
+%The tasks trees that we analyze are composed of sequence nodes, parallel nodes and leaves that we call primitive tasks.
+The primitive action nodes contain distributions over their resource consumption. Many resources can be modeled using this approach. For example if the resource of interest is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed. Note that the role parallel and sequence node is reversed here. We will assume henceforth, in order to be more concrete, that the resource of interest is time, i.e., that parallel nodes represent maximum and sequence nodes represent sum.
 
-Primitive action nodes contain distributions over their resource consumption. Many resources can be modeled using this approach. 
- 
-For example if the resource of interest is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed. Note that the role parallel and sequence node is reversed here. We will assume henceforth, in order to be more concrete, that the resource of interest is time, i.e., that parallel nodes represent maximum and sequence nodes represent sum.
-
-The tasks trees that we analyze are composed of sequence nodes, parallel nodes and leaves that we call primitive tasks. A sequence node represents a composition of tasks in sequence. Its makespan is the the sum of the makespans of its child nodes. A parallel node represents a composition of tasks in parallel. Its makespan is the maximum of the makespan of its child nodes.
+A sequence node represents a composition of tasks in sequence. Its makespan is the the sum of the makespans of its child nodes. A parallel node represents a composition of tasks in parallel. Its makespan is the maximum of the makespan of its child nodes.
 The makespans of the primitive nodes at the leafs of the tree are uncertain, and described as probability distributions.
-We initially assume  that the distributions are  independent (but {\em not} necessarily identically distributed), and that
-the random variables representing the distributions are discrete and have finite support (i.e. the number of values for which the probability is non-zero is finite).
-In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function. We use the term $F_X$ to denote the cumulative distribution function, i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is completion time, we associate each leaf node, $v$, with the random variable, $X_v$, that represents the distribution of the 
-a completion-time distribution $P_{X_v}$ and a cumulative distribution function (CDF) $F_{X_v}$.
+
+We initially assume  that the distributions are  independent but {\em not} necessarily identically distributed, and that the random variables representing the distributions are discrete and have finite support i.e. the number of values for which the probability is non-zero is finite.
+In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function (PMF). We use the term $F_X$ to denote the cumulative distribution function (CDF), i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is completion time, we associate each leaf node, $v$, with the random variable, $X_v$, that represents the distribution of the 
+a completion-time distribution $P_{X_v}$ and a cumulative distribution function $F_{X_v}$.
 
 For clarity, we use the following standard for notations in the paper. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. %Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. 
 Second, we use the symbol $\tau_{name}$ where the subscript contains a name of a node to denote the subtree rooted  at $name$. Note that $X_{\tau_{v}}$ and $X_v$ have the same meaning - a random variable representing the makespan of the subtree $\tau_{v}$.
@@ -233,9 +230,6 @@ The main computational problem analyzed in this paper is the {\em deadline probl
 %Given a task tree $\tau $ and a deadline $T$. 
 %Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
 %\end{definition}
-
-\hl{*** YUK, deleted the sentence below ***}
-%In words, given a task tree $\tau $ and a deadline $T$, we ask what is the probability that the plan modeled by $\tau$ terminates in time less than $T$?
 
 The above {\em deadline problem} reflects a step utility function: a 
 constant positive utility $U$ for all $t$ less than or equal to a deadline 
@@ -373,13 +367,13 @@ then $X'$ is a Kolmogorov $\varepsilon$
 lower bound of $X$. In the latter case we denote the $\Trim$ operator variant by $\Trim_L(X, \varepsilon)$).
 
 %From now on, in order to simplify, we will use the notation $\Trim$ instead of $\Trim_U$. Note that we could have chosen to use $\Trim_L$ instead and get a symmetric version of all the results.
-
-\hl{*** No, I strongly disagree. I meant Trim as the algorithm in the figure,
-which is DIRECTION-NEUTRAL. The kind of approximation it produces depends
-on the way its input list is sorted. TrimU is an OPERATOR that uses Trim
-with a list sorted increasing value, hence NOT the same as Trim.
-Now someone "`fixed"' it (i.e. messed it up), please UNFIX it. ****
-*** Attempting to UNFIX this myself ***}
+%
+%*** No, I strongly disagree. I meant Trim as the algorithm in the figure,
+%which is DIRECTION-NEUTRAL. The kind of approximation it produces depends
+%on the way its input list is sorted. TrimU is an OPERATOR that uses Trim
+%with a list sorted increasing value, hence NOT the same as Trim.
+%Now someone "`fixed"' it (i.e. messed it up), please UNFIX it. ****
+%*** Attempting to UNFIX this myself ***
 
 %Eyal: copy from Eyal ver
 %---------------------------------
@@ -447,7 +441,7 @@ $\Trim_U(X,\varepsilon)\succeq_\varepsilon X$
 \end{lemma}
 
 \begin{proof}
-Let $X'=\Trim(X,\varepsilon)$. 
+Let $X'=\Trim_U(X,\varepsilon)$. 
 Let $x_1{<}\cdots{<}x_m$ be the support of $X'$. 
 Because $\Trim$ adds the probabilities of elements that were removed from the support of $X$ 
 to the support element of $X'$ that precedes them, 
