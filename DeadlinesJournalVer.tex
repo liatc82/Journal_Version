@@ -1014,18 +1014,18 @@ by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-err(c,
 \end{proof}
 
 
-Based on this theorem, we propose the following pseudo-algorithm for computing a tight approximation for the makespan of a task tree, as follows. Use some symbolic mathematical engine, such as Wolfram Mathematica (\url{www.wolfram.com/mathematica/}), to find a function $\varepsilon$ such that $\EstimateError(\tau,\varepsilon)$ is smaller than the approximation that you want to achieve; then, run $\GenNetwork(\tau,\varepsilon)$ with this $\varepsilon$. This, of course, is only a pseudo algorithm because it is just a template, not dictating how to compute $\varepsilon$.
+Based on this theorem, we propose the following pseudo-algorithm for computing a tight approximation for the makespan of a task tree $\tau$ rooted in node $r$, as follows. Use some symbolic mathematical engine, such as Wolfram Mathematica (\url{www.wolfram.com/mathematica/}), to find a function $\varepsilon$ such that $err(r,\varepsilon)$ is smaller than the approximation that you want to achieve; then, run $\GenNetwork(\tau,\varepsilon)$ with this $\varepsilon$. This, of course, is only a pseudo algorithm because it is just a template, not dictating how to compute $\varepsilon$.
 The following lemma establishes, however, that the computation of $\varepsilon$ is feasible, at least in an approximated form, as it involves reversing a polynomial of relatively small degree:
 
 \begin{lemma}\label{lemma:poly}
-Given a task tree $\tau$, if we consider $\EstimateError(\tau,\varepsilon)$ as a function of the variables $\{\varepsilon(v)\}_{v\in Seq}$ where $Seq$ is the set of Sequence nodes in $\tau$, we have a polynomial of degree smaller or equal to $|Seq|$.  
+Given a task tree $\tau$, rooted in node $r$, if we consider $err(r,\varepsilon)$ as a function of the variables $\{\varepsilon(v)\}_{v\in Seq}$ where $Seq$ is the set of Sequence nodes in $\tau$, we have a polynomial of degree smaller or equal to $|Seq|$.  
 \end{lemma}
 \begin{proof}
-By induction over the depth of $\tau$ denoted by $d$. Base: if $d=1$ we have a tree with a single primitive node $p$. In this case  $\EstimateError(\tau,\varepsilon)$ which is indeed a polynomial degree zero.
+By induction over the depth of $\tau$ denoted by $d$. Base: if $d=1$ we have a tree with a single primitive node $p$. In this case  $err(p,\varepsilon)$ which is indeed a polynomial degree zero.
 Induction step: we refer to the children nodes of the root node $r$, $\ch(r)$, as a set of sub task trees, each of them with depth smaller than $d$. If $r$, is a sequence node 
-$$\EstimateError(\tau,\varepsilon)=\sum_{c\in \ch(r)}\EstimateError(\tau_c,\varepsilon) +  \varepsilon.$$ 
-If $r$, is a parallel node  $$\EstimateError(\tau,\varepsilon)=1-\prod_{c\in \ch(r)} (1-\EstimateError(\tau_c,\varepsilon)).$$ 
-By the induction hypothesis we have that the degree of $\EstimateError(c,\varepsilon)$ is the number of sequence node in $c$, for each $c$, and the above equalities show that the degree is increased by one if and only if the root is a parallel node. 
+$$err(r,\varepsilon)=\sum_{c\in \ch(r)}err(c,\varepsilon) +  \varepsilon.$$ 
+If $r$, is a parallel node  $$err(r,\varepsilon)=1-\prod_{c\in \ch(r)} (1-err(c,\varepsilon)).$$ 
+By the induction hypothesis we have that the degree of $err(c,\varepsilon)$ is the number of sequence node in $c$, for each $c$, and the above equalities show that the degree is increased by one if and only if the root is a parallel node. 
 \end{proof}
 
 
@@ -1043,8 +1043,8 @@ By the induction hypothesis we have that the degree of $\EstimateError(c,\vareps
 To establish the tightness of the proposed pseudo-algorithm, we give now an example of a task tree that cannot be estimated better than what is possible with a perfect instantiation of our template (i.e., a solver that gives the best $\varepsilon$). the terms ``cannot be estimated better'' in the preceding sentence refer only to approximation schemes that use only the structure of the tree, i.e., that are invariant to the choice of the random variables in the leaves as formalized in the next theorem:
 
 \begin{theorem}\label{theorem:tight}
-There is a task tree $\tau$, a bound $T$, and an $\varepsilon$ 
-such that $F_{\GenNetwork(\tau, \varepsilon)}(T) - F_{X_\tau}(T) = \EstimateError(\tau, \varepsilon)$ where $X_\tau$ is a random variable representing the completion time of $\tau$. 
+There is a task tree $\tau$ rooted in $r$, a bound $T$, and an $\varepsilon$ 
+such that $$F_{\GenNetwork(\tau, \varepsilon)}(T) - F_{X_\tau}(T) = err(r, \varepsilon)$$ where $X_\tau$ is a random variable representing the completion time of $\tau$. 
 \end{theorem}
 \begin{proof}
 See Example~\ref{exp:seq} and Example~\ref{expl:parallel}.
@@ -1063,7 +1063,7 @@ recursively like we do, cannot do better than $\GenNetwork$ in terms of computin
 random variable that is $\succeq_{\varepsilon}$ than $X_{\tau}$ with a smaller $\varepsilon$. 
 More formally, if we restrict the discussions to algorithms where the trimming of the variables in a subtree
 depend only on the structure of the subtree (not on siblings or parents or the CDFs of the variables), then 
-$\GenNetwork$ applies the maximal possible trimming (assuming that we have an optimal solution to $\EstimateError$). 
+$\GenNetwork$ applies the maximal possible trimming (assuming that we have an optimal solution to $err$). 
 This means that $\GenNetwork$ is an improvement over 
 $\Network$ (Algorithm~\label{alg:approx}) that satisfies this assumption. 
 Practically, the improvement is in allowing more trimming and, by that, saving unnecessary computations. 
