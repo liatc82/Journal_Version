@@ -104,7 +104,7 @@
 \DeclareMathOperator{\seqOr}{seqOr} 
 \DeclareMathOperator{\parOr}{parOr} 
 \DeclareMathOperator{\prim}{primitive} 
-\DeclareMathOperator{\ch}{\operatorname{children}} 
+\DeclareMathOperator{\ch}{\operatorname{child}} 
 \DeclareMathOperator{\order}{\textit{type}} 
 \DeclareMathOperator{\info}{\textit{info}} 
 \DeclareMathOperator{\scc}{succ} 
@@ -160,14 +160,6 @@ deadline, makespan, random variables, hierarchical plan, approximation.
 \linenumbers
 
 
-%\author{Liat Cohen \and Solomon Eyal Shimony \and Gera Weiss\\
-%Computer Science Department\\
-%Ben Gurion University of The Negev\\
-%Beer-Sheva, Israel 84105\\
-%\{liati,shimony,geraw\}@cs.bgu.ac.il
-%}
-
-
 
 \section{Introduction}
 
@@ -189,7 +181,7 @@ In this paper, we focus on the distribution
 mostly the issue of computing the probability $P(X_\tau \leq T)$ of satisfying a deadline $T$. Since in the above-mentioned applications for these computations, one needs results in real-time (for monitoring) or multiple such computations (in comparing candidate plans), efficient computation here is crucial, and is more important than in, e.g., off-line planning.
 
 We propose a deterministic polynomial-time approximation scheme for this problem, when the primitive task durations are jointly independent
-(Sections~\ref{sec:seq},~\ref{sec:par},~\ref{sec:trees}). 
+(sections~\ref{sec:seq},~\ref{sec:par},and~\ref{sec:trees}). 
 Error bounds are analyzed and are shown to be tight. For discrete random variables with finite support, finding the distribution of the maximum can be done in low-order polynomial time. However, when compounded with errors generated due to approximation in subtrees, handling this case requires careful analysis of the resulting error. The approximations developed for both sequence and parallel nodes are combined into an overall algorithm for task trees, with an analysis of the resulting error bounds, yielding a polynomial-time (additive error) approximation scheme for computing the probability of satisfying a deadline for the complete network. 
 We also consider other complexity issues, such as
 computing {\em expected} makespan (Section \ref{sec:complexity}). Since for discrete random variables, in parallel nodes one can compute an exact distribution efficiently, it is easy to compute an {\em expected makespan} in this case as well as for sequence nodes. Despite that,  we show that for trees with both parallel and sequence nodes, computing the expected makespan is hard.
@@ -200,68 +192,58 @@ reasoning (Section \ref{sec:generalizations}). That is, we show how one
 can use a combination of cut-set conditioning to extend out algorithm to
 a pseudo-polynomial time approximation scheme; for the case where the primitive task durations are independent, except for possible dependency on a small set of variables, the runtime is exponential only in the cut-set size.
 
-\section{Problem statement}\label{sec:formal}
+\section{Problem statement and notations}\label{sec:formal}
 
-\hl{*** This section is disorganized and contains REPEATED
-sentences/issues. I do not know how to fix this, please read this
-SERIOUSLY and CRITICALLY and FIX ***}
-We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes (see Fig.~\ref{fig:hierarchical plan}).
-
+The input to the problem is a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes (see Figure~\ref{fig:hierarchical plan}).
 %The tasks trees that we analyze are composed of sequence nodes, parallel nodes and leaves that we call primitive tasks.
-The primitive action nodes contain distributions over their resource consumption. Many resources can be modeled using this approach. For example if the resource of interest is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed. Note that the role parallel and sequence node is reversed here. We will assume henceforth, in order to be more concrete, that the resource of interest is time, i.e., that parallel nodes represent maximum and sequence nodes represent sum.
+The primitive action nodes represent probability distributions of resource consumption. We will assume henceforth, in order to be more concrete, that the resource of interest is time.
+%, i.e., that parallel nodes represent maximum and sequence nodes represent sum. 
 
-A sequence node represents a composition of tasks in sequence. Its makespan is the the sum of the makespans of its child nodes. A parallel node represents a composition of tasks in parallel. Its makespan is the maximum of the makespan of its child nodes.
-The makespans of the primitive nodes at the leafs of the tree are uncertain, and described as probability distributions.
+A sequence node represents a composition of tasks in sequence. Its makespan is the the sum of the makespans of its child nodes. A parallel node represents a composition of tasks in parallel. Its makespan is the maximum of the makespan of its child nodes. The makespans of the primitive nodes at the leafs of the tree are uncertain, and described as probability distributions.\footnote{While our main focus is on time, other resources can also be modeled using this approach. For example, if the resource of interest is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed. Note that the role of parallel and sequence node is reversed here.}
 
-We initially assume  that the distributions are  independent but {\em not} necessarily identically distributed, and that the random variables representing the distributions are discrete and have finite support i.e. the number of values for which the probability is non-zero is finite.
-In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function (PMF). We use the term $F_X$ to denote the cumulative distribution function (CDF), i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. More specifically, as the resource of interest is completion time, we associate each leaf node, $v$, with the random variable, $X_v$, that represents the distribution of the 
-a completion-time distribution $P_{X_v}$ and a cumulative distribution function $F_{X_v}$.
+We initially assume  that the distributions are  independent but {\em not} necessarily identically distributed, and that the random variables representing the distributions are discrete and have finite support, i.e., the number of values for which the probability is non-zero is finite.
+In this paper, we use the term $P_X$ to denote the (discrete) probability distribution of a (discrete) random variable $X$, i.e., the list of the probabilities of the outcomes, also known as the probability mass function (PMF). We use the term $F_X$ to denote the cumulative distribution function (CDF), i.e., $F_X(x)$ is the probability that $X$ will take a value less than or equal to $x$. 
 
-For clarity, we use the following standard for notations in the paper. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. %Similarly we denote nodes in the task trees by symbols of the form $v_{name}$ where the subscript contains the name of the node. 
-Second, we use the symbol $\tau_{name}$ where the subscript contains a name of a node to denote the subtree rooted  at $name$. Note that $X_{\tau_{v}}$ and $X_v$ have the same meaning - a random variable representing the makespan of the subtree $\tau_{v}$.
-Finally, we use primed versions of random variables to denote approximations, i.e., the symbol $X'_{v}$ denotes an approximation of the random variable $X_{v}$.
+For clarity, we use the following standard for notations in the paper. First, we denote all random variables by symbols of the form $X_{name}$ where in the subscript we put the name of the variable. 
+Second, we use the symbol $\tau_{name}$ where the subscript contains a name of a node to denote the subtree rooted  at $name$. Note that $X_{\tau_{v}}$ and $X_v$ have the same meaning - a random variable representing the makespan of the subtree $\tau_{v}$. Finally, we use primed versions of random variables to denote approximations, i.e., the symbol $X'_{v}$ denotes an approximation of the random variable $X_{v}$.
+
 
 The main computational problem analyzed in this paper is the {\em deadline problem}: 
 \begin{definition}\label{Def:Deadline}
 	Given a task tree $\tau $ and a deadline $T$, the \emph{deadline problem} is to compute $F_{X_\tau}(T)$.
 \end{definition}
 
-%\begin{definition}\label{Def:Deadline}
-%Given a task tree $\tau $ and a deadline $T$. 
-%Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
-%\end{definition}
 
-The above {\em deadline problem} reflects a step utility function: a 
-constant positive utility $U$ for all $t$ less than or equal to a deadline 
-$T$, and $0$ for all $t>T$. We also briefly consider a linear utility function, requiring
-computation of the expected completion time of $\tau$, and show that this {\em expectation problem} 
-is also NP-hard. 
+The above problem, we call the {\em deadline problem}, reflects a step utility function $U$: a 
+ $U(t)=1$ for all $t$ less than or equal to a deadline $T$, and $U(t)=0$ for all $t>T$. This 
+ applies, for example, when a supplier is required to complete a plan in $T$ time units, and the agreement is that the full payment is given once this requirement is met.
+ We also briefly consider a linear utility function, requiring computation of the expected completion time of $\tau$, and show that this {\em expectation problem}  
+ is also NP-hard. 
+ 
+
+The makespan of a plan is defined recursively by a specification of a random variable for each sub-tree, based on the type (sequence, parallel, or primitive) of the node, as follows.
 The duration of a sequence node $s$ is a random variable:
-
 $$
 X_s = \sum_{c\in \ch(s)} X_c
 $$
 where $X_c$ is a random variable representing the duration of the plan modeled by the subtree rooted at the child node $c$ and $\ch(s)$ is the set of children of $s$.
-
-%\hl{We denote by $\ch(v)$ the set of children of some node $v$.}
-
 Likewise, the duration distribution of a parallel node $p$ is a random variable:
 $$
 X_p = \max_{c\in \ch(p)} X_c
 $$
-Let $r$ be the root node of a task tree $\tau$ and $X_r$ be a random variable representing the duration distribution of the root.
-%and denote the cumulative distribution function (CDF) of a random variable $X$ by $F_X$. 
-Then the probability that the plan meets the deadline $T$ is $F_{X_r}(T)$.
-Thus we need to compute the CDF, which is NP-hard~\cite{mohring2001scheduling}. We show how to deterministically approximate the CDF of the root with additive error at most $\varepsilon$ in time polynomial in $1/\varepsilon$.
+The duration of the primitive nodes are given explicitly, the base-case for the recursion.
 
-Figure~\ref{fig:hierarchical plan} is a simple hierarchical plan example. The set of nodes $V$ represented by $\lbrace A,B,C,a,b,c,d,e \rbrace $ and the type of each task node denoted by its shape, $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Every primitive node is associated with a probability mass function (PMF) which describes its completion-time distribution. In this case $P_{X_a}(x)=P_{X_b}(x)=P_{X_c}(x)=P_{X_d}(x)=P_{X_e}(x)$.
+With this formulation, our goal is to compute the CDF of $X_v$ where $v$ of the root of the tree $\tau$. 
+As this problem is NP-hard~\cite{mohring2001scheduling}, we will show how to deterministically approximate the CDF of the root with additive error at most $\varepsilon$ in time polynomial in $1/\varepsilon$.
+
+See an example of a small plan in Figure~\ref{fig:hierarchical plan}. The set of nodes is $V=\{ A,B,C,a,b,c,d,e \}$ and the type of each task node is indicated by its shape: $A$ and $C$ are sequence nodes, $ B $ is a parallel node, and $ a, b, c, d, e $ are all primitive nodes. Each primitive node is associated with a probability mass function (PMF) describing its completion-time distribution. In this case $P_{X_a}(x)=P_{X_b}(x)=P_{X_c}(x)=P_{X_d}(x)=P_{X_e}(x)$.
 $$P_{X_a}(x)=
 \begin{cases}
 1/4 & \text{if } x=1; \\
 3/4 & \text{if } x=4; \\
 0 & otherwise.
 \end{cases}$$
-This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c$ and $d$ in sequence and, when they finish, run $e$.
+This tree can be used as a tool for specifying execution instructions: run $a$ and $b$ in parallel, then run $c$ and $d$ in sequence and, when they finish, run $e$.
 
 
 \begin{figure}
@@ -292,8 +274,8 @@ This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c
 
 \begin{example}
 
-Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we show how to compute the duration distribution in the form of a  PMF for each compound task node. 
-First, compute the duration distribution for node $B$.The child task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
+Given the task tree $\tau$ in Figure ~\ref{fig:hierarchical plan}, we show how to compute PMF of the completion time for each compound task node. 
+First, we compute the duration distribution for node $B$. The child task nodes $a,b$, are executed in parallel, therefore we need to find the PMF of the maximum of the respective variables:
 $$P_{X_B}(x)=P_{\max(X_a,X_b)}(x)=
 \begin{cases}
 1/16 & \text{if } x=1; \\
@@ -301,7 +283,7 @@ $$P_{X_B}(x)=P_{\max(X_a,X_b)}(x)=
 0 & otherwise.
 \end{cases}$$
 
-Second, compute duration distribution for node $C$. The child task nodes $c,d$, are executed in sequence, therefore, we need to use convolution in order to compute the sum of duration distributions of nodes $c$ and $d$:  
+Second, we compute PMF for $C$. The child task nodes $c,d$, are executed in sequence, therefore, we need to use convolution that corresponds to the sum of variables:
 $$P_{X_C}(x)=P_{X_c+X_d}(x)=
 \begin{cases}
 1/16 & \text{if } x=2; \\
@@ -310,7 +292,7 @@ $$P_{X_C}(x)=P_{X_c+X_d}(x)=
 0 & otherwise.
 \end{cases}$$
 
-Finally, compute the duration distribution for node $A$, the root node. The child task nodes $B,C,e$ are executed in sequence, therefore, we need to use convolution in order to compute the sum of the duration distributions of nodes $B$, $C$ and $e$: 
+Finally, we compute the duration distribution for node $A$, the root node. The child task nodes $B,C,e$ are executed in sequence, therefore, we need to use convolution again:
 $$P_{X_{\tau}}=P_{X_A}(x)=P_{X_B+X_C+X_e}(x)=
 \begin{cases}
 1/1024 & \text{if } x=4; \\
@@ -321,7 +303,7 @@ $$P_{X_{\tau}}=P_{X_A}(x)=P_{X_B+X_C+X_e}(x)=
 0 & otherwise.
 \end{cases}$$
 
-For every deadline $T$ we can easily compute the probability for $\tau$ to satisfy $T$. For $T=8$, the probability is  $F_{X_{\tau}}(8)=25/1024$ . 
+For any deadline $T$, we can now easily compute the probability for $\tau$ to meet $T$. For example, if $T=8$ the probability for meeting the deadline is $F_{X_{\tau}}(8)=25/1024$ . 
 \end{example}
  
 \section{Sum (sequence) nodes}\label{sec:seq}
@@ -921,7 +903,7 @@ In this section we propose a tighter analysis. The term tight here means that we
 Consider, as an extreme example, a simple task tree with a sequence node at the root and below it only parallel nodes. The total error of our approximation algorithm (\Network) in this case is only due to the invocation of \Sequence at the tail of the recursion. The \Network algorithm, however,  acts as if all the other nodes add additional errors. Eventually, the \Sequence
 computation produces a very small error which takes the toll of an unnecessary computation time. 
 
-We will present now a recursive approximation algorithm with a tighter bound on the error parameter for every sequence node. Specifically, we propose the generalized algorithm $\GenNetwork$ (listed as Algorithm~\ref{alg:GenNetwork} below) whose main property is given using the algorithm $\EstimateError$ (listed as Algorithm~\ref{alg:EstimateError} below) as follows:
+We will present now a recursive approximation algorithm with a tighter bound on the error parameter for every sequence node. Specifically, we propose the generalized algorithm $\GenNetwork$ (listed as Algorithm~\ref{alg:GenNetwork} below) whose main property is given using the function $err$ as follows:
 
 %The following algorithm, $\EstimateError$, listed as Algorithm~\ref{alg:EstimateError},
 %\hl{computes the approximation error for a tree} $\tau$ given a function $\varepsilon$ that maps each of the nodes in $\tau$ to the parameter passed in line 7 of the $\Network$ procedure.
@@ -929,38 +911,48 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 
 %i.e., we use a generalized version of $\Network$, called $\GenNetwork$ listed as Algorithm~\ref{alg:GenNetwork} below. 
 %With these notations, we phrase the main property of the new algorithm as follows:
-\begin{algorithm}
-  \DontPrintSemicolon
-  \SetKwFunction{Sequence}{Sequence}
-  \SetKwFunction{Parallel}{Parallel}
-  \SetKwFunction{EstimateError}{EstimateError}
-  %-----------------------------------%
-  {
+%\begin{algorithm}
+%  \DontPrintSemicolon
+%  \SetKwFunction{Sequence}{Sequence}
+%  \SetKwFunction{Parallel}{Parallel}
+%  \SetKwFunction{EstimateError}{EstimateError}
+%  %-----------------------------------%
+%  {
+%
+% Let $v$ be the root of $\tau$\;
+%  \If{$v$ is a $\operatorname{Primitive}$ node}{
+%	\Return $0$ \;
+%			}
+%	
+%  \If{$v$  is a $\operatorname{Sequence}$ node}{
+%  	\For{$c \in \ch(v)$} {
+%	    $e_c=$ \EstimateError($\tau_c$, $\varepsilon$)\;
+%	 }
+%	 \Return $\varepsilon(v) + \sum_{c\in \ch(v)}e_{c}$	
+%	}
+%	\If{$v$ is a $\operatorname{Parallel}$ node}{
+%	 	\For{$c \in \ch(v)$} {
+%	    $e_c=$ \EstimateError($\tau_c$, $\varepsilon$)\;
+%	 }
+%		\Return $1-\prod_{c\in \ch(v)} (1-e_{c})$
+%	}	
+%  }
+%%----------------------------------5
+%  
+%\caption{EstimateError($\tau$, $\varepsilon$) }
+%\label{alg:EstimateError}
+%  
+%\end{algorithm}
 
- Let $v$ be the root of $\tau$\;
-  \If{$v$ is a $\operatorname{Primitive}$ node}{
-	\Return $0$ \;
-			}
-	
-  \If{$v$  is a $\operatorname{Sequence}$ node}{
-  	\For{$c \in \ch(v)$} {
-	    $e_c=$ \EstimateError($\tau_c$, $\varepsilon$)\;
-	 }
-	 \Return $\varepsilon(v) + \sum_{c\in \ch(v)}e_{c}$	
-	}
-	\If{$v$ is a $\operatorname{Parallel}$ node}{
-	 	\For{$c \in \ch(v)$} {
-	    $e_c=$ \EstimateError($\tau_c$, $\varepsilon$)\;
-	 }
-		\Return $1-\prod_{c\in \ch(v)} (1-e_{c})$
-	}	
-  }
-%----------------------------------5
-  
-\caption{EstimateError($\tau$, $\varepsilon$) }
-\label{alg:EstimateError}
-  
-\end{algorithm}
+
+$$	
+	err(v,\varepsilon) = \begin{cases}
+		0	                                                        & \text{if $V$ is a primitive node;} \\	
+		\varepsilon(v) + \sum_{c\in \ch(v)}  err(c, \varepsilon)	& \text{if $V$ is a sequence node;} \\
+		1 - \prod_{c\in \ch(v)}  (1-err(c, \varepsilon))       	    & \text{if $V$ is a parallel node.} \\
+	\end{cases}
+$$
+
 
 %Todo: add some intro for the algos
 
@@ -1003,22 +995,22 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 \end{algorithm}
 
 \begin{theorem}\label{theorem:approxEps0}
-	For a task tree $\tau$ and a function $\varepsilon$ that maps the sequence nodes in $\tau$ to numbers in $[0,1]$, let 
-	$\varepsilon_0=\EstimateError(\tau,\varepsilon)$, and let $X_{\tau}$ be a random variable for the true
-	distribution of the completion time of $\tau$; then, $\GenNetwork(\tau, \varepsilon) \succeq_{\varepsilon_0} X_{\tau}$. 
+	For a task tree $\tau$ and a function $\varepsilon$ that maps the sequence nodes in $\tau$ to numbers in $[0,1]$, let $X_{\tau}$ be the random variable for the true
+	distribution of the completion time of $\tau$; then, $\GenNetwork(\tau, \varepsilon) \succeq_{err(\tau,\varepsilon)} X_{\tau}$. 
 \end{theorem}
 
 \begin{proof}
 By induction over the depth of $\tau$, denoted by $d$. Base: $ d=1$, a single primitive node $p$. 
-In this case, by line 3 of Algorithm~\ref{alg:GenNetwork}, $\GenNetwork(\tau_p,\varepsilon)=X_p$ and, by line 3 of Algorithm~\ref{alg:EstimateError},  $\EstimateError(\tau_p,\varepsilon)=0$ and the claim follows.
-% therefor $\GenNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$
-%Primitive nodes do not carry any error and, by line 3 of \EstimateError, $\EstimateError(\tau_p,\varepsilon)=0$, therefore  $\GenNetwork(\tau_{p},\varepsilon) \succeq_0 X_{\tau_{p}}$. 
-Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. Step: let $r$ be the root of the tree whose depth is $d$, i.e., its child subtrees are of depth smaller than $d$.
-%we refer to the children nodes of the root node $r$, as $\ch(r)= \lbrace c_1, c_2,...,c_{|\ch(r)|}\rbrace$ as a set of sub task trees, each of them with depth smaller than $d$. 
+In this case, by line 3 of Algorithm~\ref{alg:GenNetwork}, $\GenNetwork(\tau_p,\varepsilon)=X_p$ and, as the first case of $err$ is that $err(p,\varepsilon)=0$, the claim follows.
 
-If $r$ is a sequence node then,	by Theorem~\ref{appSeqTheorem}, sequence nodes produce an error which is the sum of all child nodes errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{\EstimateError(\tau_c,\varepsilon)}}$$ equivalent to \EstimateError line 7. By the induction hypothesis, each of the children sub trees satisfy the lemma and we get that $\GenNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
-	If $r$ is a parallel node then,
-	by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-\EstimateError(\tau_c,\varepsilon))}$$ as in line 11 of \EstimateError. By the induction hypothesis, each of the child subtrees satisfy the lemma and we get that $\GenNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+Induction hypothesis: Assume the lemma is true for a task tree with depth $ <d $. 
+Let $r$ be the root of the tree. By the hypothesis, its children are of depth smaller than $d$.
+
+
+If $r$ is a sequence node then the $\GenNetwork$ algorithm applies the $\Sequence$ operator (line 7) and, by Theorem~\ref{appSeqTheorem}, the error is the sum of all child nodes errors and an additional $\varepsilon(r)$ caused by the trim operator $$\varepsilon_0={\varepsilon(r)+\sum_{c \in \ch(r)}{err(c,\varepsilon)}}$$ corresponding to the second case of $err$. By the induction hypothesis, each of the children sub trees satisfies the lemma and we get that $\GenNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
+
+If $r$ is a parallel node then the $\GenNetwork$ algorithm applies the $\Parallel$ operator (line 11) and,
+by Lemma~\ref{tightPalTheorem}, $$\varepsilon_0=1-\prod_{c \in \ch(r)}{(1-err(c,\varepsilon))}$$ as in the third case of $err$. By the induction hypothesis, each of the child subtrees satisfies the lemma and we get that $\GenNetwork(\tau_{r}, \varepsilon) \succeq_{\varepsilon_0} X_\tau$ as required.
 \end{proof}
 
 
