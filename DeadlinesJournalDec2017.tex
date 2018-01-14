@@ -207,8 +207,6 @@ sentences/issues. I do not know how to fix this, please read this
 SERIOUSLY and CRITICALLY and FIX ***}
 We are given a hierarchical plan represented as a task tree consisting of three types of nodes: primitive actions as leaves, sequence nodes, and parallel nodes (see Fig.~\ref{fig:hierarchical plan}).
 
-\hl{*** Example should be HERE ***}
-
 Primitive action nodes contain distributions over their resource consumption. Many resources can be modeled using this approach. 
  
 For example if the resource of interest is memory, tasks running in parallel use the sum of the memory space of each of the tasks; if they run in sequence, only the maximum thereof is needed. Note that the role parallel and sequence node is reversed here. We will assume henceforth, in order to be more concrete, that the resource of interest is time, i.e., that parallel nodes represent maximum and sequence nodes represent sum.
@@ -228,14 +226,6 @@ The main computational problem analyzed in this paper is the {\em deadline probl
 \begin{definition}\label{Def:Deadline}
 	Given a task tree $\tau $ and a deadline $T$, the \emph{deadline problem} is to compute $F_{X_\tau}(T)$.
 \end{definition}
-
-%\begin{definition}\label{Def:Deadline}
-%Given a task tree $\tau $ and a deadline $T$. 
-%Computing the probability that $\tau $ will satisfy the deadline $T$ (i.e. terminate in time $t \leq T$) is called here the ``deadline problem".
-%\end{definition}
-
-\hl{*** YUK, deleted the sentence below ***}
-%In words, given a task tree $\tau $ and a deadline $T$, we ask what is the probability that the plan modeled by $\tau$ terminates in time less than $T$?
 
 The above {\em deadline problem} reflects a step utility function: a 
 constant positive utility $U$ for all $t$ less than or equal to a deadline 
@@ -298,7 +288,7 @@ This tree gives execution instructions: run $a$ and $b$ in parallel, then run $c
 
 \begin{example}
 
-Given a task tree $\tau$ as in figure ~\ref{fig:hierarchical plan}, we show how to compute the duration distribution in the form of a  PMF for each compound task node. 
+Given a task tree $\tau$ as in Figure~\ref{fig:hierarchical plan}, we show how to compute the duration distribution in the form of a  PMF for each compound task node. 
 First, compute the duration distribution for node $B$.The child task nodes $a,b$, are executed in parallel, therefore we need to find the distribution over the maximum of nodes $a$ and $b$:  
 $$P_{X_B}(x)=P_{\max(X_a,X_b)}(x)=
 \begin{cases}
@@ -447,7 +437,7 @@ $\Trim_U(X,\varepsilon)\succeq_\varepsilon X$
 \end{lemma}
 
 \begin{proof}
-Let $X'=\Trim(X,\varepsilon)$. 
+Let $X'=\Trim_U(X,\varepsilon)$. 
 Let $x_1{<}\cdots{<}x_m$ be the support of $X'$. 
 Because $\Trim$ adds the probabilities of elements that were removed from the support of $X$ 
 to the support element of $X'$ that precedes them, 
@@ -812,7 +802,7 @@ P_{X}(x) =\begin{cases}
 0 & \text{otherwise}
 \end{cases}
 $$
-The "trimmed" version of $X$ in respect to $\varepsilon$, denoted by $X'$, is:
+The ``trimmed" version of $X$ with respect to $\varepsilon$, denoted by $X'$, is:
 $$
 P_{X'}(x) =\begin{cases}
 1  & \text{if } x=0, \\
@@ -1190,7 +1180,7 @@ To complete the picture, we also state the complexity of the deadline problem  f
 	can be computed in polynomial-time.
 \end{lemma}
 \begin{proof}
-	See~\eqref{eq:par}.
+	See Equation~\eqref{eq:par}.
 \end{proof}
 
 %Table~\ref{Tab:comp} summarizes the complexity of solving the deadline problem for different plan structures and different distribution types. The table crosses the three tree structures: trees with only sequence nodes, trees with only parallel nodes, and trees with mixed types of nodes; with three types of distributions 
