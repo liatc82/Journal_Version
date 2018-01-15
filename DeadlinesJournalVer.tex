@@ -1054,7 +1054,7 @@ See Example~\ref{exp:seq} and Example~\ref{expl:parallel}.
 
 The above result establishes that $\GenNetwork$ is tight in the sense that there is no $\varepsilon_0 < \GenNetwork(\tau, \varepsilon)$ 
 such that $\GenNetwork(\tau, \varepsilon)$ is always $\succeq_{\varepsilon_0}$ than $X_{\tau}$. 
-If we look more closely at on the examples used
+If we look more closely at the examples used
 to prove the theorem, we can say more about the tightness of our algorithm, as follows.
 Since the examples consist of task trees whose root nodes are both of
 type sequence and of type parallel, we get that any algorithm that traverses the tree
@@ -1064,12 +1064,11 @@ More formally, if we restrict the discussions to algorithms where the trimming o
 depend only on the structure of the subtree (not on siblings or parents or the CDFs of the variables), then 
 $\GenNetwork$ applies the maximal possible trimming (assuming that we have an optimal solution to $err$). 
 This means that $\GenNetwork$ is an improvement over 
-$\Network$ (Algorithm~\label{alg:approx}) that satisfies this assumption. 
+$\Network$ (Algorithm~\ref{alg:approx}) that satisfies this assumption. 
 Practically, the improvement is in allowing more trimming and, by that, saving unnecessary computations. 
 Specifically, both $\GenNetwork$ and $\Network$ are guaranteed to give a satisfactory answer but they may sometimes compute 
 an approximation that is better than required in the price of taking more run-time. $\GenNetwork$ is better in that it
-takes this extra time only in cases where any algorithm that decides how to trim based only on the shape of the subtree 
-(and not on the CDFs of the random variables or on other parts of the tree) would.
+takes this extra time only in cases where any algorithm that decides how to trim based only on the shape of the subtree would.
 
 
 
