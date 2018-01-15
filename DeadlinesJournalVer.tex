@@ -1017,7 +1017,7 @@ Based on this theorem, we propose the following pseudo-algorithm for computing a
 The following lemma establishes, however, that the computation of $\varepsilon$ is feasible, at least in an approximated form, as it involves reversing a polynomial of relatively small degree:
 
 \begin{lemma}\label{lemma:poly}
-	$err(r,\varepsilon)$ is a polynomial of degree smaller or equal to $|Seq|$.  
+	$err(r,\varepsilon)$ is a polynomial of degree smaller or equal to number of sequence nodes in the tree.  
 \end{lemma}
 \begin{proof}
 By induction over the depth of $\tau$ denoted by $d$. Base: if $d=1$ we have a tree with a single primitive node $p$. In this case  $err(p,\varepsilon)$ which is indeed a polynomial degree zero.
