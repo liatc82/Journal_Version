@@ -903,7 +903,7 @@ In this section we propose a tighter analysis. The term tight here means that we
 Consider, as an extreme example, a simple task tree with a sequence node at the root and below it only parallel nodes. The total error of our approximation algorithm (\Network) in this case is only due to the invocation of \Sequence at the tail of the recursion. The \Network algorithm, however,  acts as if all the other nodes add additional errors. Eventually, the \Sequence
 computation produces a very small error which takes the toll of an unnecessary computation time. 
 
-We will present now a recursive approximation algorithm with a tighter bound on the error parameter for every sequence node. Specifically, we propose the generalized algorithm $\GenNetwork$ (listed as Algorithm~\ref{alg:GenNetwork} below) whose main property is given using the function $err$ as follows:
+We will present now a recursive approximation algorithm with a tighter bound on the error parameter for every sequence node. Specifically, we propose the generalized algorithm $\GenNetwork$ (listed as Algorithm~\ref{alg:GenNetwork} below) whose main property is given using the function $err\colon V \times [0,1]^S \to [0,1]$, where $V$ is the set of nodes of $\tau$ and $S \subseteq V$ is the set of sequence nodes, as follows:
 
 %The following algorithm, $\EstimateError$, listed as Algorithm~\ref{alg:EstimateError},
 %\hl{computes the approximation error for a tree} $\tau$ given a function $\varepsilon$ that maps each of the nodes in $\tau$ to the parameter passed in line 7 of the $\Network$ procedure.
@@ -947,9 +947,9 @@ We will present now a recursive approximation algorithm with a tighter bound on 
 
 $$	
 	err(v,\varepsilon) = \begin{cases}
-		0	                                                        & \text{if $V$ is a primitive node;} \\	
-		\varepsilon(v) + \sum_{c\in \ch(v)}  err(c, \varepsilon)	& \text{if $V$ is a sequence node;} \\
-		1 - \prod_{c\in \ch(v)}  (1-err(c, \varepsilon))       	    & \text{if $V$ is a parallel node.} \\
+		0	                                                        & \text{if $v$ is a primitive node;} \\	
+		\varepsilon(v) + \sum_{c\in \ch(v)}  err(c, \varepsilon)	& \text{if $v$ is a sequence node;} \\
+		1 - \prod_{c\in \ch(v)}  (1-err(c, \varepsilon))       	    & \text{if $v$ is a parallel node.} \\
 	\end{cases}
 $$
 
@@ -994,8 +994,8 @@ $$
 \end{algorithm}
 
 \begin{theorem}\label{theorem:approxEps0}
-	For a task tree $\tau$ rooted at $r$ and a function $\varepsilon$ that maps the sequence nodes in $\tau$ to numbers in $[0,1]$, let $X_{\tau}$ be the random variable for the true
-	distribution of the completion time of $\tau$ and $X_\tau'=\GenNetwork(\tau, \varepsilon)$ then $X_\tau' \succeq_{err(r,\varepsilon)} X_{\tau}$. 
+	For a task tree $\tau$ whose root node is $r$ and a function $\varepsilon\colon S \to  [0,1]$,  where $S$ are the sequence nodes in $\tau$, let $X_{\tau}$ be the random variable for the true
+	distribution of the completion time of $\tau$ and $X_\tau'=\GenNetwork(\tau, \varepsilon)$. Then, $X_\tau' \succeq_{err(r,\varepsilon)} X_{\tau}$. 
 \end{theorem}
 
 \begin{proof}
