@@ -1020,9 +1020,10 @@ The following lemma establishes, however, that the computation of $\varepsilon$ 
 	$err(r,\varepsilon)$ is a polynomial of degree smaller or equal to number of sequence nodes in the tree.  
 \end{lemma}
 \begin{proof}
-By induction over the depth of $\tau$ denoted by $d$. Base: if $d=1$ we have a tree with a single primitive node $p$. In this case  $err(p,\varepsilon)$ which is indeed a polynomial degree zero.
-Induction step: we refer to the children nodes of the root node $r$, $\ch(r)$, as a set of sub task trees, each of them with depth smaller than $d$. If $r$, is a sequence node 
-$err(r,\varepsilon)=\sum_{c\in \ch(r)}err(c,\varepsilon) +  \varepsilon(c)$. If $r$, is a parallel node  $err(r,\varepsilon)=1-\prod_{c\in \ch(r)} (1-err(c,\varepsilon))$. By the induction hypothesis we have that the degree of $err(c,\varepsilon)$ is the number of sequence nodes in $c$, for each child $c$, and the above equalities show that the degree is increased by one if and only if the root is a parallel node. 
+By induction over the depth of $\tau$ denoted by $d$. It is easy to see, by looking at the definition of $err$ that the degree is increased by one if and only if the root of a subtree is a parallel node. 
+%Base: if $d=1$ we have a tree with a single primitive node $p$. In this case  $err(p,\varepsilon)$ which is indeed a polynomial degree zero.
+%Induction step: we refer to the children nodes of the root node: $r$, $\ch(r)$, as a set of sub task trees, each of them with depth smaller than $d$. If $r$, is a sequence node: 
+%$err(r,\varepsilon)=\sum_{c\in \ch(r)}err(c,\varepsilon) +  \varepsilon(c)$. If $r$, is a parallel node  $err(r,\varepsilon)=1-\prod_{c\in \ch(r)} (1-err(c,\varepsilon))$. By the induction hypothesis we have that the degree of %$err(c,\varepsilon)$ is the number of sequence nodes in $c$, for each child $c$, and the above equalities show that the degree is increased by one if and only if the root is a parallel node. 
 \end{proof}
 
 
