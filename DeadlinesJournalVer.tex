@@ -1017,14 +1017,15 @@ Based on this theorem, we propose the following pseudo-algorithm for computing a
 The following lemma establishes, however, that the computation of $\varepsilon$ is feasible, at least in an approximated form, as it involves reversing a polynomial of relatively small degree:
 
 \begin{lemma}\label{lemma:poly}
-	$err(r,\varepsilon)$ is a polynomial of degree smaller or equal to number of sequence nodes in the tree.  
+	If $\tau$ is a a task tree with root node $r$ and $\{\varepsilon(s)\colon s \text{ is a sequence node in } \tau \}$ are considered as variables then $err(r,\varepsilon)$ is a polynomial of degree smaller or equal to number of parallel nodes in the tree.  
 \end{lemma}
 \begin{proof}
-By induction over the depth of $\tau$ denoted by $d$. It is easy to see, by looking at the definition of $err$ that the degree is increased by one if and only if the root of a subtree is a parallel node. 
+By induction over the depth of $\tau$. By the definition of $err$, its degree is one more than that of the maximal among the children of $r$ if and only if the root of the tree is a parallel node. 
+\end{proof}
 %Base: if $d=1$ we have a tree with a single primitive node $p$. In this case  $err(p,\varepsilon)$ which is indeed a polynomial degree zero.
 %Induction step: we refer to the children nodes of the root node: $r$, $\ch(r)$, as a set of sub task trees, each of them with depth smaller than $d$. If $r$, is a sequence node: 
 %$err(r,\varepsilon)=\sum_{c\in \ch(r)}err(c,\varepsilon) +  \varepsilon(c)$. If $r$, is a parallel node  $err(r,\varepsilon)=1-\prod_{c\in \ch(r)} (1-err(c,\varepsilon))$. By the induction hypothesis we have that the degree of %$err(c,\varepsilon)$ is the number of sequence nodes in $c$, for each child $c$, and the above equalities show that the degree is increased by one if and only if the root is a parallel node. 
-\end{proof}
+
 
 
 %The following Lemmas, shows that by solving the system of equation $\tau_v(\varepsilon)$ with the variables $\varepsilon_1 \dots \varepsilon_m$ and assuming that $\varepsilon_1=\varepsilon_2= \dots =\varepsilon_m$ we can uniquely determine the error needed to be given for each sequence node in task tree $\tau$. Assuming that $\varepsilon_1=\varepsilon_2= \dots =\varepsilon_m$ do not promise a tight bound but a unique solution, in order to get the tight bound we have to take into consideration the tree structure, this can be handled as future work.
