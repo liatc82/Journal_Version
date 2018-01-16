@@ -1020,7 +1020,7 @@ The following lemma establishes, however, that the computation of $\varepsilon$ 
 	If $\tau$ is a a task tree with root node $r$ and $\{\varepsilon(s)\colon s \text{ is a sequence node in } \tau \}$ are considered as variables then $err(r,\varepsilon)$ is a polynomial of degree smaller or equal to number of parallel nodes in the tree.  
 \end{lemma}
 \begin{proof}
-By induction over the depth of $\tau$. By the definition of $err$, its degree is one more than that of the maximal among the children of $r$ if and only if the root of the tree is a parallel node. 
+By induction over the depth of $\tau$. By the definition of $err$, its degree is one more than that of the maximal among the children of $r$ if and only if the root of $\tau$ is a parallel node. 
 \end{proof}
 %Base: if $d=1$ we have a tree with a single primitive node $p$. In this case  $err(p,\varepsilon)$ which is indeed a polynomial degree zero.
 %Induction step: we refer to the children nodes of the root node: $r$, $\ch(r)$, as a set of sub task trees, each of them with depth smaller than $d$. If $r$, is a sequence node: 
