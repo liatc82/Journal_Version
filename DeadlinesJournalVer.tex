@@ -7,6 +7,8 @@
 \documentclass[review]{elsarticle}
 
 \usepackage{lineno,hyperref}
+
+
 \modulolinenumbers[5]
 
 \journal{Journal of \LaTeX\ Templates}
@@ -124,6 +126,7 @@
 
 \usepackage{array}
 \usepackage{ragged2e}
+
 \newcolumntype{X}[1]{>{\RaggedRight\hspace{0pt}}p{#1}}
 
 
@@ -136,16 +139,16 @@
 
 \begin{frontmatter}
 
-\title{Estimating the Probability of Meeting a \\ Deadline in Hierarchical Plans\footnote{A short version of this paper was published as \cite{cohen2015estimating}}.}
+\title{Estimating the Probability of Meeting a \\ Deadline in Hierarchical Plans\footnote{A short version of this paper was published in IJCAI 2015 as \cite{cohen2015estimating}}.}
 
 %% Group authors per affiliation:
-\author{Liat Cohen}
-\author{Solomon Eyal Shimony}
-\author{Gera Weiss}
-\address{Computer Science Department\\
-Ben Gurion University of The Negev\\
-Beer-Sheva, Israel 84105\\}
+\author[1]{Liat Cohen}
+\author[1,2]{Solomon Eyal Shimony}
+\author[1]{Gera Weiss}
 
+\address[1]{Computer Science Department Ben Gurion University of The Negev\\
+Beer-Sheva, Israel 84105\\}
+\address[2]{Computer Science Department University of Massachusetts Lowell\\ 220 Pawtucket St, Lowell, MA 01854, USA}
 \begin{abstract}
 		Given a hierarchical plan (or schedule) with uncertain task times, we propose a deterministic polynomial (time and memory) algorithm for estimating the probability that its meets a deadline, or, equivalently, that its {\em makespan} is less than a given duration. Approximation is needed as it is known that this problem is NP-hard even for sequential plans (sum of random variables). In addition, we show two new complexity results: (1) Counting the number of events that do not cross the deadline is \#P-hard; (2)~Computing the expected makespan of a hierarchical plan is NP-hard. For the proposed approximation algorithm, we establish formal approximation bounds and show that the time and memory complexities grow polynomially with the required accuracy, the number of nodes in the plan, and with the size of the support of the random variables that represent the durations of the primitive tasks. We examine these approximation bounds empirically and demonstrate, using task networks taken from the literature, how our scheme outperforms sampling techniques and exact computation in terms of accuracy and run-time. As the empirical data shows much better error bounds than guaranteed, we also suggest a method for tightening the bounds in some cases. 
 \end{abstract}  
